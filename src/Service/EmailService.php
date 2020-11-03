@@ -11,7 +11,6 @@
 
 namespace App\Service;
 
-use App\Entity\Participant;
 use App\Entity\Email;
 use App\Entity\User;
 use App\Service\Interfaces\EmailServiceInterface;
@@ -22,7 +21,6 @@ use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EmailService implements EmailServiceInterface
@@ -59,12 +57,6 @@ class EmailService implements EmailServiceInterface
 
     /**
      * EmailService constructor.
-     * @param TranslatorInterface $translator
-     * @param LoggerInterface $logger
-     * @param RequestStack $request
-     * @param ManagerRegistry $registry
-     * @param MailerInterface $mailer
-     * @param string $mailerFromEmail
      */
     public function __construct(TranslatorInterface $translator, LoggerInterface $logger, RequestStack $request, ManagerRegistry $registry, MailerInterface $mailer, string $mailerFromEmail)
     {

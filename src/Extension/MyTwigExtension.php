@@ -45,19 +45,7 @@ class MyTwigExtension extends AbstractExtension
             new TwigFilter('booleanFormat', [$this, 'booleanFilter']),
             new TwigFilter('camelCaseToUnderscore', [$this, 'camelCaseToUnderscoreFilter']),
             new TwigFilter('truncate', [$this, 'truncateFilter'], ['needs_environment' => true]),
-            new TwigFilter('iOSLoginLink', [$this, 'iOSLoginLinkFilter']),
         ];
-    }
-
-    public function iOSLoginLinkFilter(Participant $constructionManager): string
-    {
-        $username = 'username='.urlencode($constructionManager->getEmail());
-        $domain = $this->request ? 'domain='.urlencode($this->request->getHttpHost()) : null;
-
-        $arguments = array_filter([$username, $domain]);
-        $url = implode('&', $arguments);
-
-        return 'mangel.io://login?'.$url;
     }
 
     public function camelCaseToUnderscoreFilter(string $propertyName): string

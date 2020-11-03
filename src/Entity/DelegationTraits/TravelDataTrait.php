@@ -11,7 +11,6 @@
 
 namespace App\Entity\DelegationTraits;
 
-use App\Enum\Diet;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -38,49 +37,31 @@ trait TravelDataTrait
      */
     private $travelDataReviewProgress = ReviewProgress::NOT_EDITED;
 
-    /**
-     * @return string|null
-     */
     public function getLocation(): ?string
     {
         return $this->location;
     }
 
-    /**
-     * @param string|null $location
-     */
     public function setLocation(?string $location): void
     {
         $this->location = $location;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTravelDetails(): ?string
     {
         return $this->travelDetails;
     }
 
-    /**
-     * @param string|null $travelDetails
-     */
     public function setTravelDetails(?string $travelDetails): void
     {
         $this->travelDetails = $travelDetails;
     }
 
-    /**
-     * @return int
-     */
     public function getTravelDataReviewProgress(): int
     {
         return $this->travelDataReviewProgress;
     }
 
-    /**
-     * @param int $travelDataReviewProgress
-     */
     public function setTravelDataReviewProgress(int $travelDataReviewProgress): void
     {
         $this->travelDataReviewProgress = $travelDataReviewProgress;

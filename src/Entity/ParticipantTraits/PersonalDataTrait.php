@@ -108,17 +108,11 @@ trait PersonalDataTrait
         $this->phone = $phone;
     }
 
-    /**
-     * @return int
-     */
     public function getPersonalDataReviewProgress(): int
     {
         return $this->personalDataReviewProgress;
     }
 
-    /**
-     * @param int $personalDataReviewProgress
-     */
     public function setPersonalDataReviewProgress(int $personalDataReviewProgress): void
     {
         $this->personalDataReviewProgress = $personalDataReviewProgress;

@@ -11,7 +11,6 @@
 
 namespace App\Form\User;
 
-use App\Entity\Participant;
 use App\Form\UserTrait\OnlyEmailType;
 use App\Form\UserTrait\SetPasswordType;
 use Symfony\Component\Form\FormBuilderInterface;

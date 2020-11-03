@@ -70,25 +70,16 @@ class Delegation extends BaseEntity
         $this->participants = new ArrayCollection();
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
     public function setName(string $name): void
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
     public function getRegistrationHash(): string
     {
         return $this->registrationHash;

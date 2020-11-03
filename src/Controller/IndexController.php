@@ -12,6 +12,7 @@
 namespace App\Controller;
 
 use App\Controller\Base\BaseController;
+use App\Entity\Delegation;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -27,6 +28,8 @@ class IndexController extends BaseController
      */
     public function indexAction()
     {
-        return $this->render('index.html.twig');
+        $delegations = $this->getDoctrine()->getRepository(Delegation::class)->findAll();
+
+        return $this->render('index.html.twig', ['delegations' => $delegations]);
     }
 }

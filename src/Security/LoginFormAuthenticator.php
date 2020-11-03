@@ -12,7 +12,7 @@
 namespace App\Security;
 
 use App\Entity\Participant;
-use App\Security\Exceptions\UserWithoutPasswordAuthenticationException;
+use App\Entity\User;
 use App\Service\Interfaces\EmailServiceInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -36,7 +36,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'login';
-    const PASSWORD_UNSET = 'password_unset';
 
     /**
      * @var EntityManagerInterface
@@ -101,20 +100,16 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             return null;
         }
 
-        $constructionManagerRepository = $this->entityManager->getRepository(Participant::class);
+        $userRepository = $this->entityManager->getRepository(User::class);
 
-        return $constructionManagerRepository->findOneBy(['email' => $credentials['email']]);
+        return $userRepository->findOneBy(['email' => $credentials['email']]);
     }
 
     /**
-     * @param Participant $user
+     * @param User $user
      */
     public function checkCredentials($credentials, UserInterface $user)
     {
-        if (null === $user->getPassword()) {
-            throw new UserWithoutPasswordAuthenticationException($user);
-        }
-
         return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
     }
 
@@ -140,10 +135,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        if (0 === strpos($request->getPathInfo(), '/api/')) {
-            return new Response('Unauthorized', Response::HTTP_UNAUTHORIZED);
-        }
-
         $url = $this->getLoginUrl();
 
         return new RedirectResponse($url);

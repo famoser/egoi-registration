@@ -11,7 +11,6 @@
 
 namespace App\Form\User;
 
-use App\Entity\Participant;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;

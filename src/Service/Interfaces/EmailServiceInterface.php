@@ -11,7 +11,6 @@
 
 namespace App\Service\Interfaces;
 
-use App\Entity\Participant;
 use App\Entity\User;
 
 interface EmailServiceInterface

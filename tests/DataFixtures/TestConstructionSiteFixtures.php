@@ -11,8 +11,8 @@
 
 namespace App\Tests\DataFixtures;
 
-use App\Entity\Participant;
 use App\Entity\ConstructionSite;
+use App\Entity\Participant;
 use App\Service\Interfaces\SampleServiceInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;

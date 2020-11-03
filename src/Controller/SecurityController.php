@@ -71,10 +71,6 @@ class SecurityController extends BaseFormController
     /**
      * @Route("/setup", name="setup")
      *
-     * @param Request $request
-     * @param TranslatorInterface $translator
-     * @param LoginFormAuthenticator $authenticator
-     * @param GuardAuthenticatorHandler $guardHandler
      * @return Response
      */
     public function setupAction(Request $request, TranslatorInterface $translator, LoginFormAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler)
@@ -104,12 +100,6 @@ class SecurityController extends BaseFormController
     /**
      * @Route("/register/{delegation}/{registrationHash}", name="register")
      *
-     * @param Request $request
-     * @param Delegation $delegation
-     * @param string $registrationHash
-     * @param TranslatorInterface $translator
-     * @param LoginFormAuthenticator $authenticator
-     * @param GuardAuthenticatorHandler $guardHandler
      * @return Response
      */
     public function registerAction(Request $request, Delegation $delegation, string $registrationHash, TranslatorInterface $translator, LoginFormAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler)

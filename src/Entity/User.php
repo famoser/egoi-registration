@@ -73,33 +73,21 @@ class User extends BaseEntity implements UserInterface
         return [self::ROLE_COUNTRY];
     }
 
-    /**
-     * @return bool
-     */
     public function isAdmin(): bool
     {
         return $this->isAdmin;
     }
 
-    /**
-     * @param bool $isAdmin
-     */
     public function setIsAdmin(bool $isAdmin): void
     {
         $this->isAdmin = $isAdmin;
     }
 
-    /**
-     * @return Delegation|null
-     */
     public function getDelegation(): ?Delegation
     {
         return $this->delegation;
     }
 
-    /**
-     * @param Delegation|null $delegation
-     */
     public function setDelegation(?Delegation $delegation): void
     {
         $this->delegation = $delegation;

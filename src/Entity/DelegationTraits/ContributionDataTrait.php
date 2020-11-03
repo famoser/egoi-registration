@@ -11,7 +11,6 @@
 
 namespace App\Entity\DelegationTraits;
 
-use App\Enum\Diet;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -31,33 +30,21 @@ trait ContributionDataTrait
      */
     private $contributionDataReviewProgress = ReviewProgress::NOT_EDITED;
 
-    /**
-     * @return string|null
-     */
     public function getTranslations(): ?string
     {
         return $this->translations;
     }
 
-    /**
-     * @param string|null $translations
-     */
     public function setTranslations(?string $translations): void
     {
         $this->translations = $translations;
     }
 
-    /**
-     * @return int
-     */
     public function getContributionDataReviewProgress(): int
     {
         return $this->contributionDataReviewProgress;
     }
 
-    /**
-     * @param int $contributionDataReviewProgress
-     */
     public function setContributionDataReviewProgress(int $contributionDataReviewProgress): void
     {
         $this->contributionDataReviewProgress = $contributionDataReviewProgress;

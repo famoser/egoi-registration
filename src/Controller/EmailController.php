@@ -12,8 +12,8 @@
 namespace App\Controller;
 
 use App\Controller\Base\BaseController;
+use App\Entity\Email;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -24,17 +24,10 @@ class EmailController extends BaseController
     /**
      * @Route("/{identifier}", name="email")
      *
-     * @param $identifier
-     *
      * @return Response
      */
-    public function emailAction($identifier)
+    public function emailAction(Email $email)
     {
-        $email = $this->getDoctrine()->getRepository('App:Email')->findOneBy(['identifier' => $identifier]);
-        if (null === $email) {
-            throw new NotFoundHttpException();
-        }
-
         return $this->render('email/_view_online_base.html.twig', $email->getContext());
     }
 }

@@ -12,13 +12,9 @@
 namespace App\DataFixtures;
 
 use App\Entity\Delegation;
-use App\Entity\Participant;
-use App\Entity\User;
-use App\Service\Interfaces\SampleServiceInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Filesystem\Filesystem;
 
 class DelegationFixture extends Fixture implements OrderedFixtureInterface
 {
