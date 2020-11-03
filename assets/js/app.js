@@ -1,5 +1,5 @@
 import '../css/app.scss'
-import './vuejs'
+import './fontawesome'
 
 const $ = require('jquery')
 require('bootstrap')
