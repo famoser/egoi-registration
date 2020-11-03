@@ -1,20 +1,19 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        construction_managers:
+        users:
             entity:
                 # the class of the entity that represents users
-                class: 'App\Entity\ConstructionManager'
+                class: 'App\Entity\User'
                 # the property to query by - e.g. username, email, etc
                 property: 'email'
 
     encoders:
-        App\Entity\ConstructionManager:
+        App\Entity\User:
             algorithm: auto
 
     role_hierarchy:
-        ROLE_ADMIN: [ROLE_CONSTRUCTION_MANAGER, ROLE_ALLOWED_TO_SWITCH]
-        ROLE_CONSTRUCTION_MANAGER: ROLE_ASSIGNED_CONSTRUCTION_MANAGER
+        ROLE_ADMIN: [ROLE_COUNTRY]
 
     firewalls:
         dev:
@@ -23,11 +22,10 @@ security:
         main:
             anonymous: true
             lazy: true
-            provider: construction_managers
+            provider: users
             guard:
                 authenticators:
                     - App\Security\LoginFormAuthenticator
-                    - App\Security\TokenAuthenticator
                 entry_point: App\Security\LoginFormAuthenticator
             logout:
                 path: logout
@@ -53,4 +51,5 @@ security:
         - { path: ^/recover, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/email, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, role: ROLE_CONSTRUCTION_MANAGER }
+        - { path: ^/country, role: ROLE_COUNTRY }
+        - { path: ^/, role: ROLE_ADMIN }

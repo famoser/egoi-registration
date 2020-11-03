@@ -13,9 +13,10 @@ namespace App\Enum;
 
 use App\Enum\Base\BaseEnum;
 
-class UploadFileCheckStatus extends BaseEnum
+class ReviewProgress extends BaseEnum
 {
-    const OK = 1;
-    const FILE_ALREADY_EXISTS = 2;
-    const HASH_CONFLICTS_FOUND = 3;
+    const NOT_EDITED = 0;
+    const EDITED = 1;
+    const REVIEWED = 2;
+    const REVIEWED_AND_LOCKED = 3;
 }

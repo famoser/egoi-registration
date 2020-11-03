@@ -50,54 +50,6 @@ trait UserTrait
     private $isEnabled = false;
 
     /**
-     * @return string|null
-     */
-    public function getGivenName(): ?string
-    {
-        return $this->givenName;
-    }
-
-    /**
-     * @param string|null $givenName
-     */
-    public function setGivenName(?string $givenName): void
-    {
-        $this->givenName = $givenName;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getFamilyName(): ?string
-    {
-        return $this->familyName;
-    }
-
-    /**
-     * @param string|null $familyName
-     */
-    public function setFamilyName(?string $familyName): void
-    {
-        $this->familyName = $familyName;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPhone(): ?string
-    {
-        return $this->phone;
-    }
-
-    /**
-     * @param string|null $phone
-     */
-    public function setPhone(?string $phone): void
-    {
-        $this->phone = $phone;
-    }
-
-    /**
      * @return string
      */
     public function getEmail()
@@ -137,16 +89,6 @@ trait UserTrait
         $this->authenticationHash = HashHelper::getHash();
 
         return $this->authenticationHash;
-    }
-
-    /**
-     * checks if the user is allowed to login.
-     *
-     * @return bool
-     */
-    public function canLogin()
-    {
-        return $this->isEnabled;
     }
 
     public function getAuthenticationHash(): ?string
@@ -221,43 +163,5 @@ trait UserTrait
     public function setPasswordFromPlain(string $plainPassword)
     {
         $this->password = password_hash($plainPassword, PASSWORD_BCRYPT);
-    }
-
-    /**
-     * checks if the user has completed the registration.
-     */
-    public function getRegistrationCompleted()
-    {
-        return null !== $this->password;
-    }
-
-    /**
-     * get the user identifier.
-     *
-     * @return string
-     */
-    protected function getUserIdentifier()
-    {
-        return $this->email;
-    }
-
-    /**
-     * check if two users are equal.
-     *
-     * @param UserTrait $user
-     *
-     * @return bool
-     */
-    protected function isEqualToUser($user)
-    {
-        if ($this->getUsername() !== $user->getUsername()) {
-            return false;
-        }
-
-        if ($this->getPassword() !== $user->getPassword()) {
-            return false;
-        }
-
-        return true;
     }
 }

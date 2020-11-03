@@ -11,31 +11,31 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Delegation;
 use App\Entity\Participant;
+use App\Entity\User;
+use App\Service\Interfaces\SampleServiceInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\Filesystem\Filesystem;
 
-class ConstructionManagerFixtures extends Fixture implements OrderedFixtureInterface
+class DelegationFixture extends Fixture implements OrderedFixtureInterface
 {
     const ORDER = 0;
 
     public function load(ObjectManager $manager)
     {
         $entries = [
-            ['j@mangel.io', 'asdf', 'Julian', 'Dunskus'],
-            ['a@mangel.io', 'asdf', 'Adrian', 'Hoffmann'],
-            ['f@mangel.io', 'asdf', 'Florian', 'Moser'],
+            ['CH'],
+            ['DE'],
+            ['GB'],
         ];
 
         foreach ($entries as $entry) {
-            $constructionManager = new Participant();
-            $constructionManager->setEmail($entry[0]);
-            $constructionManager->setPasswordFromPlain($entry[1]);
-            $constructionManager->setGivenName($entry[2]);
-            $constructionManager->setFamilyName($entry[3]);
-            $constructionManager->setIsEnabled(true);
-            $manager->persist($constructionManager);
+            $user = new Delegation();
+            $user->setName($entry[0]);
+            $manager->persist($user);
         }
 
         $manager->flush();

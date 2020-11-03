@@ -9,17 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Entity\Traits;
+namespace App\Entity\ParticipantTraits;
 
+use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
-/*
- * Personal information + email from UserTrait
- */
-
-trait AddressTrait
+trait PersonalDataTrait
 {
     /**
      * @var string|null
@@ -47,69 +42,94 @@ trait AddressTrait
      *
      * @ORM\Column(type="text", nullable=true)
      */
+    private $email;
+
+    /**
+     * @var string|null
+     *
+     * @ORM\Column(type="text", nullable=true)
+     */
     private $phone;
 
     /**
-     * @return string|null
+     * @var int
+     *
+     * @ORM\Column(type="integer")
      */
+    private $personalDataReviewProgress = ReviewProgress::NOT_EDITED;
+
     public function getGivenName(): ?string
     {
         return $this->givenName;
     }
 
-    /**
-     * @param string|null $givenName
-     */
     public function setGivenName(?string $givenName): void
     {
         $this->givenName = $givenName;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFamilyName(): ?string
     {
         return $this->familyName;
     }
 
-    /**
-     * @param string|null $familyName
-     */
     public function setFamilyName(?string $familyName): void
     {
         $this->familyName = $familyName;
     }
 
-    /**
-     * @return \DateTime|null
-     */
     public function getBirthday(): ?\DateTime
     {
         return $this->birthday;
     }
 
-    /**
-     * @param \DateTime|null $birthday
-     */
     public function setBirthday(?\DateTime $birthday): void
     {
         $this->birthday = $birthday;
     }
 
-    /**
-     * @return string|null
-     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): void
+    {
+        $this->email = $email;
+    }
+
     public function getPhone(): ?string
     {
         return $this->phone;
     }
 
-    /**
-     * @param string|null $phone
-     */
     public function setPhone(?string $phone): void
     {
         $this->phone = $phone;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPersonalDataReviewProgress(): int
+    {
+        return $this->personalDataReviewProgress;
+    }
+
+    /**
+     * @param int $personalDataReviewProgress
+     */
+    public function setPersonalDataReviewProgress(int $personalDataReviewProgress): void
+    {
+        $this->personalDataReviewProgress = $personalDataReviewProgress;
+    }
+
+    public function isPersonalDataComplete()
+    {
+        return !empty($this->givenName) &&
+            !empty($this->familyName) &&
+            !empty($this->birthday) &&
+            !empty($this->email) &&
+            !empty($this->phone);
     }
 }
