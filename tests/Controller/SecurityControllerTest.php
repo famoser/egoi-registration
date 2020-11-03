@@ -11,7 +11,9 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\Participant;
+use App\Entity\Delegation;
+use App\Entity\User;
+use App\Tests\DataFixtures\TestDelegationFixtures;
 use App\Tests\Traits\AssertAuthenticationTrait;
 use App\Tests\Traits\AssertEmailTrait;
 use Doctrine\Persistence\ManagerRegistry;
@@ -28,16 +30,16 @@ class SecurityControllerTest extends WebTestCase
     public function testCanRegister()
     {
         $client = $this->createClient();
-        $this->loadFixtures();
+        $this->loadFixtures([TestDelegationFixtures::class]);
 
         $email = 'f@mangel.io';
         $password = 'asdf1234';
 
         $this->assertNotAuthenticated($client);
-        $this->register($client, $email);
-        $this->assertNotAuthenticated($client);
 
-        $this->registerConfirm($client, $email, $password);
+        $delegationName = TestDelegationFixtures::DELEGATION_NAME;
+        $registrationHash = $this->getDelegationRegistrationHash($delegationName);
+        $this->register($client, $delegationName, $registrationHash, $email, $password);
         $this->assertAuthenticated($client);
 
         $this->logout($client);
@@ -52,7 +54,8 @@ class SecurityControllerTest extends WebTestCase
         $this->recover($client, $email);
         $this->assertNotAuthenticated($client);
 
-        $this->recoverConfirm($client, $email, $password);
+        $authenticationHash = $this->getAuthenticationHash($email);
+        $this->recoverConfirm($client, $authenticationHash, $password);
         $this->assertAuthenticated($client);
     }
 
@@ -75,41 +78,22 @@ class SecurityControllerTest extends WebTestCase
         $this->assertResponseRedirects();
     }
 
-    private function register(KernelBrowser $client, string $email): void
+    private function register(KernelBrowser $client, string $delegationName, string $registrationHash, string $email, string $password): void
     {
-        $crawler = $client->request('GET', '/register');
+        $crawler = $client->request('GET', '/register/'.$delegationName.'/'.$registrationHash);
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('only_email_submit')->form();
-        $form['only_email[email]'] = $email;
+        $form['register_confirm[only_email][email]'] = $email;
+        $form['register_confirm[password][plainPassword]'] = $password;
+        $form['register_confirm[password][repeatPlainPassword]'] = $password;
 
         $client->submit($form);
         $this->assertResponseIsSuccessful();
-        $this->assertStringContainsString('erfolgreich', $client->getResponse()->getContent()); // alert to user
+        $this->assertStringContainsString('successful', $client->getResponse()->getContent()); // alert to user
 
         $authenticationHash = $this->getAuthenticationHash($email);
         $this->assertSingleEmailSentWithBodyContains($authenticationHash);
-    }
-
-    private function registerConfirm(KernelBrowser $client, string $email, string $password): void
-    {
-        $authenticationHash = $this->getAuthenticationHash($email);
-
-        $crawler = $client->request('GET', '/register/confirm/'.$authenticationHash);
-        $this->assertResponseIsSuccessful();
-
-        $form = $crawler->selectButton('register_confirm_submit')->form();
-        $form['register_confirm[profile][givenName]'] = 'Florian';
-        $form['register_confirm[profile][familyName]'] = 'Moser';
-        $form['register_confirm[profile][phone]'] = '0781234567';
-        $form['register_confirm[password][plainPassword]'] = $password;
-        $form['register_confirm[password][repeatPlainPassword]'] = $password;
-        $client->submit($form);
-        $this->assertSingleEmailSentWithBodyContains('https://apps.apple.com/ch/app/mangel-io/id1414077195'); // iOS download link
-
-        $this->assertResponseRedirects('/help/welcome');
-        $client->followRedirect();
-        $this->assertStringContainsString('eingerichtet', $client->getResponse()->getContent()); // alert to user
     }
 
     private function recover(KernelBrowser $client, string $email): void
@@ -122,16 +106,14 @@ class SecurityControllerTest extends WebTestCase
 
         $client->submit($form);
         $this->assertResponseIsSuccessful();
-        $this->assertStringContainsString('versandt', $client->getResponse()->getContent()); // alert to user
+        $this->assertStringContainsString('sent', $client->getResponse()->getContent()); // alert to user
 
         $authenticationHash = $this->getAuthenticationHash($email);
         $this->assertSingleEmailSentWithBodyContains($authenticationHash);
     }
 
-    private function recoverConfirm(KernelBrowser $client, string $email, string $password): void
+    private function recoverConfirm(KernelBrowser $client, string $authenticationHash, string $password): void
     {
-        $authenticationHash = $this->getAuthenticationHash($email);
-
         $crawler = $client->request('GET', '/recover/confirm/'.$authenticationHash);
         $this->assertResponseIsSuccessful();
 
@@ -142,16 +124,26 @@ class SecurityControllerTest extends WebTestCase
 
         $this->assertResponseRedirects();
         $client->followRedirect();
-        $this->assertStringContainsString('gesetzt', $client->getResponse()->getContent()); // alert to user
+        $this->assertStringContainsString('set', $client->getResponse()->getContent()); // alert to user
+    }
+
+    private function getDelegationRegistrationHash(string $name)
+    {
+        $registry = static::$container->get(ManagerRegistry::class);
+        $repository = $registry->getRepository(Delegation::class);
+        /** @var Delegation $delegation */
+        $delegation = $repository->findOneBy(['name' => $name]);
+
+        return $delegation->getRegistrationHash();
     }
 
     private function getAuthenticationHash(string $email)
     {
         $registry = static::$container->get(ManagerRegistry::class);
-        $repository = $registry->getRepository(Participant::class);
-        /** @var Participant $constructionManager */
-        $constructionManager = $repository->findOneBy(['email' => $email]);
+        $repository = $registry->getRepository(User::class);
+        /** @var User $user */
+        $user = $repository->findOneBy(['email' => $email]);
 
-        return $constructionManager->getAuthenticationHash();
+        return $user->getAuthenticationHash();
     }
 }

@@ -1,15 +1,15 @@
-{% block profile_widget %}
+{% block register_widget %}
     <div class="form-row">
         <div class="form-group col-md-6">
-            {{ form_row(form.givenName) }}
-        </div>
-        <div class="form-group col-md-6">
-            {{ form_row(form.familyName) }}
+            {{ form_row(form.email) }}
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col-md-12">
-            {{ form_row(form.phone) }}
+            {{ form_row(form.plainPassword) }}
+        </div>
+        <div class="form-group col-md-6">
+            {{ form_row(form.plainPasswordRepeat) }}
         </div>
     </div>
 {% endblock %}

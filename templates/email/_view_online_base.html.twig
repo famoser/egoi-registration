@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '_base.html.twig' %}
 
 {% trans_default_domain "email" %}
 
@@ -11,11 +11,7 @@
             <div class="center-content-primary shadow">
                 {% apply inky_to_html %}
                     {% if emailType == 1 %}
-                        {{ block("body", 'email/register_confirm.html.twig') }}
-                    {% elseif emailType == 2 %}
                         {{ block("body", 'email/recover_confirm.html.twig') }}
-                    {% elseif emailType == 3 %}
-                        {{ block("body", 'email/app_invitation.html.twig') }}
                     {% endif %}
                 {% endapply %}
             </div>
