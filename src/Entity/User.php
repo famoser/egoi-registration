@@ -39,7 +39,7 @@ class User extends BaseEntity implements UserInterface
      *
      * @ORM\Column(type="boolean")
      */
-    private $isAdminAccount = false;
+    private $isAdmin = false;
 
     /**
      * @var Delegation|null
@@ -66,7 +66,7 @@ class User extends BaseEntity implements UserInterface
      */
     public function getRoles()
     {
-        if ($this->isAdminAccount) {
+        if ($this->isAdmin) {
             return [self::ROLE_ADMIN];
         }
 
@@ -76,17 +76,17 @@ class User extends BaseEntity implements UserInterface
     /**
      * @return bool
      */
-    public function isAdminAccount(): bool
+    public function isAdmin(): bool
     {
-        return $this->isAdminAccount;
+        return $this->isAdmin;
     }
 
     /**
-     * @param bool $isAdminAccount
+     * @param bool $isAdmin
      */
-    public function setIsAdminAccount(bool $isAdminAccount): void
+    public function setIsAdmin(bool $isAdmin): void
     {
-        $this->isAdminAccount = $isAdminAccount;
+        $this->isAdmin = $isAdmin;
     }
 
     /**

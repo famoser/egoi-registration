@@ -9,18 +9,19 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Form\ConstructionManager;
+namespace App\Form\User;
 
 use App\Entity\Participant;
+use App\Form\UserTrait\OnlyEmailType;
 use App\Form\UserTrait\SetPasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class RegisterConfirmType extends AbstractConstructionManagerType
+class RegisterType extends AbstractUserType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('profile', EditProfileType::class, ['inherit_data' => true]);
+        $builder->add('profile', OnlyEmailType::class, ['inherit_data' => true]);
         $builder->add('password', SetPasswordType::class, ['inherit_data' => true]);
 
         parent::buildForm($builder, $options);
@@ -29,8 +30,7 @@ class RegisterConfirmType extends AbstractConstructionManagerType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Participant::class,
-            'block_name' => 'profile',
+            'block_name' => 'register',
         ]);
         parent::configureOptions($resolver);
     }

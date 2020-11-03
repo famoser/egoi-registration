@@ -32,7 +32,7 @@ class UserFixture extends Fixture implements OrderedFixtureInterface
             $user->setEmail($entry[0]);
             $user->setPasswordFromPlain($entry[1]);
             $user->setIsEnabled(true);
-            $user->setIsAdminAccount(true);
+            $user->setIsAdmin(true);
             $manager->persist($user);
         }
 

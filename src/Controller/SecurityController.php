@@ -12,14 +12,13 @@
 namespace App\Controller;
 
 use App\Controller\Base\BaseFormController;
-use App\Entity\Participant;
-use App\Form\ConstructionManager\RegisterConfirmType;
+use App\Entity\Delegation;
+use App\Entity\User;
+use App\Form\User\RegisterType;
 use App\Form\UserTrait\LoginType;
 use App\Form\UserTrait\OnlyEmailType;
 use App\Form\UserTrait\SetPasswordType;
-use App\Security\Exceptions\UserWithoutPasswordAuthenticationException;
 use App\Security\LoginFormAuthenticator;
-use App\Service\Interfaces\AuthorizationServiceInterface;
 use App\Service\Interfaces\EmailServiceInterface;
 use LogicException;
 use Psr\Log\LoggerInterface;
@@ -55,94 +54,79 @@ class SecurityController extends BaseFormController
             $this->displayError($this->getTranslator()->trans('login.errors.password_wrong', [], 'security'));
         } elseif ($error instanceof UsernameNotFoundException) {
             $this->displayError($this->getTranslator()->trans('login.errors.email_not_found', [], 'security'));
-        } elseif ($error instanceof UserWithoutPasswordAuthenticationException) {
-            $this->displayError($this->getTranslator()->trans('login.errors.registration_not_completed', [], 'security'));
-            $emailService->sendRegisterConfirmLink($error->getUser());
         } elseif (null !== $error) {
             $this->displayError($this->getTranslator()->trans('login.errors.login_failed', [], 'security'));
             $logger->error('login failed', ['exception' => $error]);
         }
 
-        $constructionManager = new Participant();
-        $constructionManager->setEmail($authenticationUtils->getLastUsername());
+        $user = new User();
+        $user->setEmail($authenticationUtils->getLastUsername());
 
-        $form = $this->createForm(LoginType::class, $constructionManager);
+        $form = $this->createForm(LoginType::class, $user);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'security', 'label' => 'login.submit']);
 
         return $this->render('security/login.html.twig', ['form' => $form->createView()]);
     }
 
     /**
-     * @Route("/register", name="register")
+     * @Route("/setup", name="setup")
      *
+     * @param Request $request
+     * @param TranslatorInterface $translator
+     * @param LoginFormAuthenticator $authenticator
+     * @param GuardAuthenticatorHandler $guardHandler
      * @return Response
      */
-    public function registerAction(Request $request, AuthorizationServiceInterface $authorizationService, TranslatorInterface $translator, EmailServiceInterface $emailService)
+    public function setupAction(Request $request, TranslatorInterface $translator, LoginFormAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler)
     {
-        $constructionManager = new Participant();
-        $constructionManager->setEmail($request->query->get('email'));
+        $existingAdmins = $this->getDoctrine()->getRepository(User::class)->findBy(['isAdmin' => true]);
+        if (count($existingAdmins) > 0) {
+            $this->displayError($translator->trans('setup.error.already_setup', [], 'security'));
 
-        $form = $this->createForm(OnlyEmailType::class, $constructionManager);
-        $form->add('submit', SubmitType::class, ['translation_domain' => 'security', 'label' => 'register.title']);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $authorizationService->setIsEnabled($constructionManager);
-
-            if (!$constructionManager->getIsEnabled()) {
-                $this->displayError($translator->trans('register.error.email_invalid', [], 'security'));
-            } else {
-                /** @var Participant $existing */
-                $existing = $this->getDoctrine()->getRepository(Participant::class)->findOneBy(['email' => $constructionManager->getEmail()]);
-
-                if (null !== $existing && $existing->getRegistrationCompleted()) {
-                    $this->displayError($translator->trans('register.error.already_registered', [], 'security'));
-
-                    return $this->redirectToRoute('login');
-                }
-
-                if (null !== $existing) {
-                    $constructionManager = $existing;
-                }
-
-                $constructionManager->generateAuthenticationHash();
-                $this->fastSave($constructionManager);
-
-                if ($emailService->sendRegisterConfirmLink($constructionManager)) {
-                    $this->displaySuccess($translator->trans('register.success.welcome', [], 'security'));
-                } else {
-                    $this->displayError($translator->trans('register.fail.welcome_email_not_sent', [], 'security'));
-                }
-            }
+            return $this->redirect('login');
         }
 
-        return $this->render('security/register.html.twig', ['form' => $form->createView()]);
+        $user = new User();
+        $user->setIsAdmin(true);
+
+        $form = $this->createForm(RegisterType::class, $user);
+        $form->add('submit', SubmitType::class, ['translation_domain' => 'security', 'label' => 'setup.submit']);
+
+        if ($this->tryRegisterAndLoginUser($form, $request, $user, $translator, $authenticator, $guardHandler)) {
+            $this->displaySuccess($translator->trans('setup.success.welcome', [], 'security'));
+
+            return $this->redirectToRoute('index');
+        }
+
+        return $this->render('security/setup.html.twig', ['form' => $form->createView()]);
     }
 
     /**
-     * @Route("/register/confirm/{authenticationHash}", name="register_confirm")
+     * @Route("/register/{delegation}/{registrationHash}", name="register")
      *
+     * @param Request $request
+     * @param Delegation $delegation
+     * @param string $registrationHash
+     * @param TranslatorInterface $translator
+     * @param LoginFormAuthenticator $authenticator
+     * @param GuardAuthenticatorHandler $guardHandler
      * @return Response
      */
-    public function registerConfirmAction(Request $request, string $authenticationHash, TranslatorInterface $translator, EmailServiceInterface $emailService, LoginFormAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler)
+    public function registerAction(Request $request, Delegation $delegation, string $registrationHash, TranslatorInterface $translator, LoginFormAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler)
     {
-        if (!$this->getConstructionManagerFromAuthenticationHash($authenticationHash, $translator, $constructionManager)) {
+        if (!($delegation = $this->getDelegationToRegisterFor($delegation, $registrationHash, $translator))) {
             return $this->redirectToRoute('login');
         }
 
-        $form = $this->createForm(RegisterConfirmType::class, $constructionManager);
-        $form->add('submit', SubmitType::class, ['translation_domain' => 'security', 'label' => 'register_confirm.submit']);
+        $user = new User();
+        $user->setDelegation($delegation);
+        $form = $this->createForm(RegisterType::class, $user);
+        $form->add('submit', SubmitType::class, ['translation_domain' => 'security', 'label' => 'register.submit']);
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid() && $this->applySetPasswordType($form->get('password'), $constructionManager, $translator)) {
-            $constructionManager->generateAuthenticationHash();
-            $this->fastSave($constructionManager);
+        if ($this->tryRegisterAndLoginUser($form, $request, $user, $translator, $authenticator, $guardHandler)) {
+            $this->displaySuccess($translator->trans('register.success.welcome', [], 'security'));
 
-            $this->loginUser($constructionManager, $authenticator, $guardHandler, $request);
-            $this->displaySuccess($translator->trans('register_confirm.success.welcome', [], 'security'));
-            $emailService->sendAppInvitation($constructionManager);
-
-            return $this->redirectToRoute('help_welcome');
+            return $this->redirectToRoute('delegation', ['name' => $delegation->getName()]);
         }
 
         return $this->render('security/register_confirm.html.twig', ['form' => $form->createView()]);
@@ -155,19 +139,19 @@ class SecurityController extends BaseFormController
      */
     public function recoverAction(Request $request, EmailServiceInterface $emailService, TranslatorInterface $translator, LoggerInterface $logger)
     {
-        $constructionManager = new Participant();
-        $form = $this->createForm(OnlyEmailType::class, $constructionManager);
+        $user = new User();
+        $form = $this->createForm(OnlyEmailType::class, $user);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'security', 'label' => 'recover.submit']);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var Participant $existingConstructionManager */
-            $existingConstructionManager = $this->getDoctrine()->getRepository(Participant::class)->findOneBy(['email' => $constructionManager->getEmail()]);
-            if (null === $existingConstructionManager) {
-                $logger->info('could not reset password of unknown user '.$constructionManager->getEmail());
+            /** @var User $existingUser */
+            $existingUser = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
+            if (null === $existingUser) {
+                $logger->info('could not reset password of unknown user '.$user->getEmail());
                 $this->displayError($translator->trans('recover.fail.email_not_found', [], 'security'));
             } else {
-                $this->sendAuthenticationLink($existingConstructionManager, $emailService, $logger, $translator);
+                $this->sendAuthenticationLink($existingUser, $emailService, $logger, $translator);
             }
         }
 
@@ -183,22 +167,22 @@ class SecurityController extends BaseFormController
      */
     public function recoverConfirmAction(Request $request, $authenticationHash, TranslatorInterface $translator, LoginFormAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler)
     {
-        if (!$this->getConstructionManagerFromAuthenticationHash($authenticationHash, $translator, $constructionManager)) {
+        if (!($user = $this->getUserFromAuthenticationHash($authenticationHash, $translator))) {
             return $this->redirectToRoute('login');
         }
 
-        $form = $this->createForm(SetPasswordType::class, $constructionManager);
+        $form = $this->createForm(SetPasswordType::class, $user);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'security', 'label' => 'recover_confirm.submit']);
 
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid() && $this->applySetPasswordType($form, $constructionManager, $translator)) {
-            $constructionManager->generateAuthenticationHash();
-            $this->fastSave($constructionManager);
+        if ($form->isSubmitted() && $form->isValid() && $this->applySetPasswordType($form, $user, $translator)) {
+            $user->generateAuthenticationHash();
+            $this->fastSave($user);
 
             $message = $translator->trans('recover_confirm.success.password_set', [], 'security');
             $this->displaySuccess($message);
 
-            $this->loginUser($constructionManager, $authenticator, $guardHandler, $request);
+            $this->loginUser($user, $authenticator, $guardHandler, $request);
 
             return $this->redirectToRoute('index');
         }
@@ -214,20 +198,22 @@ class SecurityController extends BaseFormController
         throw new LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
-    private function getConstructionManagerFromAuthenticationHash(string $authenticationHash, TranslatorInterface $translator, Participant &$constructionManager = null)
+    private function getDelegationToRegisterFor(Delegation $delegation, string $registrationHash, TranslatorInterface $translator): ?Delegation
     {
-        /** @var Participant $constructionManager */
-        $constructionManager = $this->getDoctrine()->getRepository(Participant::class)->findOneBy(['authenticationHash' => $authenticationHash]);
-        if (null === $constructionManager) {
-            $this->displayError($translator->trans('recover_confirm.error.invalid_hash', [], 'security'));
+        if ($delegation->getRegistrationHash() !== $registrationHash) {
+            $this->displayError($translator->trans('register.error.invalid_hash', [], 'security'));
 
-            return false;
+            return null;
+        } elseif ($delegation->getUsers()->count() > 0) {
+            $this->displayError($translator->trans('register.error.hash_already_used', [], 'security'));
+
+            return null;
         }
 
-        return true;
+        return $delegation;
     }
 
-    private function applySetPasswordType(FormInterface $form, Participant $constructionManager, TranslatorInterface $translator)
+    private function applySetPasswordType(FormInterface $form, User $user, TranslatorInterface $translator)
     {
         $plainPassword = $form->get('plainPassword')->getData();
         $repeatPlainPassword = $form->get('repeatPlainPassword')->getData();
@@ -244,9 +230,22 @@ class SecurityController extends BaseFormController
             return false;
         }
 
-        $constructionManager->setPasswordFromPlain($plainPassword);
+        $user->setPasswordFromPlain($plainPassword);
 
         return true;
+    }
+
+    private function getUserFromAuthenticationHash(string $authenticationHash, TranslatorInterface $translator): ?User
+    {
+        /** @var User|null $user */
+        $user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['authenticationHash' => $authenticationHash]);
+        if (null === $user) {
+            $this->displayError($translator->trans('recover_confirm.error.invalid_hash', [], 'security'));
+
+            return null;
+        }
+
+        return $user;
     }
 
     private function loginUser(UserInterface $user, LoginFormAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler, Request $request)
@@ -261,17 +260,32 @@ class SecurityController extends BaseFormController
         );
     }
 
-    private function sendAuthenticationLink(Participant $existingConstructionManager, EmailServiceInterface $emailService, LoggerInterface $logger, TranslatorInterface $translator): void
+    private function sendAuthenticationLink(User $existingUser, EmailServiceInterface $emailService, LoggerInterface $logger, TranslatorInterface $translator): void
     {
-        $existingConstructionManager->generateAuthenticationHash();
-        $this->fastSave($existingConstructionManager);
+        $existingUser->generateAuthenticationHash();
+        $this->fastSave($existingUser);
 
-        if ($emailService->sendRecoverConfirmLink($existingConstructionManager)) {
-            $logger->info('sent password reset email to '.$existingConstructionManager->getEmail());
+        if ($emailService->sendRecoverConfirmLink($existingUser)) {
+            $logger->info('sent password reset email to '.$existingUser->getEmail());
             $this->displaySuccess($translator->trans('recover.success.email_sent', [], 'security'));
         } else {
-            $logger->error('could not send password reset email '.$existingConstructionManager->getEmail());
+            $logger->error('could not send password reset email '.$existingUser->getEmail());
             $this->displayError($translator->trans('recover.fail.email_not_sent', [], 'security'));
         }
+    }
+
+    private function tryRegisterAndLoginUser(FormInterface $form, Request $request, User $user, TranslatorInterface $translator, LoginFormAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler): bool
+    {
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid() && $this->applySetPasswordType($form->get('password'), $user, $translator)) {
+            $user->generateAuthenticationHash();
+            $this->fastSave($user);
+
+            $this->loginUser($user, $authenticator, $guardHandler, $request);
+
+            return true;
+        }
+
+        return false;
     }
 }

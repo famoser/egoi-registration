@@ -12,12 +12,9 @@
 namespace App\Service\Interfaces;
 
 use App\Entity\Participant;
+use App\Entity\User;
 
 interface EmailServiceInterface
 {
-    public function sendRegisterConfirmLink(Participant $constructionManager): bool;
-
-    public function sendAppInvitation(Participant $constructionManager): bool;
-
-    public function sendRecoverConfirmLink(Participant $constructionManager): bool;
+    public function sendRecoverConfirmLink(User $user): bool;
 }

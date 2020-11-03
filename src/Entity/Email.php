@@ -64,7 +64,7 @@ class Email extends BaseEntity
      */
     private $readAt;
 
-    public static function create(int $emailType, Participant $sentBy)
+    public static function create(int $emailType, User $sentBy)
     {
         $email = new Email();
 

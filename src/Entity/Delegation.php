@@ -20,6 +20,7 @@ use App\Entity\Traits\TimeTrait;
 use App\Helper\HashHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
@@ -37,7 +38,8 @@ class Delegation extends BaseEntity
     /**
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @Assert\Unique()
+     * @ORM\Column(type="text", unique=true)
      */
     private $name;
 
@@ -46,7 +48,7 @@ class Delegation extends BaseEntity
      *
      * @ORM\Column(type="string")
      */
-    private $registrationCode;
+    private $registrationHash;
 
     /**
      * @var User[]|ArrayCollection
@@ -87,17 +89,17 @@ class Delegation extends BaseEntity
     /**
      * @return string
      */
-    public function getRegistrationCode(): string
+    public function getRegistrationHash(): string
     {
-        return $this->registrationCode;
+        return $this->registrationHash;
     }
 
     /**
      * @ORM\PrePersist()
      */
-    public function generateRegistrationCode()
+    public function generateRegistrationHash()
     {
-        $this->registrationCode = HashHelper::getHash();
+        $this->registrationHash = HashHelper::getHash();
     }
 
     /**

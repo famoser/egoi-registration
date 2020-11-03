@@ -13,6 +13,7 @@ namespace App\Service;
 
 use App\Entity\Participant;
 use App\Entity\Email;
+use App\Entity\User;
 use App\Service\Interfaces\EmailServiceInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
@@ -42,11 +43,6 @@ class EmailService implements EmailServiceInterface
     private $request;
 
     /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
-
-    /**
      * @var ObjectManager
      */
     private $manager;
@@ -62,71 +58,36 @@ class EmailService implements EmailServiceInterface
     private $mailerFromEmail;
 
     /**
-     * @var string
-     */
-    private $supportEmail;
-
-    /**
      * EmailService constructor.
+     * @param TranslatorInterface $translator
+     * @param LoggerInterface $logger
+     * @param RequestStack $request
+     * @param ManagerRegistry $registry
+     * @param MailerInterface $mailer
+     * @param string $mailerFromEmail
      */
-    public function __construct(TranslatorInterface $translator, LoggerInterface $logger, RequestStack $request, UrlGeneratorInterface $urlGenerator, ManagerRegistry $registry, MailerInterface $mailer, string $mailerFromEmail, string $supportEmail)
+    public function __construct(TranslatorInterface $translator, LoggerInterface $logger, RequestStack $request, ManagerRegistry $registry, MailerInterface $mailer, string $mailerFromEmail)
     {
         $this->translator = $translator;
         $this->logger = $logger;
         $this->request = $request;
-        $this->urlGenerator = $urlGenerator;
         $this->manager = $registry->getManager();
         $this->mailer = $mailer;
         $this->mailerFromEmail = $mailerFromEmail;
-        $this->supportEmail = $supportEmail;
     }
 
-    public function sendRegisterConfirmLink(Participant $constructionManager): bool
+    public function sendRecoverConfirmLink(User $user): bool
     {
-        $entity = Email::create(Email::TYPE_REGISTER_CONFIRM, $constructionManager);
-        $subject = $this->translator->trans('register_confirm.subject', ['%page%' => $this->getCurrentPage()], 'email');
-
-        $message = (new TemplatedEmail())
-            ->subject($subject)
-            ->from($this->mailerFromEmail)
-            ->to($constructionManager->getEmail())
-            ->replyTo($this->mailerFromEmail)
-            ->textTemplate('email/register_confirm.txt.twig')
-            ->htmlTemplate('email/register_confirm.html.twig')
-            ->context($entity->getContext());
-
-        return $this->sendAndStoreEMail($message, $entity);
-    }
-
-    public function sendRecoverConfirmLink(Participant $constructionManager): bool
-    {
-        $entity = Email::create(Email::TYPE_RECOVER_CONFIRM, $constructionManager);
+        $entity = Email::create(Email::TYPE_RECOVER_CONFIRM, $user);
         $subject = $this->translator->trans('recover_confirm.subject', ['%page%' => $this->getCurrentPage()], 'email');
 
         $message = (new TemplatedEmail())
             ->subject($subject)
             ->from($this->mailerFromEmail)
-            ->to($constructionManager->getEmail())
+            ->to($user->getEmail())
             ->replyTo($this->mailerFromEmail)
             ->textTemplate('email/recover_confirm.txt.twig')
             ->htmlTemplate('email/recover_confirm.html.twig')
-            ->context($entity->getContext());
-
-        return $this->sendAndStoreEMail($message, $entity);
-    }
-
-    public function sendAppInvitation(Participant $constructionManager): bool
-    {
-        $entity = Email::create(Email::TYPE_APP_INVITATION, $constructionManager);
-        $subject = $this->translator->trans('app_invitation.subject', ['%page%' => $this->getCurrentPage()], 'email');
-
-        $message = (new TemplatedEmail())
-            ->subject($subject)
-            ->from($this->mailerFromEmail)
-            ->to($constructionManager->getEmail())
-            ->replyTo($this->mailerFromEmail)
-            ->textTemplate('email/app_invitation.txt.twig')
-            ->htmlTemplate('email/app_invitation.html.twig')
             ->context($entity->getContext());
 
         return $this->sendAndStoreEMail($message, $entity);
