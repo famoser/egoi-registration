@@ -38,7 +38,7 @@ class UserFixture extends Fixture implements OrderedFixtureInterface
 
         $delegations = $manager->getRepository(Delegation::class)->findAll();
         $delegationUsers = [
-            ['f@egoi.org', 'asdf'],
+            ['ch@egoi.org', 'asdf'],
         ];
         for ($i = 0; $i < count($delegationUsers) && $i < count($delegations); ++$i) {
             $user = new User();
