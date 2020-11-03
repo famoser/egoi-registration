@@ -63,7 +63,6 @@ Encore
   .enableSassLoader(options => {
     options.implementation = require('sass')
   })
-  .enableVueLoader(() => {}, { runtimeCompilerBuild: false })
   .autoProvidejQuery()
 
   // uncomment to get integrity="..." attributes on your script & link tags
