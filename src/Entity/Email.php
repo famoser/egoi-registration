@@ -51,9 +51,9 @@ class Email extends BaseEntity
     private $sentDateTime;
 
     /**
-     * @var Participant
+     * @var User
      *
-     * @ORM\ManyToOne (targetEntity="Participant")
+     * @ORM\ManyToOne (targetEntity="App\Entity\User")
      */
     private $sentBy;
 
@@ -96,7 +96,7 @@ class Email extends BaseEntity
         return $this->sentDateTime;
     }
 
-    public function getSentBy(): Participant
+    public function getSentBy(): User
     {
         return $this->sentBy;
     }

@@ -24,10 +24,9 @@ class StorageService implements StorageServiceInterface
         FileHelper::ensureFolderExists($targetFolder);
         $targetFileName = $this->getSanitizedUniqueFileName($targetFolder, $file->getClientOriginalName());
         if (!$file->move($targetFolder, $targetFileName)) {
-            return false;
+            return null;
         }
 
-        // write filetrait properties
         return $targetFolder.DIRECTORY_SEPARATOR.$targetFileName;
     }
 

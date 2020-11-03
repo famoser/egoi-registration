@@ -53,14 +53,14 @@ class Delegation extends BaseEntity
     /**
      * @var User[]|ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="country")
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="delegation")
      */
     private $users;
 
     /**
      * @var Delegation[]|ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\Participant", mappedBy="country")
+     * @ORM\OneToMany(targetEntity="App\Entity\Participant", mappedBy="delegation")
      */
     private $participants;
 

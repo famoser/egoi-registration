@@ -52,11 +52,11 @@ class CountryVoter extends Voter
     {
         $user = $token->getUser();
 
-        if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
-            return true;
-        }
-
         if ($user instanceof User) {
+            if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
+                return true;
+            }
+
             return $user->getDelegation() === $subject;
         }
 

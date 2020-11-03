@@ -45,15 +45,31 @@ class Participant extends BaseEntity
      *
      * @ORM\ManyToOne(targetEntity="Delegation", inversedBy="participants")
      */
-    private $country;
+    private $delegation;
 
-    public function getCountry(): Delegation
+    /**
+     * @return int
+     */
+    public function getRole(): int
     {
-        return $this->country;
+        return $this->role;
     }
 
-    public function setCountry(Delegation $country): void
+    /**
+     * @param int $role
+     */
+    public function setRole(int $role): void
     {
-        $this->country = $country;
+        $this->role = $role;
+    }
+
+    public function getDelegation(): Delegation
+    {
+        return $this->delegation;
+    }
+
+    public function setDelegation(Delegation $delegation): void
+    {
+        $this->delegation = $delegation;
     }
 }
