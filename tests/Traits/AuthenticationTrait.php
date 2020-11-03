@@ -11,8 +11,6 @@
 
 namespace App\Tests\Traits;
 
-use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\Client;
-use App\Entity\Participant;
 use App\Entity\User;
 use App\Tests\DataFixtures\TestUserFixtures;
 use Doctrine\Persistence\ManagerRegistry;
@@ -38,7 +36,7 @@ trait AuthenticationTrait
         $testUser = $userRepository->findOneBy(['email' => $email]);
 
         if (!$testUser) {
-            throw new \Exception('User for E-Mail ' . $email . ' not found. Likely you need to load the ' . TestUserFixtures::class . ' fixture first.');
+            throw new \Exception('User for E-Mail '.$email.' not found. Likely you need to load the '.TestUserFixtures::class.' fixture first.');
         }
 
         $client->loginUser($testUser);

@@ -11,7 +11,6 @@
 
 namespace App\Extension;
 
-use App\Entity\Participant;
 use App\Enum\BooleanType;
 use App\Helper\DateTimeFormatter;
 use DateTime;

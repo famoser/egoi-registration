@@ -39,9 +39,6 @@ class SecurityController extends BaseFormController
 {
     /**
      * @Route("/login", name="login")
-     * @param AuthenticationUtils $authenticationUtils
-     * @param LoggerInterface $logger
-     * @return Response
      */
     public function login(AuthenticationUtils $authenticationUtils, LoggerInterface $logger): Response
     {

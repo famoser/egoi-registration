@@ -47,17 +47,11 @@ class Participant extends BaseEntity
      */
     private $delegation;
 
-    /**
-     * @return int
-     */
     public function getRole(): int
     {
         return $this->role;
     }
 
-    /**
-     * @param int $role
-     */
     public function setRole(int $role): void
     {
         $this->role = $role;

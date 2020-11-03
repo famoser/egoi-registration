@@ -12,7 +12,6 @@
 namespace App\Tests\DataFixtures;
 
 use App\Entity\Delegation;
-use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
