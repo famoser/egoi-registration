@@ -28,10 +28,6 @@
                     <i class="fal fa-question-circle"></i>
                 </a>
             </ul>
-            <ul class="navbar-nav mr-2">
-                {{ own_macros.nav_item(path("set_locale", {"locale": "de", "return_to": app.request.requestUri}), "de", app.request.locale != "de") }}
-                {{ own_macros.nav_item(path("set_locale", {"locale": "it", "return_to": app.request.requestUri}), "it", app.request.locale != "it") }}
-            </ul>
             <ul class="navbar-nav">
                 {{ own_macros.nav_item(path("logout"), "logout.title"|trans({}, "security")) }}
             </ul>
