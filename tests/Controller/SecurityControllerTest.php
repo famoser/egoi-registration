@@ -40,10 +40,10 @@ class SecurityControllerTest extends WebTestCase
         $this->assertCanSetup($client, $email, $password);
         $this->assertAuthenticated($client);
 
-        $this->assertCanlogout($client);
+        $this->assertCanLogout($client);
         $this->assertNotAuthenticated($client);
 
-        $this->assertSetupRedirectsToLogin($client);
+        $this->assertCanNotSetup($client);
     }
 
     public function skipTestCanRegister()
@@ -61,13 +61,13 @@ class SecurityControllerTest extends WebTestCase
         $this->assertCanRegister($client, $delegationName, $registrationHash, $email, $password);
         $this->assertAuthenticated($client);
 
-        $this->assertCanlogout($client);
+        $this->assertCanLogout($client);
         $this->assertNotAuthenticated($client);
 
         $this->assertCanLogin($client, $email, $password);
         $this->assertAuthenticated($client);
 
-        $this->assertCanlogout($client);
+        $this->assertCanLogout($client);
         $this->assertNotAuthenticated($client);
 
         $this->assertCanRecover($client, $email);
@@ -91,7 +91,7 @@ class SecurityControllerTest extends WebTestCase
         $this->assertResponseRedirects();
     }
 
-    private function assertCanlogout(KernelBrowser $client): void
+    private function assertCanLogout(KernelBrowser $client): void
     {
         $client->request('GET', '/logout');
         $this->assertResponseRedirects();
@@ -103,19 +103,22 @@ class SecurityControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('register_submit')->form();
-        $form['register[only_email][email]'] = $email;
+        $form['register[profile][email]'] = $email;
         $form['register[password][plainPassword]'] = $password;
         $form['register[password][repeatPlainPassword]'] = $password;
 
         $client->submit($form);
+        $this->assertResponseRedirects('/');
+
+        $client->followRedirect();
         $this->assertResponseIsSuccessful();
-        $this->assertStringContainsString('successful', $client->getResponse()->getContent()); // alert to user
+        $this->assertStringContainsString('Welcome', $client->getResponse()->getContent()); // alert to user
     }
 
-    private function assertSetupRedirectsToLogin(KernelBrowser $client): void
+    private function assertCanNotSetup(KernelBrowser $client): void
     {
         $client->request('GET', '/setup');
-        $this->assertResponseRedirects('/login');
+        $this->assertResponseRedirects();
     }
 
     private function assertCanRegister(KernelBrowser $client, string $delegationName, string $registrationHash, string $email, string $password): void
@@ -123,8 +126,8 @@ class SecurityControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/register/'.$delegationName.'/'.$registrationHash);
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->selectButton('only_email_submit')->form();
-        $form['register[only_email][email]'] = $email;
+        $form = $crawler->selectButton('register_submit')->form();
+        $form['register[profile][email]'] = $email;
         $form['register[password][plainPassword]'] = $password;
         $form['register[password][repeatPlainPassword]'] = $password;
 
