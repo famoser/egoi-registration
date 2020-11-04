@@ -9,12 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Entity\ParticipantTraits;
+namespace App\Entity\Traits;
 
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 
-trait ImmigrationDataTrait
+trait ParticipantImmigrationDataTrait
 {
     /**
      * @var string|null

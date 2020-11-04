@@ -1,0 +1,53 @@
+login:
+  title: 'Welcome back!'
+  description: 'Use the account created with your delegations invitation.'
+  submit: Login
+  forgot_passwort: 'Forgot your Password?'
+  errors:
+    login_failed: 'Login failed.'
+    email_not_found: 'E-Mail not found.'
+    password_wrong: 'Password wrong.'
+    account_disabled: 'This Account is deactivated.'
+
+register:
+  title: 'Create an Account.'
+  description: 'Register your delegation for the next EGOI.'
+  back_to_login: 'Back to Login.'
+  success:
+    welcome: 'Welcome :)'
+
+recover:
+  title: 'Reset password.'
+  description: 'We will send you a recover link to your E-Mail.'
+  submit: 'Send recover link'
+  forgot_email: 'Forgot your E-Mail or other problems?'
+  remembered_login: 'Retry login?'
+  back_to_login: 'Back to Login.'
+  success:
+    email_sent: 'We have send your a recover link to your E-Mail.'
+  fail:
+    email_not_sent: 'E-Mail could not be sent. This is a technical error, please do contract the support.'
+    email_not_found: 'E-Mail was not found in the system.'
+
+recover_confirm:
+  title: 'Welcome back!'
+  description: 'Set your new password.'
+  submit: 'Set password'
+  success:
+    password_set: 'New password set successfully.'
+  error:
+    passwords_do_not_match: 'Passwords do not match.'
+    invalid_hash: 'Link is no longer valid. Please acknowledge that each link can only be used once.'
+    password_too_short: 'The password is too short. Please use at least 8 characters.'
+
+logout:
+  title: Logout
+
+setup:
+  title: 'Setup registration tool'
+  description: 'Setup the administrator account.'
+  submit: 'Create administrator account'
+  error:
+    already_setup: 'An administrator account already exists.'
+  success:
+    welcome: 'Welcome :). You can setup the delegations now.'

@@ -12,10 +12,10 @@
 namespace App\Entity;
 
 use App\Entity\Base\BaseEntity;
-use App\Entity\ParticipantTraits\EventDataTrait;
-use App\Entity\ParticipantTraits\ImmigrationDataTrait;
-use App\Entity\ParticipantTraits\PersonalDataTrait;
 use App\Entity\Traits\IdTrait;
+use App\Entity\Traits\ParticipantEventDataTrait;
+use App\Entity\Traits\ParticipantImmigrationDataTrait;
+use App\Entity\Traits\ParticipantPersonalDataTrait;
 use App\Entity\Traits\TimeTrait;
 use App\Enum\ParticipantRole;
 use Doctrine\ORM\Mapping as ORM;
@@ -29,9 +29,9 @@ class Participant extends BaseEntity
     use IdTrait;
     use TimeTrait;
 
-    use PersonalDataTrait;
-    use EventDataTrait;
-    use ImmigrationDataTrait;
+    use ParticipantPersonalDataTrait;
+    use ParticipantEventDataTrait;
+    use ParticipantImmigrationDataTrait;
 
     /**
      * @var int

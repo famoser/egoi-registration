@@ -27,9 +27,23 @@ class SecurityControllerTest extends WebTestCase
     use AssertEmailTrait;
     use AssertAuthenticationTrait;
 
-    public function testNothing()
+    public function testCanSetup()
     {
-        $this->assertTrue(true);
+        $client = $this->createClient();
+        $this->loadFixtures();
+
+        $email = 'f@mangel.io';
+        $password = 'asdf1234';
+
+        $this->assertNotAuthenticated($client);
+
+        $this->assertCanSetup($client, $email, $password);
+        $this->assertAuthenticated($client);
+
+        $this->assertCanlogout($client);
+        $this->assertNotAuthenticated($client);
+
+        $this->assertSetupRedirectsToLogin($client);
     }
 
     public function skipTestCanRegister()
@@ -44,27 +58,27 @@ class SecurityControllerTest extends WebTestCase
 
         $delegationName = TestDelegationFixtures::DELEGATION_NAME;
         $registrationHash = $this->getDelegationRegistrationHash($delegationName);
-        $this->register($client, $delegationName, $registrationHash, $email, $password);
+        $this->assertCanRegister($client, $delegationName, $registrationHash, $email, $password);
         $this->assertAuthenticated($client);
 
-        $this->logout($client);
+        $this->assertCanlogout($client);
         $this->assertNotAuthenticated($client);
 
-        $this->login($client, $email, $password);
+        $this->assertCanLogin($client, $email, $password);
         $this->assertAuthenticated($client);
 
-        $this->logout($client);
+        $this->assertCanlogout($client);
         $this->assertNotAuthenticated($client);
 
-        $this->recover($client, $email);
+        $this->assertCanRecover($client, $email);
         $this->assertNotAuthenticated($client);
 
         $authenticationHash = $this->getAuthenticationHash($email);
-        $this->recoverConfirm($client, $authenticationHash, $password);
+        $this->assertCanRecoverConfirm($client, $authenticationHash, $password);
         $this->assertAuthenticated($client);
     }
 
-    private function login(KernelBrowser $client, string $email, string $password): void
+    private function assertCanLogin(KernelBrowser $client, string $email, string $password): void
     {
         $crawler = $client->request('GET', '/login');
         $this->assertResponseIsSuccessful();
@@ -77,21 +91,42 @@ class SecurityControllerTest extends WebTestCase
         $this->assertResponseRedirects();
     }
 
-    private function logout(KernelBrowser $client): void
+    private function assertCanlogout(KernelBrowser $client): void
     {
         $client->request('GET', '/logout');
         $this->assertResponseRedirects();
     }
 
-    private function register(KernelBrowser $client, string $delegationName, string $registrationHash, string $email, string $password): void
+    private function assertCanSetup(KernelBrowser $client, string $email, string $password): void
+    {
+        $crawler = $client->request('GET', '/setup');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('register_submit')->form();
+        $form['register[only_email][email]'] = $email;
+        $form['register[password][plainPassword]'] = $password;
+        $form['register[password][repeatPlainPassword]'] = $password;
+
+        $client->submit($form);
+        $this->assertResponseIsSuccessful();
+        $this->assertStringContainsString('successful', $client->getResponse()->getContent()); // alert to user
+    }
+
+    private function assertSetupRedirectsToLogin(KernelBrowser $client): void
+    {
+        $client->request('GET', '/setup');
+        $this->assertResponseRedirects('/login');
+    }
+
+    private function assertCanRegister(KernelBrowser $client, string $delegationName, string $registrationHash, string $email, string $password): void
     {
         $crawler = $client->request('GET', '/register/'.$delegationName.'/'.$registrationHash);
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('only_email_submit')->form();
-        $form['register_confirm[only_email][email]'] = $email;
-        $form['register_confirm[password][plainPassword]'] = $password;
-        $form['register_confirm[password][repeatPlainPassword]'] = $password;
+        $form['register[only_email][email]'] = $email;
+        $form['register[password][plainPassword]'] = $password;
+        $form['register[password][repeatPlainPassword]'] = $password;
 
         $client->submit($form);
         $this->assertResponseIsSuccessful();
@@ -101,7 +136,7 @@ class SecurityControllerTest extends WebTestCase
         $this->assertSingleEmailSentWithBodyContains($authenticationHash);
     }
 
-    private function recover(KernelBrowser $client, string $email): void
+    private function assertCanRecover(KernelBrowser $client, string $email): void
     {
         $crawler = $client->request('GET', '/recover');
         $this->assertResponseIsSuccessful();
@@ -117,7 +152,7 @@ class SecurityControllerTest extends WebTestCase
         $this->assertSingleEmailSentWithBodyContains($authenticationHash);
     }
 
-    private function recoverConfirm(KernelBrowser $client, string $authenticationHash, string $password): void
+    private function assertCanRecoverConfirm(KernelBrowser $client, string $authenticationHash, string $password): void
     {
         $crawler = $client->request('GET', '/recover/confirm/'.$authenticationHash);
         $this->assertResponseIsSuccessful();

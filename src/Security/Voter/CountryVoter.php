@@ -60,6 +60,6 @@ class CountryVoter extends Voter
             return $user->getDelegation() === $subject;
         }
 
-        throw new \LogicException('Unknown user type '.get_class($user).'!');
+        throw new \LogicException('Unknown user payload '.serialize($user).'!');
     }
 }

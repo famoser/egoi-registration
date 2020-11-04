@@ -44,7 +44,7 @@ class User extends BaseEntity implements UserInterface
     /**
      * @var Delegation|null
      *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Delegation", inversedBy="user")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Delegation", inversedBy="users")
      */
     private $delegation;
 
