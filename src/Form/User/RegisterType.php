@@ -14,6 +14,7 @@ namespace App\Form\User;
 use App\Form\UserTrait\OnlyEmailType;
 use App\Form\UserTrait\SetPasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RegisterType extends AbstractUserType
 {
@@ -21,7 +22,5 @@ class RegisterType extends AbstractUserType
     {
         $builder->add('profile', OnlyEmailType::class, ['inherit_data' => true, 'label' => false]);
         $builder->add('password', SetPasswordType::class, ['inherit_data' => true, 'label' => false]);
-
-        parent::buildForm($builder, $options);
     }
 }
