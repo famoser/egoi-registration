@@ -13,7 +13,6 @@ namespace App\Form\UserTrait;
 
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SetPasswordType extends AbstractUserTraitType
 {

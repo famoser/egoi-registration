@@ -1,7 +1,7 @@
 # Introduction
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE) 
-[![Build Status](https://travis-ci.com/famoser/egoi-registration.svg?branch=master)](https://travis-ci.com/famoser/egoi-registration)
-[![Scrutinizer](https://scrutinizer-ci.com/g/famoser/egoi-registration/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/famoser/egoi-registration/?branch=master)
+[![Build Status](https://travis-ci.com/famoser/egoi-registration.svg?branch=main)](https://travis-ci.com/famoser/egoi-registration)
+[![Scrutinizer](https://scrutinizer-ci.com/g/famoser/egoi-registration/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/famoser/egoi-registration/)
 
 ## About
 The European Girls' Olympiad in Informatics (EGOI) is a new programming competition just for girls. Inspired by the success of the European Girls' Mathematical Olympiad we want to create a similar competition in Informatics. The format of the competition will be similar to established competitions such as the International Olympiad in Informatics or the Central European Olympiad in Informatics.
