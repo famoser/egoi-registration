@@ -49,14 +49,14 @@ class DelegationController extends BaseDoctrineController
             $delegationNames = explode(',', $commaSeparatedDelegationNames);
 
             $existingDelegations = $this->getDoctrine()->getRepository(Delegation::class)->findAll();
-            $existingDelegationNames = array_map(function (Delegation $delegation) {
-                return $delegation->getName();
+            $existingDelegationNamesLowercase = array_map(function (Delegation $delegation) {
+                return strtolower($delegation->getName());
             }, $existingDelegations);
 
             $delegations = [];
             foreach ($delegationNames as $delegationName) {
                 $cleanedDelegationName = trim($delegationName);
-                if (0 === strlen($cleanedDelegationName) || in_array($cleanedDelegationName, $existingDelegationNames)) {
+                if (0 === strlen($cleanedDelegationName) || in_array(strtolower($cleanedDelegationName), $existingDelegationNamesLowercase)) {
                     continue;
                 }
 
