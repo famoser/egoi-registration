@@ -19,6 +19,7 @@ use App\Enum\ReviewProgress;
 use App\Form\Participant\AddParticipantType;
 use App\Form\Participant\EditParticipantType;
 use App\Form\Participant\RemoveParticipantType;
+use App\Form\Traits\EditParticipantEventPresenceType;
 use App\Form\Traits\EditParticipantPersonalDataType;
 use App\Security\Voter\DelegationVoter;
 use App\Security\Voter\ParticipantVoter;
@@ -108,7 +109,7 @@ class ParticipantController extends BaseDoctrineController
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
 
         $readOnly = ReviewProgress::REVIEWED_AND_LOCKED === $participant->getPersonalDataReviewProgress();
-        $form = $this->createForm(EditParticipantPersonalDataType::class, $participant, ['disabled' => $readOnly]);
+        $form = $this->createForm(EditParticipantEventPresenceType::class, $participant, ['disabled' => $readOnly]);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'edit.submit']);
 
         $form->handleRequest($request);
@@ -174,7 +175,7 @@ class ParticipantController extends BaseDoctrineController
     {
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_MODERATE, $participant);
 
-        $form = $this->createForm(EditParticipantType::class, $participant);
+        $form = $this->createForm(EditParticipantType::class, $participant, ['required' => false]);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'edit.submit']);
 
         $form->handleRequest($request);

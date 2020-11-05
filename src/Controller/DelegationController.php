@@ -171,7 +171,7 @@ class DelegationController extends BaseDoctrineController
     {
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE, $delegation);
 
-        $form = $this->createForm(EditDelegationType::class, $delegation);
+        $form = $this->createForm(EditDelegationType::class, $delegation, ['required' => false]);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'delegation', 'label' => 'edit.submit']);
 
         $form->handleRequest($request);
