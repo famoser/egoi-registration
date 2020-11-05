@@ -1,1 +1,7 @@
+entity:
+  name: 'Delegation'
+  plural: 'Delegations'
+
 name: "Name"
+comma_separated_delegation_names: "Delegations (comma separated)"
+comma_separated_delegation_names_help: "Name of the delegation must be unique"

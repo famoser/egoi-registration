@@ -1,3 +1,9 @@
+{% macro nav_item(link, text, secondary = false) %}
+    <li class="nav-item {% if secondary %} font-weight-light {% endif %}{% if app.request.pathInfo == link %}active{% endif %}">
+        <a class="nav-link" href="{{ link }}">{{ text }}</a>
+    </li>
+{% endmacro %}
+{% import _self as own_macros %}
 <!doctype html>
 <html lang="{{ app.request.locale }}">
 <head>
@@ -44,7 +50,7 @@
     </div>
 {% endif %}
 
-{% block content %}
+{% block body %}
 
 {% endblock %}
 

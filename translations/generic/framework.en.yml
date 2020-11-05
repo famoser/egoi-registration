@@ -6,3 +6,6 @@ date_time:
   Fri: Fri
   Sat: Sat
   Sun: Sun
+form:
+  remove:
+    confirm_consequences: 'I acknowledge that this is a destructive operation which can not be reversed.'

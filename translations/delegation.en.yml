@@ -1,0 +1,22 @@
+new:
+  title: 'Create delegations'
+  description: 'Create multiple delegations.'
+  submit: 'Create delegations'
+  success:
+    created: 'Created %count% delegations.'
+
+edit:
+  title: 'Edit delegation'
+  description: 'Edit delegation.'
+  submit: 'Save changes'
+  success:
+    edited: 'Delegation changed.'
+  error:
+    name_already_taken: 'Delegation with this name already exists'
+
+remove:
+  title: 'Remove delegation'
+  description: 'Remove delegation and associated users & participants.'
+  submit: 'Remove delegation'
+  success:
+    removed: 'Delegation removed'

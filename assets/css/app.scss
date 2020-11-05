@@ -1,13 +1,20 @@
 $border-radius: 0;
 $blue: #0a85c7;
-$yellow: #f4c300;
 $green: #009f3d;
+$yellow: #f4c300;
 $red: #d13337;
 
 @import '~bootstrap/scss/bootstrap';
 
+// add a drop shadow
+@mixin shadow($shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16)) {
+  box-shadow: $shadow;
+}
+
 html,
 body {
+  background-image: url('../images/background.png');
+  background-repeat: repeat;
   height: 100%;
 }
 
@@ -42,6 +49,31 @@ body {
   padding: 1rem 2rem;
 }
 
+.content {
+  margin-top: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.tile {
+  @include shadow();
+
+  background-color: #fff;
+  padding: 1em;
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
+}
+
 .col-form-label {
   font-weight: bold;
+}
+
+.admin-wrapper {
+  padding: 1em;
 }

@@ -1,6 +1,7 @@
 import {
-  library as FontawesomeLibrary,
-  config as FontawesomeConfig
+  library,
+  config,
+  dom
 } from '@fortawesome/fontawesome-svg-core'
 import {
   faPlus,
@@ -15,8 +16,8 @@ import { faStar as faStartSolid } from '@fortawesome/pro-solid-svg-icons/faStar'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 
 // configure fontawesome
-FontawesomeConfig.autoAddCss = false
-FontawesomeLibrary.add(
+config.autoAddCss = false
+library.add(
   faPlus,
   faPencil,
   faTrash,
@@ -27,3 +28,4 @@ FontawesomeLibrary.add(
 
   faStartSolid
 )
+dom.watch()

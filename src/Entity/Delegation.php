@@ -20,7 +20,6 @@ use App\Entity\Traits\TimeTrait;
 use App\Helper\HashHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
@@ -38,7 +37,6 @@ class Delegation extends BaseEntity
     /**
      * @var string
      *
-     * @Assert\Unique()
      * @ORM\Column(type="text", unique=true)
      */
     private $name;

@@ -1,39 +1,53 @@
-{% macro nav_item(link, text, secondary = false) %}
-    <li class="nav-item {% if secondary %} font-weight-light {% endif %}{% if app.request.pathInfo == link %}active{% endif %}">
-        <a class="nav-link" href="{{ link }}">{{ text }}</a>
-    </li>
-{% endmacro %}
-{% import _self as own_macros %}
-
-{% extends "_base.html.twig" %}
+{% extends "_content.html.twig" %}
 
 {% block title %}{{ "index.title"|trans }}{% endblock %}
 {% block description %}{{ "index.description"|trans }}{% endblock %}
 
 {% trans_default_domain "index" %}
+{% set fluid = true %}
 
 {% block content %}
-    <nav class="navbar navbar-dark bg-dark navbar-expand">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <div class="tile">
+        <h1>{{ "index.title"|trans }}</h1>
+        <p>{{ "index.description"|trans }}</p>
 
-        <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav mr-2">
-                <a href="mailto:{{ env_support_email }}" class="nav-link">
-                    <i class="fal fa-envelope-open"></i>
-                </a>
-            </ul>
-            <ul class="navbar-nav">
-                {{ own_macros.nav_item(path("logout"), "logout.title"|trans({}, "security")) }}
-            </ul>
-        </div>
-    </nav>
+        <p>
+            <a class="btn btn-outline-primary"
+               href="{{ path("delegation_new") }}">{{ "new.title"|trans({}, "delegation") }}</a>
+        </p>
 
-    <div class="container-fluid">
-        <div id="index">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{ "entity.name"|trans({}, "entity_delegation") }}</th>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for delegation in delegations %}
+                <tr>
+                    <td>
+                        {{ delegation.name }}
+                        <span class="p-1"></span>
+                        <a class="btn btn-outline-secondary" href="{{ path("delegation_edit", {"delegation": delegation.id}) }}">
+                            <i class="fal fa-pencil"></i>
+                        </a>
 
-        </div>
+                        <a class="btn btn-outline-danger" href="{{ path("delegation_remove", {"delegation": delegation.id}) }}">
+                            <i class="fal fa-trash"></i>
+                        </a>
+                    </td>
+                    <td>
+                        {{ delegation.participants|length }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
     </div>
+{% endblock %}
+
+{% block navbar %}
+
 {% endblock %}

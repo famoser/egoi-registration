@@ -11,23 +11,121 @@
 
 namespace App\Controller;
 
-use App\Controller\Base\BaseController;
+use App\Controller\Base\BaseDoctrineController;
 use App\Entity\Delegation;
+use App\Form\Delegation\AddMultipleDelegationsType;
+use App\Form\Delegation\EditDelegationType;
+use App\Form\Delegation\RemoveDelegationType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/delegation")
  */
-class DelegationController extends BaseController
+class DelegationController extends BaseDoctrineController
 {
     /**
-     * @Route("/{name}", name="delegation")
+     * @Route("/new", name="delegation_new")
      *
      * @return Response
      */
-    public function indexAction(Delegation $delegation)
+    public function indexAction(Request $request, TranslatorInterface $translator)
     {
-        return $this->render('delegation/index.html.twig', ['delegation' => $delegation]);
+        $form = $this->createForm(AddMultipleDelegationsType::class);
+        $form->add('submit', SubmitType::class, ['translation_domain' => 'delegation', 'label' => 'new.submit']);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $commaSeparatedDelegationNames = $form->get('commaSeparatedDelegationNames')->getData();
+            $delegationNames = explode(',', $commaSeparatedDelegationNames);
+
+            $existingDelegations = $this->getDoctrine()->getRepository(Delegation::class)->findAll();
+            $existingDelegationNames = array_map(function (Delegation $delegation) {
+                return $delegation->getName();
+            }, $existingDelegations);
+
+            $delegations = [];
+            foreach ($delegationNames as $delegationName) {
+                $cleanedDelegationName = trim($delegationName);
+                if (0 === strlen($cleanedDelegationName) || in_array($cleanedDelegationName, $existingDelegationNames)) {
+                    continue;
+                }
+
+                $delegation = new Delegation();
+                $delegation->setName($cleanedDelegationName);
+                $delegations[] = $delegation;
+            }
+
+            $this->fastSave(...$delegations);
+
+            $message = $translator->trans('new.success.created', ['%count%' => count($delegations)], 'delegation');
+            $this->displaySuccess($message);
+
+            return $this->redirectToRoute('index');
+        }
+
+        return $this->render('delegation/new.html.twig', ['form' => $form->createView()]);
+    }
+
+    /**
+     * @Route("/edit/{delegation}", name="delegation_edit")
+     *
+     * @return Response
+     */
+    public function editAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
+    {
+        $form = $this->createForm(EditDelegationType::class, $delegation);
+        $form->add('submit', SubmitType::class, ['translation_domain' => 'delegation', 'label' => 'edit.submit']);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $existingDelegations = $this->getDoctrine()->getRepository(Delegation::class)->findBy(['name' => $delegation->getName()]);
+            if (count($existingDelegations) > 0) {
+                $message = $translator->trans('edit.error.name_already_taken', [], 'delegation');
+                $this->displayError($message);
+            } else {
+                $this->fastSave($delegation);
+
+                $message = $translator->trans('edit.success.edited', [], 'delegation');
+                $this->displaySuccess($message);
+
+                return $this->redirectToRoute('index');
+            }
+        }
+
+        return $this->render('delegation/edit.html.twig', ['form' => $form->createView()]);
+    }
+
+    /**
+     * @Route("/remove/{delegation}/", name="delegation_remove")
+     *
+     * @return Response
+     */
+    public function removeAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
+    {
+        $form = $this->createForm(RemoveDelegationType::class);
+        $form->add('submit', SubmitType::class, ['translation_domain' => 'delegation', 'label' => 'remove.submit']);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $toRemove = [$delegation];
+            foreach ($delegation->getParticipants() as $participant) {
+                $toRemove[] = $participant;
+            }
+            foreach ($delegation->getUsers() as $user) {
+                $toRemove[] = $user;
+            }
+            $this->fastRemove(...$toRemove);
+
+            $message = $translator->trans('remove.success.removed', [], 'delegation');
+            $this->displaySuccess($message);
+
+            return $this->redirectToRoute('index');
+        }
+
+        return $this->render('delegation/remove.html.twig', ['form' => $form->createView()]);
     }
 }
