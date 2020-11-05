@@ -17,7 +17,6 @@ use App\Enum\ReviewProgress;
 use App\Form\Delegation\AddMultipleDelegationsType;
 use App\Form\Delegation\EditDelegationType;
 use App\Form\Delegation\RemoveDelegationType;
-use App\Form\Traits\EditDelegationAttendanceType;
 use App\Security\Voter\DelegationVoter;
 use App\Service\Interfaces\ExportServiceInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -95,25 +94,64 @@ class DelegationController extends BaseDoctrineController
      */
     public function editAttendanceAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
     {
+        return $this->editReviewableContent($request, $delegation, $translator, 'attendance');
+    }
+
+    /**
+     * @Route("/edit_contribution/{delegation}", name="delegation_edit_contribution")
+     *
+     * @return Response
+     */
+    public function editContributionAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
+    {
+        return $this->editReviewableContent($request, $delegation, $translator, 'contribution');
+    }
+
+    /**
+     * @Route("/edit_travel/{delegation}", name="delegation_edit_travel")
+     *
+     * @return Response
+     */
+    public function editTravelAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
+    {
+        return $this->editReviewableContent($request, $delegation, $translator, 'travel');
+    }
+
+    /**
+     * assumes that $editablePart follows some conventions, then generates & processes form.
+     */
+    private function editReviewableContent(Request $request, Delegation $delegation, TranslatorInterface $translator, string $editablePart)
+    {
+        // normalizers
+        $editablePart = strtolower($editablePart);
+        $templatePrefix = 'edit_'.$editablePart;
+        $editablePartFirstCharacterUppercase = strtoupper(substr($editablePart, 0, 1)).substr($editablePart, 1);
+
+        // CONVENTIONS TO FOLLOW
+        $getter = 'get'.$editablePartFirstCharacterUppercase.'ReviewProgress';
+        $setter = 'set'.$editablePartFirstCharacterUppercase.'ReviewProgress';
+        $formType = 'App\Form\Traits\EditDelegation'.$editablePartFirstCharacterUppercase.'Type';
+        // end CONVENTIONS TO FOLLOW
+
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_EDIT, $delegation);
 
-        $readOnly = ReviewProgress::REVIEWED_AND_LOCKED === $delegation->getAttendanceReviewProgress();
-        $form = $this->createForm(EditDelegationAttendanceType::class, $delegation, ['disabled' => $readOnly]);
-        $form->add('submit', SubmitType::class, ['translation_domain' => 'delegation', 'label' => 'edit.submit']);
+        $readOnly = ReviewProgress::REVIEWED_AND_LOCKED === $delegation->$getter();
+        $form = $this->createForm($formType, $delegation, ['disabled' => $readOnly]);
+        $form->add('submit', SubmitType::class, ['translation_domain' => 'delegation', 'label' => $templatePrefix.'.submit']);
 
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $delegation->setAttendanceReviewProgress(ReviewProgress::EDITED);
+        if ($form->isSubmitted() && $form->isValid() && !$readOnly) {
+            $delegation->$setter(ReviewProgress::EDITED);
 
             $this->fastSave($delegation);
 
-            $message = $translator->trans('edit.success.edited', [], 'delegation');
+            $message = $translator->trans($templatePrefix.'.success.saved', [], 'delegation');
             $this->displaySuccess($message);
 
             return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
         }
 
-        return $this->render('delegation/edit_attendance.html.twig', ['form' => $form->createView(), 'readonly' => $readOnly]);
+        return $this->render('delegation/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'readonly' => $readOnly]);
     }
 
     /**

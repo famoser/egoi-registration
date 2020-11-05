@@ -53,8 +53,8 @@ trait DelegationContributionTrait
         $this->contributionReviewProgress = $contributionReviewProgress;
     }
 
-    public function isDelegationContributionDataComplete()
+    public function isContributionComplete()
     {
-        return !empty($this->translations);
+        return ReviewProgress::NOT_EDITED !== $this->contributionReviewProgress;
     }
 }

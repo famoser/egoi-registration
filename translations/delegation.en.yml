@@ -14,10 +14,6 @@ edit:
   error:
     name_already_taken: 'Delegation with this name already exists'
 
-edit_attendance:
-  title: 'Edit attendance'
-  description: 'Specify how many athletes, leaders and guests will attend and if onsite or online.'
-
 remove:
   title: 'Remove delegation'
   description: 'Remove delegation and associated users & participants.'
@@ -28,16 +24,36 @@ remove:
 export:
   title: 'Export delegations'
 
-
 view:
   title: 'Delegation %name%'
   description: 'Register participants & other required data'
   no_participants_yet: 'No participants yet'
 
-  please_set_attendence_data: 'Welcome! To get started, click on edit attendance below.'
+  please_set_attendence_data: 'Welcome! To get started, click on Attendance below.'
   legend:
     legend: 'Legend'
     data_missing: 'data missing'
     data_complete: 'data complete'
     reviewed: 'reviewed & accepted'
     reviewed_and_locked: 'reviewed & locked'
+
+edit_attendance:
+  title: 'Attendance'
+  description: 'Specify how many athletes, leaders and guests will attend and if onsite or online.'
+  submit: 'Save attendance'
+  success:
+    saved: 'Saved attendance'
+
+edit_contribution:
+  title: 'Contribution'
+  description: 'What your delegation can contribute to the event.'
+  submit: 'Save contribution'
+  success:
+    saved: 'Saved contribution'
+
+edit_travel:
+  title: 'Travel'
+  description: 'How your delegation will arrive to the event.'
+  submit: 'Save travel details'
+  success:
+    saved: 'Saved travel details'

@@ -39,7 +39,7 @@ trait DelegationTravelDetailsTrait
      * @Groups({"delegation-export"})
      * @ORM\Column(type="integer")
      */
-    private $travelDetailsReviewProgress = ReviewProgress::NOT_EDITED;
+    private $travelReviewProgress = ReviewProgress::NOT_EDITED;
 
     public function getLocation(): ?string
     {
@@ -61,17 +61,17 @@ trait DelegationTravelDetailsTrait
         $this->travelDetails = $travelDetails;
     }
 
-    public function getTravelDetailsReviewProgress(): int
+    public function getTravelReviewProgress(): int
     {
-        return $this->travelDetailsReviewProgress;
+        return $this->travelReviewProgress;
     }
 
-    public function setTravelDetailsReviewProgress(int $travelDetailsReviewProgress): void
+    public function setTravelReviewProgress(int $travelReviewProgress): void
     {
-        $this->travelDetailsReviewProgress = $travelDetailsReviewProgress;
+        $this->travelReviewProgress = $travelReviewProgress;
     }
 
-    public function isDelegationTravelDataComplete()
+    public function isTravelComplete()
     {
         return !empty($this->location) &&
             !empty($this->travelDetails);

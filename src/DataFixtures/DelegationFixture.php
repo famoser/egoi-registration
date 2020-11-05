@@ -23,9 +23,9 @@ class DelegationFixture extends Fixture implements OrderedFixtureInterface
     public function load(ObjectManager $manager)
     {
         $entries = [
-            ['CH'],
-            ['DE'],
-            ['GB'],
+            ['Switzlerland'],
+            ['Germany'],
+            ['Great Britain'],
         ];
 
         foreach ($entries as $entry) {
