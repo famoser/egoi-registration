@@ -16,7 +16,7 @@ use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-trait ParticipantEventAttendanceTrait
+trait ParticipantEventPresenceTrait
 {
     /**
      * @var string|null

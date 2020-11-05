@@ -84,7 +84,35 @@ class ParticipantController extends BaseDoctrineController
         $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'edit.submit']);
 
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid() && !$readOnly) {
+            $participant->setPersonalDataReviewProgress(ReviewProgress::EDITED);
+
+            $this->fastSave($participant);
+
+            $message = $translator->trans('edit.success.edited', [], 'participant');
+            $this->displaySuccess($message);
+
+            return $this->redirectToRoute('delegation_view', ['delegation' => $participant->getDelegation()->getId()]);
+        }
+
+        return $this->render('participant/edit_personal_data.html.twig', ['form' => $form->createView(), 'readonly' => $readOnly]);
+    }
+
+    /**
+     * @Route("/edit_event_presence/{participant}", name="participant_edit_event_presence")
+     *
+     * @return Response
+     */
+    public function editEventPresence(Request $request, Participant $participant, TranslatorInterface $translator)
+    {
+        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
+
+        $readOnly = ReviewProgress::REVIEWED_AND_LOCKED === $participant->getPersonalDataReviewProgress();
+        $form = $this->createForm(EditParticipantPersonalDataType::class, $participant, ['disabled' => $readOnly]);
+        $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'edit.submit']);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid() && !$readOnly) {
             $participant->setPersonalDataReviewProgress(ReviewProgress::EDITED);
 
             $this->fastSave($participant);
