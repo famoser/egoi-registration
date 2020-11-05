@@ -1,0 +1,9 @@
+trait:
+  name: Event
+
+badge_name: Badge name
+badge_name_help: The name as it will appear on your badge
+badge_image: Badge image
+diet: Diet
+allergies: Food / medication / other allergies
+

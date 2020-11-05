@@ -54,3 +54,69 @@
         </div>
     </div>
 {% endblock %}
+
+{% block edit_participant_immigration_widget %}
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.nationality) }}
+        </div>
+        <div class="col">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.countryOfResidence) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.placeOfBirth) }}
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.passportNumber) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.passportIssueCountry) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.passportValidityFrom) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.passportValidityTo) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.passportImage) }}
+        </div>
+        <div class="col">
+        </div>
+    </div>
+{% endblock %}
+
+{% block edit_participant_event_presence_widget %}
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.diet) }}
+        </div>
+        <div class="col">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.allergies) }}
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.badgeImage) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.badgeName) }}
+        </div>
+    </div>
+{% endblock %}

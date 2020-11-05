@@ -24,13 +24,13 @@ class EditParticipantImmigrationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('nationality', TextType::class);
-        $builder->add('passportNumber', FileType::class);
+        $builder->add('passportNumber', TextType::class);
         $builder->add('passportValidityFrom', DateType::class, ['widget' => 'single_text']);
         $builder->add('passportValidityTo', DateType::class, ['widget' => 'single_text']);
         $builder->add('passportIssueCountry', TextType::class);
         $builder->add('passportImage', FileType::class);
-        $builder->add('countryOfResidence', TextType::class);
-        $builder->add('placeOfBirth', TextType::class);
+        $builder->add('countryOfResidence', TextType::class, ['help' => 'country_of_residence_help']);
+        $builder->add('placeOfBirth', TextType::class, ['help' => 'place_of_birth_help']);
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -28,7 +28,7 @@ class EditParticipantEventPresenceType extends AbstractType
         $builder->add('badgeName', TextType::class);
         $builder->add('badgeImage', FileType::class);
         $builder->add('diet', ChoiceType::class, Diet::getChoicesForBuilder());
-        $builder->add('allergies', TextareaType::class);
+        $builder->add('allergies', TextareaType::class, ['required' => false]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

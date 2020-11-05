@@ -12,6 +12,7 @@
 namespace App\Extension;
 
 use App\Enum\BooleanType;
+use App\Enum\ParticipantRole;
 use App\Helper\DateTimeFormatter;
 use DateTime;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -43,6 +44,7 @@ class MyTwigExtension extends AbstractExtension
             new TwigFilter('dateTimeFormat', [$this, 'dateTimeFormatFilter']),
             new TwigFilter('booleanFormat', [$this, 'booleanFilter']),
             new TwigFilter('camelCaseToUnderscore', [$this, 'camelCaseToUnderscoreFilter']),
+            new TwigFilter('participantRoleFilter', [$this, 'participantRoleFilter']),
             new TwigFilter('truncate', [$this, 'truncateFilter'], ['needs_environment' => true]),
         ];
     }
@@ -77,6 +79,11 @@ class MyTwigExtension extends AbstractExtension
         }
 
         return BooleanType::getTranslationForValue(BooleanType::NO, $this->translator);
+    }
+
+    public function participantRoleFilter(int $value): string
+    {
+        return ParticipantRole::getTranslationForValue($value, $this->translator);
     }
 
     /**

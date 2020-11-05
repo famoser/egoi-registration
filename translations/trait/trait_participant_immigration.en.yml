@@ -1,0 +1,17 @@
+trait:
+  name: Immigration details
+
+nationality: Nationality
+
+passport_number: Passport number
+passport_issue_country: Passport issuing country
+
+passport_validity_from: Passport valid from
+passport_validity_to: Passport valid to
+passport_image: Image / Scan of your Passport
+
+country_of_residence: Country of residence
+country_of_residence_help: The country in which the participant currently lives
+place_of_birth: Place of birth
+place_of_birth_help: The place & country the participant was born
+

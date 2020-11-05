@@ -58,9 +58,10 @@ class Delegation extends BaseEntity
     private $users;
 
     /**
-     * @var Delegation[]|ArrayCollection
+     * @var Participant[]|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\Participant", mappedBy="delegation")
+     * @ORM\OrderBy({"role" = "ASC", "givenName" = "ASC"})
      */
     private $participants;
 
@@ -102,7 +103,7 @@ class Delegation extends BaseEntity
     }
 
     /**
-     * @return Delegation[]|ArrayCollection
+     * @return Participant[]|ArrayCollection
      */
     public function getParticipants()
     {

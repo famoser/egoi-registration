@@ -62,8 +62,49 @@
                 </tr>
             {% endfor %}
             </tbody>
-
         </table>
+
+        {% for delegation in delegations %}
+            {% if delegation.users|length > 0 %}
+                <h2 class="mt-5">{{ delegation.name }}</h2>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{{ "role"|trans({}, "entity_participant") }}</th>
+                        <th>{{ "entity.name"|trans({}, "entity_participant") }}</th>
+                        <td class="minimal-width"></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for participant in delegation.participants %}
+                        <tr>
+                            <td>
+                                {{ participant.role|participantRoleFilter }}
+                            </td>
+                            <td>
+                                {{ participant.name }}
+                            </td>
+                            <td>
+                                <span class="btn-group">
+                                    <a class="btn btn-outline-secondary"
+                                       href="{{ path("participant_edit", {"participant": participant.id}) }}">
+                                        <i class="fal fa-pencil"></i>
+                                    </a>
+
+                                    <a class="btn btn-outline-danger"
+                                       href="{{ path("participant_remove", {"participant": participant.id}) }}">
+                                        <i class="fal fa-trash"></i>
+                                    </a>
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+
+        {% endfor %}
     </div>
 {% endblock %}
 
