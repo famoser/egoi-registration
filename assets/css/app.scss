@@ -78,7 +78,7 @@ body {
   padding: 1em;
 }
 
-label.required::after {
+form .required::after {
   color: $red;
   content: '* ';
 }
