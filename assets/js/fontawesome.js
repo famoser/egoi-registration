@@ -8,11 +8,10 @@ import {
   faPencil,
   faTrash,
   faUserAlt,
-  faStar,
-  faQuestionCircle,
+  faPassport,
+  faMapMarkerAlt,
   faEnvelopeOpen
 } from '@fortawesome/pro-light-svg-icons'
-import { faStar as faStartSolid } from '@fortawesome/pro-solid-svg-icons/faStar'
 import '@fortawesome/fontawesome-svg-core/styles.css'
 
 // configure fontawesome
@@ -22,10 +21,8 @@ library.add(
   faPencil,
   faTrash,
   faUserAlt,
-  faStar,
-  faQuestionCircle,
-  faEnvelopeOpen,
-
-  faStartSolid
+  faPassport,
+  faMapMarkerAlt,
+  faEnvelopeOpen
 )
 dom.watch()

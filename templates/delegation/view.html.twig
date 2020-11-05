@@ -66,12 +66,11 @@
                         <td>
                             {{ participant.name }}
                         </td>
-                        <td>
+                        <td class="minimal-width">
                             <span class="btn-group">
-                                <a class="btn btn-outline-secondary"
-                                   href="{{ path("participant_edit_personal_data", {"participant": participant.id}) }}">
-                                    <i class="fal fa-pencil"></i>
-                                </a>
+        {{ own_macros.get_button(participant.personalDataComplete, participant.personalDataReviewProgress, path("participant_edit_personal_data", {"participant": participant.id}), "edit_personal_data.title"|trans({}, "participant")) }}
+                                {{ own_macros.get_button(participant.immigrationDataComplete, participant.personalDataReviewProgress, path("participant_edit_immigration", {"participant": participant.id}), "edit_immigration.title"|trans({}, "participant")) }}
+                                {{ own_macros.get_button(participant.eventPresenceComplete, participant.eventPresenceReviewProgress, path("participant_edit_event_presence", {"participant": participant.id}), "edit_event_presence.title"|trans({}, "participant")) }}
 
                                 <a class="btn btn-outline-danger"
                                    href="{{ path("participant_remove", {"participant": participant.id}) }}">

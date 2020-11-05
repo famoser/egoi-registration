@@ -12,15 +12,13 @@
 namespace App\Controller;
 
 use App\Controller\Base\BaseDoctrineController;
+use App\Controller\Traits\ReviewableContentEditTrait;
 use App\Entity\Delegation;
 use App\Entity\Participant;
 use App\Enum\ParticipantRole;
-use App\Enum\ReviewProgress;
 use App\Form\Participant\AddParticipantType;
 use App\Form\Participant\EditParticipantType;
 use App\Form\Participant\RemoveParticipantType;
-use App\Form\Traits\EditParticipantEventPresenceType;
-use App\Form\Traits\EditParticipantPersonalDataType;
 use App\Security\Voter\DelegationVoter;
 use App\Security\Voter\ParticipantVoter;
 use App\Service\Interfaces\ExportServiceInterface;
@@ -71,32 +69,26 @@ class ParticipantController extends BaseDoctrineController
         return $this->render('participant/new.html.twig', ['form' => $form->createView()]);
     }
 
+    use ReviewableContentEditTrait;
+
     /**
      * @Route("/edit_personal_data/{participant}", name="participant_edit_personal_data")
      *
      * @return Response
      */
-    public function editPersonalData(Request $request, Participant $participant, TranslatorInterface $translator)
+    public function editPersonalDataAction(Request $request, Participant $participant, TranslatorInterface $translator)
     {
-        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
+        return $this->editReviewableParticipantContent($request, $translator, $participant, 'personal_data');
+    }
 
-        $readOnly = ReviewProgress::REVIEWED_AND_LOCKED === $participant->getPersonalDataReviewProgress();
-        $form = $this->createForm(EditParticipantPersonalDataType::class, $participant, ['disabled' => $readOnly]);
-        $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'edit.submit']);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid() && !$readOnly) {
-            $participant->setPersonalDataReviewProgress(ReviewProgress::EDITED);
-
-            $this->fastSave($participant);
-
-            $message = $translator->trans('edit.success.edited', [], 'participant');
-            $this->displaySuccess($message);
-
-            return $this->redirectToRoute('delegation_view', ['delegation' => $participant->getDelegation()->getId()]);
-        }
-
-        return $this->render('participant/edit_personal_data.html.twig', ['form' => $form->createView(), 'readonly' => $readOnly]);
+    /**
+     * @Route("/edit_immigration/{participant}", name="participant_edit_immigration")
+     *
+     * @return Response
+     */
+    public function editImmigrationAction(Request $request, Participant $participant, TranslatorInterface $translator)
+    {
+        return $this->editReviewableParticipantContent($request, $translator, $participant, 'immigration');
     }
 
     /**
@@ -104,27 +96,9 @@ class ParticipantController extends BaseDoctrineController
      *
      * @return Response
      */
-    public function editEventPresence(Request $request, Participant $participant, TranslatorInterface $translator)
+    public function editEventPresenceAction(Request $request, Participant $participant, TranslatorInterface $translator)
     {
-        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
-
-        $readOnly = ReviewProgress::REVIEWED_AND_LOCKED === $participant->getPersonalDataReviewProgress();
-        $form = $this->createForm(EditParticipantEventPresenceType::class, $participant, ['disabled' => $readOnly]);
-        $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'edit.submit']);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid() && !$readOnly) {
-            $participant->setPersonalDataReviewProgress(ReviewProgress::EDITED);
-
-            $this->fastSave($participant);
-
-            $message = $translator->trans('edit.success.edited', [], 'participant');
-            $this->displaySuccess($message);
-
-            return $this->redirectToRoute('delegation_view', ['delegation' => $participant->getDelegation()->getId()]);
-        }
-
-        return $this->render('participant/edit_personal_data.html.twig', ['form' => $form->createView(), 'readonly' => $readOnly]);
+        return $this->editReviewableParticipantContent($request, $translator, $participant, 'event_presence');
     }
 
     /**

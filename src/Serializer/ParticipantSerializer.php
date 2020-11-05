@@ -41,8 +41,8 @@ class ParticipantSerializer implements ContextAwareNormalizerInterface
             $data['diet'] = Diet::getTranslationForValue($data['diet'], $this->translator);
         }
 
-        if (isset($data['eventAttendanceReviewProgress'])) {
-            $data['eventAttendanceReviewProgress'] = ReviewProgress::getTranslationForValue($data['eventAttendanceReviewProgress'], $this->translator);
+        if (isset($data['eventPresenceReviewProgress'])) {
+            $data['eventPresenceReviewProgress'] = ReviewProgress::getTranslationForValue($data['eventPresenceReviewProgress'], $this->translator);
         }
 
         if (isset($data['immigrationReviewProgress'])) {

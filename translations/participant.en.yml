@@ -22,8 +22,22 @@ remove:
     removed: 'Participant removed'
 
 edit_personal_data:
-  title: 'Edit personal data'
+  title: 'Personal data'
   description: 'Edit name, phone & email'
+  submit: 'Save personal data'
+  success:
+    saved: 'Saved personal data'
 
-export:
-  title: 'Export participants'
+edit_immigration:
+  title: 'Immigration'
+  description: 'Information necessary for entering the country.'
+  submit: 'Save immigration details'
+  success:
+    saved: 'Saved immigration details'
+
+edit_event_presence:
+  title: 'Attendance'
+  description: 'Event specific details when you are physically attending.'
+  submit: 'Save event details'
+  success:
+    saved: 'Saved event details'

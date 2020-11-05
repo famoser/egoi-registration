@@ -56,7 +56,7 @@ trait ParticipantEventPresenceTrait
      * @Groups({"participant-export"})
      * @ORM\Column(type="integer")
      */
-    private $eventAttendanceReviewProgress = ReviewProgress::NOT_EDITED;
+    private $eventPresenceReviewProgress = ReviewProgress::NOT_EDITED;
 
     public function getBadgeName(): ?string
     {
@@ -98,17 +98,17 @@ trait ParticipantEventPresenceTrait
         $this->allergies = $allergies;
     }
 
-    public function getEventAttendanceReviewProgress(): int
+    public function getEventPresenceReviewProgress(): int
     {
-        return $this->eventAttendanceReviewProgress;
+        return $this->eventPresenceReviewProgress;
     }
 
-    public function setEventAttendanceReviewProgress(int $eventAttendanceReviewProgress): void
+    public function setEventPresenceReviewProgress(int $eventPresenceReviewProgress): void
     {
-        $this->eventAttendanceReviewProgress = $eventAttendanceReviewProgress;
+        $this->eventPresenceReviewProgress = $eventPresenceReviewProgress;
     }
 
-    public function isEventDataComplete()
+    public function isEventPresenceComplete()
     {
         return !empty($this->badgeName) &&
             !empty($this->badgeImage) &&
