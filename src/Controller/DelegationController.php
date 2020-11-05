@@ -19,7 +19,10 @@ use App\Form\Delegation\RemoveDelegationType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -68,6 +71,32 @@ class DelegationController extends BaseDoctrineController
         }
 
         return $this->render('delegation/new.html.twig', ['form' => $form->createView()]);
+    }
+
+    /**
+     * @Route("/export", name="delegation_export")
+     *
+     * @return Response
+     */
+    public function exportAction(SerializerInterface $serializer)
+    {
+        $delegations = $this->getDoctrine()->getRepository(Delegation::class)->findBy([], ['name' => 'ASC']);
+
+        $response = new StreamedResponse();
+        $response->setCallback(
+            function () use ($delegations, $serializer) {
+                $content = $serializer->serialize($delegations, 'csv', ['groups' => 'delegation-export']);
+                echo $content;
+            }
+        );
+        $response->setStatusCode(200);
+
+        $filename = (new \DateTime())->format('c').' - delegations.csv';
+        $dispositionHeader = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
+        $response->headers->set('Content-Disposition', $dispositionHeader);
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+
+        return $response;
     }
 
     /**

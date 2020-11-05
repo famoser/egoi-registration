@@ -28,7 +28,7 @@ class IndexController extends BaseController
      */
     public function indexAction()
     {
-        $delegations = $this->getDoctrine()->getRepository(Delegation::class)->findAll();
+        $delegations = $this->getDoctrine()->getRepository(Delegation::class)->findBy([], ['name' => 'ASC']);
 
         return $this->render('index.html.twig', ['delegations' => $delegations]);
     }

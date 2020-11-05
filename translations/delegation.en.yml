@@ -20,3 +20,6 @@ remove:
   submit: 'Remove delegation'
   success:
     removed: 'Delegation removed'
+
+export:
+  title: 'Export delegations'
