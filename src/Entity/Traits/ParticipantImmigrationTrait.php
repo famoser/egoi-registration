@@ -13,12 +13,14 @@ namespace App\Entity\Traits;
 
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait ParticipantImmigrationTrait
 {
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $nationality;
@@ -26,6 +28,7 @@ trait ParticipantImmigrationTrait
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $passportNumber;
@@ -33,6 +36,7 @@ trait ParticipantImmigrationTrait
     /**
      * @var \DateTime|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="date", nullable=true)
      */
     private $passportValidityFrom;
@@ -40,6 +44,7 @@ trait ParticipantImmigrationTrait
     /**
      * @var \DateTime|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="date", nullable=true)
      */
     private $passportValidityTo;
@@ -47,6 +52,7 @@ trait ParticipantImmigrationTrait
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $passportIssueCountry;
@@ -54,6 +60,7 @@ trait ParticipantImmigrationTrait
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="string", nullable=true)
      */
     private $passportImage;
@@ -61,6 +68,7 @@ trait ParticipantImmigrationTrait
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $countryOfResidence;
@@ -68,6 +76,7 @@ trait ParticipantImmigrationTrait
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $placeOfBirth;
@@ -75,6 +84,7 @@ trait ParticipantImmigrationTrait
     /**
      * @var int
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="integer")
      */
     private $immigrationReviewProgress = ReviewProgress::NOT_EDITED;
@@ -107,6 +117,16 @@ trait ParticipantImmigrationTrait
     public function setPassportValidityFrom(?\DateTime $passportValidityFrom): void
     {
         $this->passportValidityFrom = $passportValidityFrom;
+    }
+
+    public function getPassportValidityTo(): ?\DateTime
+    {
+        return $this->passportValidityTo;
+    }
+
+    public function setPassportValidityTo(?\DateTime $passportValidityTo): void
+    {
+        $this->passportValidityTo = $passportValidityTo;
     }
 
     public function getPassportIssueCountry(): ?string

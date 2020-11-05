@@ -13,12 +13,14 @@ namespace App\Entity\Traits;
 
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait ParticipantPersonalDataTrait
 {
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $givenName;
@@ -26,6 +28,7 @@ trait ParticipantPersonalDataTrait
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $familyName;
@@ -33,13 +36,15 @@ trait ParticipantPersonalDataTrait
     /**
      * @var \DateTime|null
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"participant-export"})
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $birthday;
 
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $email;
@@ -47,16 +52,31 @@ trait ParticipantPersonalDataTrait
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $phone;
 
     /**
+     * @var string|null
+     *
+     * @Groups({"participant-export"})
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $gender;
+
+    /**
      * @var int
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="integer")
      */
     private $personalDataReviewProgress = ReviewProgress::NOT_EDITED;
+
+    public function getName(): string
+    {
+        return trim($this->getGivenName().' '.$this->getFamilyName());
+    }
 
     public function getGivenName(): ?string
     {
@@ -108,6 +128,16 @@ trait ParticipantPersonalDataTrait
         $this->phone = $phone;
     }
 
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?string $gender): void
+    {
+        $this->gender = $gender;
+    }
+
     public function getPersonalDataReviewProgress(): int
     {
         return $this->personalDataReviewProgress;
@@ -124,6 +154,7 @@ trait ParticipantPersonalDataTrait
             !empty($this->familyName) &&
             !empty($this->birthday) &&
             !empty($this->email) &&
-            !empty($this->phone);
+            !empty($this->phone) &&
+            !empty($this->gender);
     }
 }

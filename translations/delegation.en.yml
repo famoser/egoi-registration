@@ -35,3 +35,9 @@ view:
   no_participants_yet: 'No participants yet'
 
   please_set_attendence_data: 'Welcome! To get started, click on edit attendance below.'
+  legend:
+    legend: 'Legend'
+    data_missing: 'data missing'
+    data_complete: 'data complete'
+    reviewed: 'reviewed & accepted'
+    reviewed_and_locked: 'reviewed & locked'

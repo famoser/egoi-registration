@@ -13,12 +13,14 @@ namespace App\Entity\Traits;
 
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait DelegationContributionTrait
 {
     /**
      * @var string|null
      *
+     * @Groups({"delegation-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $translations;
@@ -26,6 +28,7 @@ trait DelegationContributionTrait
     /**
      * @var int
      *
+     * @Groups({"delegation-export"})
      * @ORM\Column(type="integer")
      */
     private $contributionReviewProgress = ReviewProgress::NOT_EDITED;

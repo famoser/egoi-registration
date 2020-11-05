@@ -25,11 +25,12 @@
         </p>
     {% endif %}
 
-    <p class="p-2 jumbotron mb-3 text-right">
-        <button class="btn btn-sm btn-secondary">data missing</button>
-        <button class="btn btn-sm btn-outline-secondary">data complete</button>
-        <button class="btn btn-sm btn-success">reviewed & accepted</button>
-        <button class="btn btn-sm btn-outline-success">reviewed & locked</button>
+    <p class="p-2 jumbotron mb-3 text-right text-secondary">
+        {{ "view.legend.legend"|trans }}:
+        <button class="btn btn-sm btn-secondary">{{ "view.legend.data_missing"|trans }}</button>
+        <button class="btn btn-sm btn-outline-secondary">{{ "view.legend.data_complete"|trans }}</button>
+        <button class="btn btn-sm btn-success">{{ "view.legend.reviewed"|trans }}</button>
+        <button class="btn btn-sm btn-outline-success">{{ "view.legend.reviewed_and_locked"|trans }}</button>
     </p>
 
     <p>
@@ -38,6 +39,13 @@
 
     {% if delegation.attendanceComplete %}
         <h2 class="mt-5">{{ "entity.plural"|trans({}, "entity_participant") }}</h2>
+        {% if delegation.expectedAttendance > delegation.participants|length %}
+            <p>
+                <a class="btn btn-secondary" href="{{ path("participant_new", {"delegation": delegation.id}) }}">
+                    {{ "new.title"|trans({}, "participant") }}
+                </a>
+            </p>
+        {% endif %}
         {% if delegation.participants|length == 0 %}
             <p class="alert alert-info">
                 {{ "view.no_participants_yet"|trans }}
@@ -47,26 +55,27 @@
                 <thead>
                 <tr>
                     <th>{{ "name"|trans({}, "trait_participant_personal_data") }}</th>
-                    <th></th>
+                    <th class="minimal-width"></th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for participant in delegation.participants %}
                     <tr>
                         <td>
-                            {{ delegation.name }}
+                            {{ participant.name }}
                         </td>
                         <td>
-                            <span class="p-1"></span>
-                            <a class="btn btn-outline-secondary"
-                               href="{{ path("participant_edit_personal_data", {"participant": participant.id}) }}">
-                                <i class="fal fa-pencil"></i>
-                            </a>
+                            <span class="btn-group">
+                                <a class="btn btn-outline-secondary"
+                                   href="{{ path("participant_edit_personal_data", {"participant": participant.id}) }}">
+                                    <i class="fal fa-pencil"></i>
+                                </a>
 
-                            <a class="btn btn-outline-danger"
-                               href="{{ path("participant_remove", {"participant": participant.id}) }}">
-                                <i class="fal fa-trash"></i>
-                            </a>
+                                <a class="btn btn-outline-danger"
+                                   href="{{ path("participant_remove", {"participant": participant.id}) }}">
+                                    <i class="fal fa-trash"></i>
+                                </a>
+                            </span>
                         </td>
                     </tr>
                 {% endfor %}

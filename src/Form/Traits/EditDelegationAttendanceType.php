@@ -11,6 +11,7 @@
 
 namespace App\Form\Traits;
 
+use App\Entity\Delegation;
 use App\Enum\ParticipantMode;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -22,16 +23,17 @@ class EditDelegationAttendanceType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('athleteCount', IntegerType::class, ['required' => true, 'attr' => ['min' => 1, 'max' => 4]]);
-        $builder->add('leaderCount', IntegerType::class, ['required' => true, 'attr' => ['min' => 1, 'max' => 2]]);
-        $builder->add('guestCount', IntegerType::class, ['required' => true, 'attr' => ['min' => 0, 'max' => 5]]);
-        $builder->add('participationMode', ChoiceType::class, array_merge(['required' => true], ParticipantMode::getChoicesForBuilder()));
+        $builder->add('athleteCount', IntegerType::class, ['attr' => ['min' => 1, 'max' => 4]]);
+        $builder->add('leaderCount', IntegerType::class, ['attr' => ['min' => 1, 'max' => 2]]);
+        $builder->add('guestCount', IntegerType::class, ['attr' => ['min' => 0, 'max' => 5]]);
+        $builder->add('participationMode', ChoiceType::class, ParticipantMode::getChoicesForBuilder());
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'translation_domain' => 'trait_delegation_attendance',
+            'data_class' => Delegation::class,
         ]);
     }
 }

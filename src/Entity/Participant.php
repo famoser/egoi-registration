@@ -19,6 +19,7 @@ use App\Entity\Traits\ParticipantPersonalDataTrait;
 use App\Entity\Traits\TimeTrait;
 use App\Enum\ParticipantRole;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity()
@@ -30,12 +31,13 @@ class Participant extends BaseEntity
     use TimeTrait;
 
     use ParticipantPersonalDataTrait;
-    use ParticipantEventAttendanceTrait;
     use ParticipantImmigrationTrait;
+    use ParticipantEventAttendanceTrait;
 
     /**
      * @var int
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="integer")
      */
     private $role = ParticipantRole::ATHLETE;
@@ -43,6 +45,7 @@ class Participant extends BaseEntity
     /**
      * @var Delegation
      *
+     * @Groups({"participant-export"})
      * @ORM\ManyToOne(targetEntity="Delegation", inversedBy="participants")
      */
     private $delegation;

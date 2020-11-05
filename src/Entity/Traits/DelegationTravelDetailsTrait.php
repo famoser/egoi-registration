@@ -13,12 +13,14 @@ namespace App\Entity\Traits;
 
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait DelegationTravelDetailsTrait
 {
     /**
      * @var string|null
      *
+     * @Groups({"delegation-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $location;
@@ -26,6 +28,7 @@ trait DelegationTravelDetailsTrait
     /**
      * @var string|null
      *
+     * @Groups({"delegation-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $travelDetails;
@@ -33,6 +36,7 @@ trait DelegationTravelDetailsTrait
     /**
      * @var int
      *
+     * @Groups({"delegation-export"})
      * @ORM\Column(type="integer")
      */
     private $travelDetailsReviewProgress = ReviewProgress::NOT_EDITED;

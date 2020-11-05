@@ -9,19 +9,20 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Form\Delegation;
+namespace App\Form\Participant;
 
-use App\Entity\Delegation;
+use App\Entity\Participant;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-abstract class AbstractDelegationType extends AbstractType
+abstract class AbstractParticipantType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'translation_domain' => 'entity_delegation',
-            'data_class' => Delegation::class,
+            'translation_domain' => 'entity_participant',
+            'data_class' => Participant::class,
         ]);
+        parent::configureOptions($resolver);
     }
 }

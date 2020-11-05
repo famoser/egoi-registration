@@ -14,26 +14,30 @@ namespace App\Entity\Traits;
 use App\Enum\Diet;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait ParticipantEventAttendanceTrait
 {
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
-    private $badeName;
+    private $badgeName;
 
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
-    private $badeImage;
+    private $badgeImage;
 
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $diet = Diet::NONE;
@@ -41,6 +45,7 @@ trait ParticipantEventAttendanceTrait
     /**
      * @var string|null
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $allergies;
@@ -48,28 +53,29 @@ trait ParticipantEventAttendanceTrait
     /**
      * @var int
      *
+     * @Groups({"participant-export"})
      * @ORM\Column(type="integer")
      */
     private $eventAttendanceReviewProgress = ReviewProgress::NOT_EDITED;
 
-    public function getBadeName(): ?string
+    public function getBadgeName(): ?string
     {
-        return $this->badeName;
+        return $this->badgeName;
     }
 
-    public function setBadeName(?string $badeName): void
+    public function setBadgeName(?string $badgeName): void
     {
-        $this->badeName = $badeName;
+        $this->badgeName = $badgeName;
     }
 
-    public function getBadeImage(): ?string
+    public function getBadgeImage(): ?string
     {
-        return $this->badeImage;
+        return $this->badgeImage;
     }
 
-    public function setBadeImage(?string $badeImage): void
+    public function setBadgeImage(?string $badgeImage): void
     {
-        $this->badeImage = $badeImage;
+        $this->badgeImage = $badgeImage;
     }
 
     public function getDiet(): ?string
@@ -104,8 +110,8 @@ trait ParticipantEventAttendanceTrait
 
     public function isEventDataComplete()
     {
-        return !empty($this->badeName) &&
-            !empty($this->badeImage) &&
+        return !empty($this->badgeName) &&
+            !empty($this->badgeImage) &&
             !empty($this->diet) &&
             !empty($this->allergies);
     }

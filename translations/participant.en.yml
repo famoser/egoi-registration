@@ -1,0 +1,29 @@
+new:
+  title: 'Add participant'
+  description: 'Add an athlete, leader or guest.'
+  submit: 'Add participant'
+  success:
+    created: 'Participant created.'
+  error:
+    role_exceeded: 'You have exceeded the limit of these role.'
+
+edit:
+  title: 'Edit participant'
+  description: 'Edit participant.'
+  submit: 'Save changes'
+  success:
+    edited: 'Participant changed.'
+
+remove:
+  title: 'Remove participant'
+  description: 'Remove participant and all associated data.'
+  submit: 'Remove participant'
+  success:
+    removed: 'Participant removed'
+
+edit_personal_data:
+  title: 'Edit personal data'
+  description: 'Edit name, phone & email'
+
+export:
+  title: 'Export participants'

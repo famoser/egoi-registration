@@ -14,12 +14,14 @@ namespace App\Entity\Traits;
 use App\Enum\ParticipantMode;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait DelegationAttendanceTrait
 {
     /**
      * @var int
      *
+     * @Groups({"delegation-export"})
      * @ORM\Column(type="integer")
      */
     private $athleteCount = 0;
@@ -27,6 +29,7 @@ trait DelegationAttendanceTrait
     /**
      * @var int
      *
+     * @Groups({"delegation-export"})
      * @ORM\Column(type="integer")
      */
     private $leaderCount = 0;
@@ -34,6 +37,7 @@ trait DelegationAttendanceTrait
     /**
      * @var int
      *
+     * @Groups({"delegation-export"})
      * @ORM\Column(type="integer")
      */
     private $guestCount = 0;
@@ -41,6 +45,7 @@ trait DelegationAttendanceTrait
     /**
      * @var int
      *
+     * @Groups({"delegation-export"})
      * @ORM\Column(type="integer")
      */
     private $participationMode = ParticipantMode::ONSITE;
@@ -48,6 +53,7 @@ trait DelegationAttendanceTrait
     /**
      * @var int
      *
+     * @Groups({"delegation-export"})
      * @ORM\Column(type="integer")
      */
     private $attendanceReviewProgress = ReviewProgress::NOT_EDITED;
@@ -102,8 +108,13 @@ trait DelegationAttendanceTrait
         $this->attendanceReviewProgress = $attendanceReviewProgress;
     }
 
+    public function expectedAttendance()
+    {
+        return $this->leaderCount + $this->athleteCount + $this->guestCount;
+    }
+
     public function isAttendanceComplete()
     {
-        return $this->leaderCount + $this->athleteCount + $this->guestCount > 0;
+        return $this->expectedAttendance() > 0;
     }
 }

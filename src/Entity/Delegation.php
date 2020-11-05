@@ -31,14 +31,14 @@ class Delegation extends BaseEntity
     use IdTrait;
     use TimeTrait;
 
-    use DelegationContributionTrait;
     use DelegationAttendanceTrait;
+    use DelegationContributionTrait;
     use DelegationTravelDetailsTrait;
 
     /**
      * @var string
      *
-     * @Groups({"delegation-export"})
+     * @Groups({"delegation-export", "participant-export"})
      * @ORM\Column(type="text", unique=true)
      */
     private $name;

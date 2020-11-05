@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20201105100457 extends AbstractMigration
+final class Version20201105131827 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -30,7 +30,7 @@ final class Version20201105100457 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_E7927C74A45BB98C ON email (sent_by_id)');
         $this->addSql('CREATE TABLE participant (id CHAR(36) NOT NULL --(DC2Type:guid)
         , delegation_id CHAR(36) DEFAULT NULL --(DC2Type:guid)
-        , role INTEGER NOT NULL, created_at DATETIME NOT NULL, last_changed_at DATETIME NOT NULL, given_name CLOB DEFAULT NULL, family_name CLOB DEFAULT NULL, birthday CLOB DEFAULT NULL, email CLOB DEFAULT NULL, phone CLOB DEFAULT NULL, personal_data_review_progress INTEGER NOT NULL, bade_name CLOB DEFAULT NULL, bade_image CLOB DEFAULT NULL, diet CLOB DEFAULT NULL, allergies CLOB DEFAULT NULL, event_attendance_review_progress INTEGER NOT NULL, nationality CLOB DEFAULT NULL, passport_number CLOB DEFAULT NULL, passport_validity_from DATE DEFAULT NULL, passport_validity_to DATE DEFAULT NULL, passport_issue_country CLOB DEFAULT NULL, passport_image VARCHAR(255) DEFAULT NULL, country_of_residence CLOB DEFAULT NULL, place_of_birth CLOB DEFAULT NULL, immigration_review_progress INTEGER NOT NULL, PRIMARY KEY(id))');
+        , role INTEGER NOT NULL, created_at DATETIME NOT NULL, last_changed_at DATETIME NOT NULL, given_name CLOB DEFAULT NULL, family_name CLOB DEFAULT NULL, birthday DATETIME DEFAULT NULL, email CLOB DEFAULT NULL, phone CLOB DEFAULT NULL, gender CLOB DEFAULT NULL, personal_data_review_progress INTEGER NOT NULL, badge_name CLOB DEFAULT NULL, badge_image CLOB DEFAULT NULL, diet CLOB DEFAULT NULL, allergies CLOB DEFAULT NULL, event_attendance_review_progress INTEGER NOT NULL, nationality CLOB DEFAULT NULL, passport_number CLOB DEFAULT NULL, passport_validity_from DATE DEFAULT NULL, passport_validity_to DATE DEFAULT NULL, passport_issue_country CLOB DEFAULT NULL, passport_image VARCHAR(255) DEFAULT NULL, country_of_residence CLOB DEFAULT NULL, place_of_birth CLOB DEFAULT NULL, immigration_review_progress INTEGER NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_D79F6B1156CBBCF5 ON participant (delegation_id)');
         $this->addSql('CREATE TABLE user (id CHAR(36) NOT NULL --(DC2Type:guid)
         , delegation_id CHAR(36) DEFAULT NULL --(DC2Type:guid)
