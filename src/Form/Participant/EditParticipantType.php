@@ -12,6 +12,8 @@
 namespace App\Form\Participant;
 
 use App\Enum\ParticipantRole;
+use App\Form\Traits\EditParticipantEventPresenceType;
+use App\Form\Traits\EditParticipantImmigrationType;
 use App\Form\Traits\EditParticipantPersonalDataType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,6 +23,9 @@ class EditParticipantType extends AbstractParticipantType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('role', ChoiceType::class, ParticipantRole::getChoicesForBuilder());
-        $builder->add('personal', EditParticipantPersonalDataType::class, ['inherit_data' => true]);
+
+        $builder->add('personalData', EditParticipantPersonalDataType::class, ['inherit_data' => true, 'label' => 'trait.name']);
+        $builder->add('immigration', EditParticipantImmigrationType::class, ['inherit_data' => true, 'label' => 'trait.name']);
+        $builder->add('eventPresence', EditParticipantEventPresenceType::class, ['inherit_data' => true, 'label' => 'trait.name']);
     }
 }

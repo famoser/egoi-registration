@@ -21,6 +21,7 @@ class AddParticipantType extends AbstractParticipantType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('role', ChoiceType::class, ParticipantRole::getChoicesForBuilder());
+
         $builder->add('personal', EditParticipantPersonalDataType::class, ['inherit_data' => true, 'label' => 'trait.name']);
     }
 }

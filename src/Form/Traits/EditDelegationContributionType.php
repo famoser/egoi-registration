@@ -21,7 +21,7 @@ class EditDelegationContributionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('translations', TextType::class);
+        $builder->add('translations', TextType::class, ['required' => false, 'help' => 'translations_help']);
     }
 
     public function configureOptions(OptionsResolver $resolver)

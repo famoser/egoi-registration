@@ -12,6 +12,8 @@
 namespace App\Form\Delegation;
 
 use App\Form\Traits\EditDelegationAttendanceType;
+use App\Form\Traits\EditDelegationContributionType;
+use App\Form\Traits\EditDelegationTravelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -21,6 +23,8 @@ class EditDelegationType extends AbstractDelegationType
     {
         $builder->add('name', TextType::class);
 
-        $builder->add('attendance', EditDelegationAttendanceType::class, ['inherit_data' => true]);
+        $builder->add('attendance', EditDelegationAttendanceType::class, ['inherit_data' => true, 'label' => 'trait.name']);
+        $builder->add('contribution', EditDelegationContributionType::class, ['inherit_data' => true, 'label' => 'trait.name']);
+        $builder->add('travel', EditDelegationTravelType::class, ['inherit_data' => true, 'label' => 'trait.name']);
     }
 }

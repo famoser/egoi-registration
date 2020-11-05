@@ -78,7 +78,8 @@ body {
   padding: 1em;
 }
 
-form .required::after {
+// stylelint-disable-next-line selector-no-qualifying-type
+label.required::after {
   color: $red;
   content: '* ';
 }
