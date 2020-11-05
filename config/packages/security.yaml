@@ -53,4 +53,5 @@ security:
         - { path: ^/recover, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/email, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/delegation, role: ROLE_DELEGATION }
+        - { path: ^/participant, role: ROLE_DELEGATION }
         - { path: ^/, role: ROLE_ADMIN }

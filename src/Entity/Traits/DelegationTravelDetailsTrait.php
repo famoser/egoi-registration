@@ -14,7 +14,7 @@ namespace App\Entity\Traits;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 
-trait DelegationTravelDataTrait
+trait DelegationTravelDetailsTrait
 {
     /**
      * @var string|null
@@ -35,7 +35,7 @@ trait DelegationTravelDataTrait
      *
      * @ORM\Column(type="integer")
      */
-    private $travelDataReviewProgress = ReviewProgress::NOT_EDITED;
+    private $travelDetailsReviewProgress = ReviewProgress::NOT_EDITED;
 
     public function getLocation(): ?string
     {
@@ -57,14 +57,14 @@ trait DelegationTravelDataTrait
         $this->travelDetails = $travelDetails;
     }
 
-    public function getTravelDataReviewProgress(): int
+    public function getTravelDetailsReviewProgress(): int
     {
-        return $this->travelDataReviewProgress;
+        return $this->travelDetailsReviewProgress;
     }
 
-    public function setTravelDataReviewProgress(int $travelDataReviewProgress): void
+    public function setTravelDetailsReviewProgress(int $travelDetailsReviewProgress): void
     {
-        $this->travelDataReviewProgress = $travelDataReviewProgress;
+        $this->travelDetailsReviewProgress = $travelDetailsReviewProgress;
     }
 
     public function isDelegationTravelDataComplete()

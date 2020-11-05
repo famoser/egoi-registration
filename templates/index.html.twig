@@ -16,14 +16,14 @@
                href="{{ path("delegation_new") }}">{{ "new.title"|trans({}, "delegation") }}</a>
             <a class="btn btn-outline-secondary"
                href="{{ path("delegation_export") }}">{{ "export.title"|trans({}, "delegation") }}</a>
-
         </p>
 
         <table class="table table-striped">
             <thead>
             <tr>
                 <th>{{ "entity.name"|trans({}, "entity_delegation") }}</th>
-                <td></td>
+                <th>{{ "index.delegation_overview.registration_url"|trans() }}</th>
+                <td class="minimal-width"></td>
             </tr>
             </thead>
             <tbody>
@@ -31,17 +31,31 @@
                 <tr>
                     <td>
                         {{ delegation.name }}
-                        <span class="p-1"></span>
-                        <a class="btn btn-outline-secondary" href="{{ path("delegation_edit", {"delegation": delegation.id}) }}">
-                            <i class="fal fa-pencil"></i>
-                        </a>
-
-                        <a class="btn btn-outline-danger" href="{{ path("delegation_remove", {"delegation": delegation.id}) }}">
-                            <i class="fal fa-trash"></i>
-                        </a>
                     </td>
                     <td>
-                        {{ delegation.participants|length }}
+                        <a target="_blank"
+                           href="{{ path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash}) }}">
+                            {{ absolute_url(path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash})) }}
+                        </a>
+                        {% if delegation.users|length > 0 %}
+                            <span class="bade badge-pill badge-success">{{ "index.delegation_overview.registration_url_used"|trans() }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="btn-group">
+                            <a class="btn btn-link" href="{{ path("delegation_view", {"delegation": delegation.id}) }}">
+                                {{ "index.impersonate"|trans }}
+                            </a>
+                            <a class="btn btn-outline-secondary"
+                               href="{{ path("delegation_edit", {"delegation": delegation.id}) }}">
+                                <i class="fal fa-pencil"></i>
+                            </a>
+
+                            <a class="btn btn-outline-danger"
+                               href="{{ path("delegation_remove", {"delegation": delegation.id}) }}">
+                                <i class="fal fa-trash"></i>
+                            </a>
+                        </span>
                     </td>
                 </tr>
             {% endfor %}

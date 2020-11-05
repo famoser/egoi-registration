@@ -13,8 +13,8 @@ namespace App\Entity;
 
 use App\Entity\Base\BaseEntity;
 use App\Entity\Traits\IdTrait;
-use App\Entity\Traits\ParticipantEventDataTrait;
-use App\Entity\Traits\ParticipantImmigrationDataTrait;
+use App\Entity\Traits\ParticipantEventAttendanceTrait;
+use App\Entity\Traits\ParticipantImmigrationTrait;
 use App\Entity\Traits\ParticipantPersonalDataTrait;
 use App\Entity\Traits\TimeTrait;
 use App\Enum\ParticipantRole;
@@ -30,8 +30,8 @@ class Participant extends BaseEntity
     use TimeTrait;
 
     use ParticipantPersonalDataTrait;
-    use ParticipantEventDataTrait;
-    use ParticipantImmigrationDataTrait;
+    use ParticipantEventAttendanceTrait;
+    use ParticipantImmigrationTrait;
 
     /**
      * @var int

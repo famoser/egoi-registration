@@ -15,6 +15,9 @@ register:
   back_to_login: 'Back to Login.'
   success:
     welcome: 'Welcome :)'
+  error:
+    invalid_hash: 'Link invalid.'
+    hash_already_used: 'An account has already been created for this delegation.'
 
 recover:
   title: 'Reset password.'

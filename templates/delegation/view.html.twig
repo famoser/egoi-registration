@@ -1,0 +1,81 @@
+{% extends "_single_content.html.twig" %}
+
+{% block title %}{{ "view.title"|trans({"%name%": delegation.name}) }}{% endblock %}
+{% block description %}{{ "view.description"|trans }}{% endblock %}
+
+{% trans_default_domain "delegation" %}
+
+{% macro get_button(isComplete, reviewProgress, link, content) %}
+    {% if reviewProgress == 3 %} {# reviewed & locked #}
+        <a class="btn btn-outline-success" href="{{ link }}">{{ content }}</a>
+    {% elseif reviewProgress == 2 %} {# reviewed #}
+        <a class="btn btn-success" href="{{ link }}">{{ content }}</a>
+    {% elseif isComplete %}
+        <a class="btn btn-outline-secondary" href="{{ link }}">{{ content }}</a>
+    {% else %}
+        <a class="btn btn-secondary" href="{{ link }}">{{ content }}</a>
+    {% endif %}
+{% endmacro %}
+{% import _self as own_macros %}
+
+{% block single_content %}
+    {% if not delegation.attendanceComplete %}
+        <p class="alert alert-info">
+            {{ "view.please_set_attendence_data"|trans }}
+        </p>
+    {% endif %}
+
+    <p class="p-2 jumbotron mb-3 text-right">
+        <button class="btn btn-sm btn-secondary">data missing</button>
+        <button class="btn btn-sm btn-outline-secondary">data complete</button>
+        <button class="btn btn-sm btn-success">reviewed & accepted</button>
+        <button class="btn btn-sm btn-outline-success">reviewed & locked</button>
+    </p>
+
+    <p>
+        {{ own_macros.get_button(delegation.attendanceComplete, delegation.attendanceReviewProgress, path("delegation_edit_attendance", {"delegation": delegation.id}), "edit_attendance.title"|trans({}, "delegation")) }}
+    </p>
+
+    {% if delegation.attendanceComplete %}
+        <h2 class="mt-5">{{ "entity.plural"|trans({}, "entity_participant") }}</h2>
+        {% if delegation.participants|length == 0 %}
+            <p class="alert alert-info">
+                {{ "view.no_participants_yet"|trans }}
+            </p>
+        {% else %}
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{{ "name"|trans({}, "trait_participant_personal_data") }}</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for participant in delegation.participants %}
+                    <tr>
+                        <td>
+                            {{ delegation.name }}
+                        </td>
+                        <td>
+                            <span class="p-1"></span>
+                            <a class="btn btn-outline-secondary"
+                               href="{{ path("participant_edit_personal_data", {"participant": participant.id}) }}">
+                                <i class="fal fa-pencil"></i>
+                            </a>
+
+                            <a class="btn btn-outline-danger"
+                               href="{{ path("participant_remove", {"participant": participant.id}) }}">
+                                <i class="fal fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block navbar %}
+
+{% endblock %}

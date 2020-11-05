@@ -16,10 +16,11 @@ use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class CountryVoter extends Voter
+class DelegationVoter extends Voter
 {
     const DELEGATION_VIEW = 'DELEGATION_VIEW';
     const DELEGATION_EDIT = 'DELEGATION_EDIT';
+    const DELEGATION_MODERATE = 'DELEGATION_MODERATE';
 
     /**
      * Determines if the attribute and subject are supported by this voter.
@@ -32,7 +33,7 @@ class CountryVoter extends Voter
     protected function supports($attribute, $subject)
     {
         // if the attribute isn't one we support, return false
-        if (!in_array($attribute, [self::DELEGATION_VIEW, self::DELEGATION_EDIT])) {
+        if (!in_array($attribute, [self::DELEGATION_VIEW, self::DELEGATION_EDIT, self::DELEGATION_MODERATE])) {
             return false;
         }
 
@@ -53,8 +54,14 @@ class CountryVoter extends Voter
         $user = $token->getUser();
 
         if ($user instanceof User) {
-            if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
+            $userIsAdmin = in_array(User::ROLE_ADMIN, $user->getRoles());
+
+            if ($userIsAdmin) {
                 return true;
+            }
+
+            if (self::DELEGATION_MODERATE === $attribute) {
+                return $userIsAdmin;
             }
 
             return $user->getDelegation() === $subject;

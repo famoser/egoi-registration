@@ -15,7 +15,7 @@ use App\Enum\Diet;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 
-trait ParticipantEventDataTrait
+trait ParticipantEventAttendanceTrait
 {
     /**
      * @var string|null
@@ -50,7 +50,7 @@ trait ParticipantEventDataTrait
      *
      * @ORM\Column(type="integer")
      */
-    private $eventDataReviewProgress = ReviewProgress::NOT_EDITED;
+    private $eventAttendanceReviewProgress = ReviewProgress::NOT_EDITED;
 
     public function getBadeName(): ?string
     {
@@ -92,14 +92,14 @@ trait ParticipantEventDataTrait
         $this->allergies = $allergies;
     }
 
-    public function getEventDataReviewProgress(): int
+    public function getEventAttendanceReviewProgress(): int
     {
-        return $this->eventDataReviewProgress;
+        return $this->eventAttendanceReviewProgress;
     }
 
-    public function setEventDataReviewProgress(int $eventDataReviewProgress): void
+    public function setEventAttendanceReviewProgress(int $eventAttendanceReviewProgress): void
     {
-        $this->eventDataReviewProgress = $eventDataReviewProgress;
+        $this->eventAttendanceReviewProgress = $eventAttendanceReviewProgress;
     }
 
     public function isEventDataComplete()

@@ -98,13 +98,13 @@ class SecurityController extends BaseFormController
     }
 
     /**
-     * @Route("/register/{delegation}/{registrationHash}", name="register")
+     * @Route("/register/{delegationName}/{registrationHash}", name="register")
      *
      * @return Response
      */
-    public function registerAction(Request $request, Delegation $delegation, string $registrationHash, TranslatorInterface $translator, LoginFormAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler)
+    public function registerAction(Request $request, string $delegationName, string $registrationHash, TranslatorInterface $translator, LoginFormAuthenticator $authenticator, GuardAuthenticatorHandler $guardHandler)
     {
-        if (!($delegation = $this->getDelegationToRegisterFor($delegation, $registrationHash, $translator))) {
+        if (!($delegation = $this->getDelegationToRegisterFor($delegationName, $registrationHash, $translator))) {
             return $this->redirectToRoute('login');
         }
 
@@ -116,10 +116,10 @@ class SecurityController extends BaseFormController
         if ($this->tryRegisterAndLoginUser($form, $request, $user, $translator, $authenticator, $guardHandler)) {
             $this->displaySuccess($translator->trans('register.success.welcome', [], 'security'));
 
-            return $this->redirectToRoute('delegation', ['name' => $delegation->getName()]);
+            return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
         }
 
-        return $this->render('security/register_confirm.html.twig', ['form' => $form->createView()]);
+        return $this->render('security/register.html.twig', ['form' => $form->createView()]);
     }
 
     /**
@@ -188,8 +188,10 @@ class SecurityController extends BaseFormController
         throw new LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
-    private function getDelegationToRegisterFor(Delegation $delegation, string $registrationHash, TranslatorInterface $translator): ?Delegation
+    private function getDelegationToRegisterFor(string $delegationName, string $registrationHash, TranslatorInterface $translator): ?Delegation
     {
+        $delegation = $this->getDoctrine()->getRepository(Delegation::class)->findOneBy(['name' => $delegationName]);
+
         if ($delegation->getRegistrationHash() !== $registrationHash) {
             $this->displayError($translator->trans('register.error.invalid_hash', [], 'security'));
 

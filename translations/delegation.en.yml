@@ -14,6 +14,10 @@ edit:
   error:
     name_already_taken: 'Delegation with this name already exists'
 
+edit_attendance:
+  title: 'Edit attendance'
+  description: 'Specify how many athletes, leaders and guests will attend and if onsite or online.'
+
 remove:
   title: 'Remove delegation'
   description: 'Remove delegation and associated users & participants.'
@@ -23,3 +27,11 @@ remove:
 
 export:
   title: 'Export delegations'
+
+
+view:
+  title: 'Delegation %name%'
+  description: 'Register participants & other required data'
+  no_participants_yet: 'No participants yet'
+
+  please_set_attendence_data: 'Welcome! To get started, click on edit attendance below.'

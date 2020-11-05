@@ -14,7 +14,7 @@ namespace App\Entity\Traits;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 
-trait DelegationContributionDataTrait
+trait DelegationContributionTrait
 {
     /**
      * @var string|null
@@ -28,7 +28,7 @@ trait DelegationContributionDataTrait
      *
      * @ORM\Column(type="integer")
      */
-    private $contributionDataReviewProgress = ReviewProgress::NOT_EDITED;
+    private $contributionReviewProgress = ReviewProgress::NOT_EDITED;
 
     public function getTranslations(): ?string
     {
@@ -40,14 +40,14 @@ trait DelegationContributionDataTrait
         $this->translations = $translations;
     }
 
-    public function getContributionDataReviewProgress(): int
+    public function getContributionReviewProgress(): int
     {
-        return $this->contributionDataReviewProgress;
+        return $this->contributionReviewProgress;
     }
 
-    public function setContributionDataReviewProgress(int $contributionDataReviewProgress): void
+    public function setContributionReviewProgress(int $contributionReviewProgress): void
     {
-        $this->contributionDataReviewProgress = $contributionDataReviewProgress;
+        $this->contributionReviewProgress = $contributionReviewProgress;
     }
 
     public function isDelegationContributionDataComplete()

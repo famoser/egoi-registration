@@ -1,3 +1,8 @@
 index:
   title: 'Overview'
   description: 'Delegations and registration progress.'
+
+  impersonate: 'Impersonate'
+  delegation_overview:
+    registration_url_used: 'used'
+    registration_url: 'registration url'

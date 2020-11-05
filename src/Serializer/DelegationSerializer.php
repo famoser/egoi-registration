@@ -36,7 +36,7 @@ class DelegationSerializer implements ContextAwareNormalizerInterface
 
         if ('delegation-export' === $context['groups']) {
             $data['registration_url'] = $this->router->generate('register', [
-                'delegation' => $delegation->getName(),
+                'delegationName' => $delegation->getName(),
                 'registrationHash' => $delegation->getRegistrationHash(),
             ], UrlGeneratorInterface::ABSOLUTE_URL);
         }

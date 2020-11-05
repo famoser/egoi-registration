@@ -32,7 +32,7 @@ class User extends BaseEntity implements UserInterface
     public const ROLE_ADMIN = 'ROLE_ADMIN';
 
     // can use any features
-    public const ROLE_COUNTRY = 'ROLE_COUNTRY';
+    public const ROLE_DELEGATION = 'ROLE_DELEGATION';
 
     /**
      * @var bool
@@ -70,7 +70,7 @@ class User extends BaseEntity implements UserInterface
             return [self::ROLE_ADMIN];
         }
 
-        return [self::ROLE_COUNTRY];
+        return [self::ROLE_DELEGATION];
     }
 
     public function isAdmin(): bool

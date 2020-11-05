@@ -15,7 +15,7 @@ use App\Enum\ParticipantMode;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 
-trait DelegationParticipationDataTrait
+trait DelegationAttendanceTrait
 {
     /**
      * @var int
@@ -50,7 +50,7 @@ trait DelegationParticipationDataTrait
      *
      * @ORM\Column(type="integer")
      */
-    private $participationReviewProgress = ReviewProgress::NOT_EDITED;
+    private $attendanceReviewProgress = ReviewProgress::NOT_EDITED;
 
     public function getAthleteCount(): int
     {
@@ -92,18 +92,18 @@ trait DelegationParticipationDataTrait
         $this->participationMode = $participationMode;
     }
 
-    public function getParticipationReviewProgress(): int
+    public function getAttendanceReviewProgress(): int
     {
-        return $this->participationReviewProgress;
+        return $this->attendanceReviewProgress;
     }
 
-    public function setParticipationReviewProgress(int $participationReviewProgress): void
+    public function setAttendanceReviewProgress(int $attendanceReviewProgress): void
     {
-        $this->participationReviewProgress = $participationReviewProgress;
+        $this->attendanceReviewProgress = $attendanceReviewProgress;
     }
 
-    public function isParticipationDataComplete()
+    public function isAttendanceComplete()
     {
-        return ReviewProgress::NOT_EDITED !== $this->participationReviewProgress;
+        return $this->leaderCount + $this->athleteCount + $this->guestCount > 0;
     }
 }

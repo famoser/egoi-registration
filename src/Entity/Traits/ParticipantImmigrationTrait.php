@@ -14,7 +14,7 @@ namespace App\Entity\Traits;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 
-trait ParticipantImmigrationDataTrait
+trait ParticipantImmigrationTrait
 {
     /**
      * @var string|null
@@ -77,7 +77,7 @@ trait ParticipantImmigrationDataTrait
      *
      * @ORM\Column(type="integer")
      */
-    private $immigrationDataReviewProgress = ReviewProgress::NOT_EDITED;
+    private $immigrationReviewProgress = ReviewProgress::NOT_EDITED;
 
     public function getNationality(): ?string
     {
@@ -149,14 +149,14 @@ trait ParticipantImmigrationDataTrait
         $this->placeOfBirth = $placeOfBirth;
     }
 
-    public function getImmigrationDataReviewProgress(): int
+    public function getImmigrationReviewProgress(): int
     {
-        return $this->immigrationDataReviewProgress;
+        return $this->immigrationReviewProgress;
     }
 
-    public function setImmigrationDataReviewProgress(int $immigrationDataReviewProgress): void
+    public function setImmigrationReviewProgress(int $immigrationReviewProgress): void
     {
-        $this->immigrationDataReviewProgress = $immigrationDataReviewProgress;
+        $this->immigrationReviewProgress = $immigrationReviewProgress;
     }
 
     public function isImmigrationDataComplete()

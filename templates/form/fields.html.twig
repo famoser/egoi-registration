@@ -8,3 +8,22 @@
         </div>
     </div>
 {% endblock %}
+
+{% block edit_delegation_attendance_widget %}
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.athleteCount) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.leaderCount) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.guestCount) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.participationMode) }}
+        </div>
+    </div>
+{% endblock %}

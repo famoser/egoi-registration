@@ -12,9 +12,9 @@
 namespace App\Entity;
 
 use App\Entity\Base\BaseEntity;
-use App\Entity\Traits\DelegationContributionDataTrait;
-use App\Entity\Traits\DelegationParticipationDataTrait;
-use App\Entity\Traits\DelegationTravelDataTrait;
+use App\Entity\Traits\DelegationAttendanceTrait;
+use App\Entity\Traits\DelegationContributionTrait;
+use App\Entity\Traits\DelegationTravelDetailsTrait;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\TimeTrait;
 use App\Helper\HashHelper;
@@ -31,9 +31,9 @@ class Delegation extends BaseEntity
     use IdTrait;
     use TimeTrait;
 
-    use DelegationContributionDataTrait;
-    use DelegationParticipationDataTrait;
-    use DelegationTravelDataTrait;
+    use DelegationContributionTrait;
+    use DelegationAttendanceTrait;
+    use DelegationTravelDetailsTrait;
 
     /**
      * @var string
