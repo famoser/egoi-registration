@@ -21,6 +21,9 @@ remove:
   success:
     removed: 'Participant removed'
 
+export:
+  title: 'Export participants'
+
 edit_personal_data:
   title: 'Personal data'
   description: 'Edit name, phone & email'

@@ -3,7 +3,9 @@ useful information for operations.
 
 ## Installation
 
-Recommended is using `famoser/agnes` which ensures folders are setup correctly and migrations are run.
+Recommended is using `famoser/agnes` which ensures folders are setup correctly and migrations are run. You need access to the config repository specified in `agnes.yml`. Then, the process is simply:
+- create a new release (here `v1.0`) of `main` branch with `./vendor/bin/agnes release v1.0 main`
+- deploy release to `prod` environment with `./vendor/bin/agnes deploy *:*:prod main`
 
 Manual installation:
 - unzip the release in the target directory
