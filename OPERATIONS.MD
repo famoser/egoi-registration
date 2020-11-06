@@ -3,19 +3,9 @@ useful information for operations.
 
 ## Installation
 
-Recommended is using `famoser/agnes` which ensures folders are setup correctly and migrations are run. You need access to the config repository specified in `agnes.yml`. Then, the process is simply:
-- create a new release (here `v1.0`) of `main` branch with `./vendor/bin/agnes release v1.0 main`
-- deploy release to `prod` environment with `./vendor/bin/agnes deploy *:*:prod main`
+The server must fulfil requirements of `composer.json`.
 
-Manual installation:
-- unzip the release in the target directory
-- create a .env.local in the target directory to overwrite configuration values of the .env file
-- migrate the database (run `composer install` then `php bin/console doctrine:migrations:migrate -n`)
-- point the server inside the `public` directory
-
-The server must fulfil requirements of `composer.json`  
-
-a sample prod `.env.local` could look like this:
+A sample production config `.env.local` could look like this:
 
 ```dotenv
 APP_ENV=prod
@@ -23,10 +13,29 @@ APP_SECRET=NEW_SECRET
 MAILER_URL=smtp://info@example.com:NOT_REAL@smtp.mail.com:465/?encryption=ssl&auth_mode=login
 ```
 
+### Using agnes
+
+Use `famoser/agnes` to ensure folders are setup correctly and migrations are run. 
+
+You need access to the config repository specified in `agnes.yml`. Then:
+- create a new release (here `v1.0`) of `main` branch with `./vendor/bin/agnes release v1.0 main`
+- deploy release to `prod` environment with `./vendor/bin/agnes deploy *:*:prod v1.0`
+
+You can also directly deploy from `main` branch with `./vendor/bin/agnes deploy *:*:prod main`.
+
+### Manual installation
+
+To be able to reliably install it you need basic symfony knowledge.
+
+Steps:
+- unzip the release in the target directory
+- create a .env.local in the target directory to overwrite configuration values of the .env file
+- migrate the database (run `composer install` then `php bin/console doctrine:migrations:migrate -n`)
+- point the server inside the `public` directory
+
 ## Backup
 
-you only need to backup the files in the `/var/persistent` folder.
-it even includes the database :)
+You only need to backup the files in the `/var/persistent` folder (includes the sqlite database too). 
 
 Using rsync, do something like this: 
 ```
