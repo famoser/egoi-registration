@@ -108,7 +108,7 @@ class ParticipantController extends BaseDoctrineController
      */
     public function removeAction(Request $request, Participant $participant, TranslatorInterface $translator)
     {
-        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_MODERATE, $participant);
+        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
 
         $form = $this->createForm(RemoveParticipantType::class);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'remove.submit']);
