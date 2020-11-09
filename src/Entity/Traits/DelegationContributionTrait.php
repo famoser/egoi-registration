@@ -18,10 +18,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 trait DelegationContributionTrait
 {
     /**
-     * @var string|null
+     * @var string[]
      *
      * @Groups({"delegation-export"})
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="simple_array", nullable=true)
      */
     private $translations;
 
@@ -33,12 +33,18 @@ trait DelegationContributionTrait
      */
     private $contributionReviewProgress = ReviewProgress::NOT_EDITED;
 
-    public function getTranslations(): ?string
+    /**
+     * @return string[]
+     */
+    public function getTranslations(): array
     {
         return $this->translations;
     }
 
-    public function setTranslations(?string $translations): void
+    /**
+     * @param string[] $translations
+     */
+    public function setTranslations(array $translations): void
     {
         $this->translations = $translations;
     }

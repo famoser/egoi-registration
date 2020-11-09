@@ -4,6 +4,7 @@ import './fontawesome'
 const $ = require('jquery')
 require('bootstrap')
 require('typeface-open-sans')
+require('bootstrap-select')
 
 // attach jquery to window
 window.$ = $
@@ -23,6 +24,8 @@ $(document)
 
     $('[data-toggle="popover"]')
       .popover()
+
+    $('select').selectpicker()
 
     // force reload on user browser button navigation
     $(window)

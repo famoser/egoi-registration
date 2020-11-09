@@ -13,6 +13,8 @@ namespace App\Form\Traits;
 
 use App\Entity\Delegation;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -21,7 +23,7 @@ class EditDelegationContributionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('translations', TextType::class, ['required' => false, 'help' => 'translations_help']);
+        $builder->add('translations', LanguageType::class, ['required' => false, 'multiple' => true, 'help' => 'translations_help']);
     }
 
     public function configureOptions(OptionsResolver $resolver)

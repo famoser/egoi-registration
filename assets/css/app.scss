@@ -5,6 +5,7 @@ $yellow: #f4c300;
 $red: #d13337;
 
 @import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-select/dist/css/bootstrap-select.css';
 
 // add a drop shadow
 @mixin shadow($shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16)) {
