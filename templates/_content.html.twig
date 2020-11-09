@@ -16,7 +16,11 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav mr-auto">
-                    {{ own_macros.nav_item(path("index"), "index.title"|trans({}, "index")) }}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {{ own_macros.nav_item(path("index"), "index.title"|trans({}, "index")) }}
+                    {% else %}
+                        {{ own_macros.nav_item(path("delegation_view", {"delegation": app.user.delegation.id}), "view.title"|trans({"%name%": app.user.delegation.name}, "delegation")) }}
+                    {% endif %}
                 </ul>
                 <ul class="navbar-nav">
                     {% block navbar_secondary %}
