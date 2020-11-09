@@ -23,7 +23,7 @@ trait AssertAuthenticationTrait
 
     private function assertAuthenticated(KernelBrowser $client)
     {
-        $client->request('GET', '/');
-        $this->assertResponseIsSuccessful();
+        $client->request('GET', '/login');
+        $this->assertResponseRedirects();
     }
 }

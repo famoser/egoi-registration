@@ -46,7 +46,7 @@ class SecurityControllerTest extends WebTestCase
         $this->assertCanNotSetup($client);
     }
 
-    public function skipTestCanRegister()
+    public function testCanRegister()
     {
         $client = $this->createClient();
         $this->loadFixtures([TestDelegationFixtures::class]);
@@ -132,11 +132,9 @@ class SecurityControllerTest extends WebTestCase
         $form['register[password][repeatPlainPassword]'] = $password;
 
         $client->submit($form);
+        $client->followRedirect();
         $this->assertResponseIsSuccessful();
-        $this->assertStringContainsString('successful', $client->getResponse()->getContent()); // alert to user
-
-        $authenticationHash = $this->getAuthenticationHash($email);
-        $this->assertSingleEmailSentWithBodyContains($authenticationHash);
+        $this->assertStringContainsString('Welcome', $client->getResponse()->getContent()); // alert to user
     }
 
     private function assertCanRecover(KernelBrowser $client, string $email): void
