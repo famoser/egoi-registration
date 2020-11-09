@@ -44,6 +44,9 @@ class ParticipantController extends BaseDoctrineController
 
         $participant = new Participant();
         $participant->setDelegation($delegation);
+        $participant->setCountryOfResidence($delegation->getName());
+        $participant->setNationality($delegation->getName());
+        $participant->setPlaceOfBirth($delegation->getName());
 
         $defaultGender = $translator->trans('trait.default.gender', [], 'trait_participant_personal_data');
         $participant->setGender($defaultGender);

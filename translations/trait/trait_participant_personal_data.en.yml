@@ -1,7 +1,7 @@
 trait:
   name: 'Personal data'
   default:
-    gender: "Woman"
+    gender: "Female"
 
 name: Name
 given_name: "Given name"
