@@ -1,6 +1,6 @@
 login:
   title: 'Welcome back!'
-  description: 'Use the account created with your delegations invitation.'
+  description: "Use the account created with your delegation's invitation."
   submit: Login
   forgot_passwort: 'Forgot your Password?'
   errors:
