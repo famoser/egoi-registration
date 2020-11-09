@@ -13,9 +13,7 @@ namespace App\Controller;
 
 use App\Controller\Base\BaseController;
 use App\Entity\Delegation;
-use App\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
