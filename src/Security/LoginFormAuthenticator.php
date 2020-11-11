@@ -128,7 +128,17 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('index'));
+        /** @var User $user */
+        $user = $token->getUser();
+        if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
+            $indexUrl = $this->urlGenerator->generate('index');
+
+            return new RedirectResponse($indexUrl);
+        }
+
+        $delegationViewUrl = $this->urlGenerator->generate('delegation_view', ['delegation' => $user->getDelegation()->getId()]);
+
+        return new RedirectResponse($delegationViewUrl);
     }
 
     public function start(Request $request, AuthenticationException $authException = null)
