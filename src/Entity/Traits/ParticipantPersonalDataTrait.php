@@ -11,6 +11,7 @@
 
 namespace App\Entity\Traits;
 
+use App\Enum\ParticipantRole;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -150,11 +151,16 @@ trait ParticipantPersonalDataTrait
 
     public function isPersonalDataComplete()
     {
-        return !empty($this->givenName) &&
+        $validation = !empty($this->givenName) &&
             !empty($this->familyName) &&
             !empty($this->birthday) &&
-            !empty($this->email) &&
-            !empty($this->phone) &&
             !empty($this->gender);
+
+        if (ParticipantRole::LEADER === $this->role || ParticipantRole::DEPUTY_LEADER === $this->role) {
+            $validation &= !empty($this->email) &&
+                !empty($this->phone);
+        }
+
+        return $validation;
     }
 }

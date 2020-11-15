@@ -37,6 +37,7 @@
             {{ form_row(form.familyName) }}
         </div>
     </div>
+    {% if form.email is defined and form.phone is defined %}
     <div class="row">
         <div class="col">
             {{ form_row(form.email) }}
@@ -45,6 +46,7 @@
             {{ form_row(form.phone) }}
         </div>
     </div>
+    {% endif %}
     <div class="row">
         <div class="col">
             {{ form_row(form.birthday) }}
