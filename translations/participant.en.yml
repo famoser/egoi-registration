@@ -39,7 +39,7 @@ edit_immigration:
     saved: 'Saved immigration details'
 
 edit_event_presence:
-  title: 'Presence'
+  title: 'Onsite'
   description: 'Event specific details when you are physically present.'
   submit: 'Save event details'
   success:
