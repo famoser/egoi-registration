@@ -1,0 +1,23 @@
+new:
+  title: 'Create travel group'
+  description: 'Declare how you will arrive or depart.'
+  submit: 'Create travel group'
+  success:
+    created: 'Created travel group.'
+
+edit:
+  title: 'Edit'
+  description: 'Edit travel group.'
+  submit: 'Save changes'
+  success:
+    edited: 'Travel group changed.'
+
+remove:
+  title: 'Remove travel group'
+  description: 'Remove travel group.'
+  submit: 'Remove travel group'
+  success:
+    removed: 'Travel group removed'
+
+export:
+  title: 'Export travel groups'

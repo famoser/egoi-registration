@@ -39,18 +39,44 @@
     </div>
     <div class="row">
         <div class="col">
-            {{ form_row(form.email) }}
-        </div>
-        <div class="col">
-            {{ form_row(form.phone) }}
-        </div>
-    </div>
-    <div class="row">
-        <div class="col">
             {{ form_row(form.birthday) }}
         </div>
         <div class="col">
             {{ form_row(form.gender) }}
+        </div>
+    </div>
+    {% if form.email is defined %}
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.email) }}
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    {% endif %}
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.portrait) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.nameOnDocuments) }}
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.papers) }}
+        </div>
+        <div class="col">
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.consent) }}
+        </div>
+        <div class="col">
         </div>
     </div>
 {% endblock %}
@@ -88,16 +114,35 @@
             {{ form_row(form.passportValidityTo) }}
         </div>
     </div>
+{% endblock %}
+
+{% block edit_participant_event_presence_widget %}
     <div class="row">
         <div class="col">
-            {{ form_row(form.passportImage) }}
+            {{ form_row(form.phone) }}
         </div>
         <div class="col">
         </div>
     </div>
-{% endblock %}
-
-{% block edit_participant_event_presence_widget %}
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.shirtSize) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.shirtFit) }}
+        </div>
+    </div>
+    {% if form.singleRoom is defined %}
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.singleRoom) }}
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    {% endif %}
+    <hr/>
     <div class="row">
         <div class="col">
             {{ form_row(form.diet) }}
@@ -110,13 +155,36 @@
             {{ form_row(form.allergies) }}
         </div>
     </div>
+{% endblock %}
+
+
+{% block edit_travel_group_widget %}
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.participants) }}
+        </div>
+    </div>
     <hr/>
     <div class="row">
         <div class="col">
-            {{ form_row(form.badgeImage) }}
+            {{ form_row(form.location) }}
         </div>
         <div class="col">
-            {{ form_row(form.badgeName) }}
+            {{ form_row(form.dateTime) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.provider) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.tripNumber) }}
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.description) }}
         </div>
     </div>
 {% endblock %}

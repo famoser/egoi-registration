@@ -65,7 +65,7 @@ class ParticipantVoter extends Voter
             }
 
             if (self::PARTICIPANT_MODERATE === $attribute) {
-                return $userIsAdmin;
+                return false;
             }
 
             return $user->getDelegation() === $subject->getDelegation();

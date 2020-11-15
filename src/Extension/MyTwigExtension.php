@@ -11,6 +11,7 @@
 
 namespace App\Extension;
 
+use App\Enum\ArrivalOrDeparture;
 use App\Enum\BooleanType;
 use App\Enum\ParticipantRole;
 use App\Helper\DateTimeFormatter;
@@ -45,6 +46,7 @@ class MyTwigExtension extends AbstractExtension
             new TwigFilter('booleanFormat', [$this, 'booleanFilter']),
             new TwigFilter('camelCaseToUnderscore', [$this, 'camelCaseToUnderscoreFilter']),
             new TwigFilter('transParticipantRole', [$this, 'transParticipantRole']),
+            new TwigFilter('transArrivalOrDeparture', [$this, 'transArrivalOrDeparture']),
             new TwigFilter('truncate', [$this, 'truncateFilter'], ['needs_environment' => true]),
         ];
     }
@@ -84,6 +86,11 @@ class MyTwigExtension extends AbstractExtension
     public function transParticipantRole(int $value): string
     {
         return ParticipantRole::getTranslationForValue($value, $this->translator);
+    }
+
+    public function transArrivalOrDeparture(int $value): string
+    {
+        return ArrivalOrDeparture::getTranslationForValue($value, $this->translator);
     }
 
     /**

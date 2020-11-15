@@ -16,13 +16,14 @@ use App\Controller\Traits\ReviewableContentEditTrait;
 use App\Entity\Delegation;
 use App\Entity\Participant;
 use App\Enum\ParticipantRole;
-use App\Form\Participant\AddParticipantType;
 use App\Form\Participant\EditParticipantType;
 use App\Form\Participant\RemoveParticipantType;
+use App\Form\Traits\EditParticipantPersonalDataType;
 use App\Security\Voter\DelegationVoter;
 use App\Security\Voter\ParticipantVoter;
 use App\Service\Interfaces\ExportServiceInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,42 +35,40 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ParticipantController extends BaseDoctrineController
 {
     /**
-     * @Route("/new/{delegation}", name="participant_new")
+     * @Route("/new/{delegation}/{role}", name="participant_new")
      *
      * @return Response
      */
-    public function newAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
+    public function newAction(Request $request, Delegation $delegation, int $role, TranslatorInterface $translator)
     {
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_EDIT, $delegation);
 
+        if (!$this->canRoleBeChosen($role, $delegation, $delegation->getParticipants()->toArray())) {
+            throw new BadRequestException();
+        }
+
         $participant = new Participant();
+        $participant->setRole($role);
         $participant->setDelegation($delegation);
         $participant->setCountryOfResidence($delegation->getName());
         $participant->setNationality($delegation->getName());
         $participant->setPlaceOfBirth($delegation->getName());
 
-        $defaultGender = $translator->trans('trait.default.gender', [], 'trait_participant_personal_data');
-        $participant->setGender($defaultGender);
-
-        $form = $this->createForm(AddParticipantType::class, $participant);
+        $form = $this->createForm(EditParticipantPersonalDataType::class, $participant);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'new.submit']);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$this->canRoleBeChosen($participant)) {
-                $message = $translator->trans('new.error.role_exceeded', [], 'participant');
-                $this->displaySuccess($message);
-            } else {
-                $this->fastSave($participant);
+            $this->fastSave($participant);
 
-                $message = $translator->trans('new.success.created', [], 'participant');
-                $this->displaySuccess($message);
+            $roleTranslation = ParticipantRole::getTranslationForValue($role, $translator);
+            $message = $translator->trans('new.success.created', ['%role%' => $roleTranslation], 'participant');
+            $this->displaySuccess($message);
 
-                return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
-            }
+            return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
         }
 
-        return $this->render('participant/new.html.twig', ['form' => $form->createView()]);
+        return $this->render('participant/new.html.twig', ['form' => $form->createView(), 'role' => $role]);
     }
 
     use ReviewableContentEditTrait;
@@ -120,7 +119,8 @@ class ParticipantController extends BaseDoctrineController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->fastRemove($participant);
 
-            $message = $translator->trans('remove.success.removed', [], 'participant');
+            $roleTranslation = ParticipantRole::getTranslationForValue($participant->getRole(), $translator);
+            $message = $translator->trans('remove.success.removed', ['%role%' => $roleTranslation], 'participant');
             $this->displaySuccess($message);
 
             return $this->redirectToRoute('delegation_view', ['delegation' => $participant->getDelegation()->getId()]);
@@ -157,41 +157,64 @@ class ParticipantController extends BaseDoctrineController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$this->canRoleBeChosen($participant)) {
-                $message = $translator->trans('new.error.role_exceeded', [], 'participant');
-                $this->displaySuccess($message);
-            } else {
+            $delegation = $participant->getDelegation();
+            $otherParticipants = array_filter($delegation->getParticipants()->toArray(), function (Participant $other) use ($participant) {
+                return $other !== $participant;
+            });
+            if ($this->canRoleBeChosen($participant->getRole(), $delegation, $otherParticipants)) {
                 $this->fastSave($participant);
 
-                $message = $translator->trans('edit.success.edited', [], 'participant');
+                $roleTranslation = ParticipantRole::getTranslationForValue($participant->getRole(), $translator);
+                $message = $translator->trans('edit.success.edited', ['%role%' => $roleTranslation], 'participant');
                 $this->displaySuccess($message);
 
-                return $this->redirectToRoute('delegation_view', ['delegation' => $participant->getDelegation()->getId()]);
+                return $this->redirectToRoute('index');
+            } else {
+                $roleTranslation = ParticipantRole::getTranslationForValue($participant->getRole(), $translator);
+                $message = $translator->trans('edit.error.role_already_taken', ['%role%' => $roleTranslation], 'participant');
+                $this->displayError($message);
             }
         }
 
-        return $this->render('participant/edit.html.twig', ['form' => $form->createView()]);
+        return $this->render('participant/edit.html.twig', ['form' => $form->createView(), 'role' => $participant->getRole()]);
     }
 
-    private function canRoleBeChosen(Participant $changedRoleParticipant): bool
+    private function canRoleBeChosen(int $role, Delegation $delegation, array $participants): bool
     {
-        $participants = $this->getDoctrine()->getRepository(Participant::class)->findAll();
+        if ($role > 3 || $role < 0) {
+            return false;
+        }
+
         $sameRoleCount = 0;
 
         foreach ($participants as $participant) {
-            if ($participant === $changedRoleParticipant || $participant->getRole() !== $changedRoleParticipant->getRole()) {
+            if ($role !== $participant->getRole()) {
                 continue;
             }
 
             ++$sameRoleCount;
         }
 
-        if (ParticipantRole::CONTESTANT === $changedRoleParticipant->getRole()) {
-            return $changedRoleParticipant->getDelegation()->getContestantCount() > $sameRoleCount;
-        } elseif (ParticipantRole::LEADER === $changedRoleParticipant->getRole()) {
-            return $changedRoleParticipant->getDelegation()->getLeaderCount() > $sameRoleCount;
+        /*
+         * leader if only single leader count
+         * leader & deputy leader if two leaders
+         * contestants if quota not exceeded
+         * guest if quota not exceeded
+         */
+        if (ParticipantRole::LEADER === $role) {
+            $result = 0 === $sameRoleCount;
+        } elseif (ParticipantRole::DEPUTY_LEADER === $role) {
+            $result = 0 === $sameRoleCount && $delegation->getLeaderCount() > 1;
+        } elseif (ParticipantRole::CONTESTANT === $role) {
+            $result = $delegation->getContestantCount() > $sameRoleCount;
         } else {
-            return $changedRoleParticipant->getDelegation()->getGuestCount() > $sameRoleCount;
+            $result = $delegation->getGuestCount() > $sameRoleCount;
         }
+
+        if (!$result) {
+            return false;
+        }
+
+        return true;
     }
 }

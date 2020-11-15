@@ -8,3 +8,5 @@ twig:
 
     globals:
         env_support_email: '%env(SUPPORT_EMAIL)%'
+        single_room_surchange: '%env(SINGLE_ROOM_SURCHARGE)%'
+        guest_surcharge: '%env(GUEST_SURCHARGE)%'

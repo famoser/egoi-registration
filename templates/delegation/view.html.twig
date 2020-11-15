@@ -16,6 +16,71 @@
         <a class="btn btn-secondary" href="{{ link }}">{{ content }}</a>
     {% endif %}
 {% endmacro %}
+
+{% macro get_participant_row(role, delegation, offset = 0) %}
+    {% import _self as own_macros %}
+
+    {% set participant = delegation.participantWithRole(role, offset) %}
+
+    <tr>
+        <td>{{ role|transParticipantRole }}</td>
+
+        {% if participant is null %}
+            <td></td>
+            <td class="minimal-width text-right">
+                <a class="btn btn-secondary"
+                   href="{{ path("participant_new", {"delegation": delegation.id, "role": role}) }}">
+                    {{ "new.title"|trans({"%role%": role|transParticipantRole}, "participant") }}
+                </a>
+            </td>
+        {% else %}
+            <td>{{ participant.name }}</td>
+            <td class="minimal-width">
+            <span class="btn-group">
+                {{ own_macros.get_button(participant.personalDataComplete, participant.personalDataReviewProgress, path("participant_edit_personal_data", {"participant": participant.id}), "edit_personal_data.title"|trans({}, "participant")) }}
+                {{ own_macros.get_button(participant.immigrationDataComplete, participant.personalDataReviewProgress, path("participant_edit_immigration", {"participant": participant.id}), "edit_immigration.title"|trans({}, "participant")) }}
+                {{ own_macros.get_button(participant.eventPresenceComplete, participant.eventPresenceReviewProgress, path("participant_edit_event_presence", {"participant": participant.id}), "edit_event_presence.title"|trans({}, "participant")) }}
+
+                <a class="btn btn-outline-danger"
+                   href="{{ path("participant_remove", {"participant": participant.id}) }}">
+                    <i class="fal fa-trash"></i>
+                </a>
+            </span>
+            </td>
+        {% endif %}
+    </tr>
+{% endmacro %}
+
+{% macro get_travel_group_row(arrivalOrDeparture, delegation, participants, travelGroup = null) %}
+    {% import _self as own_macros %}
+
+    <tr>
+        <td>{{ arrivalOrDeparture|transArrivalOrDeparture }}</td>
+        <td>{{ participants|map(p => p.givenName)|join(", ") }}</td>
+        {% if travelGroup is null %}
+            <td></td>
+            <td class="minimal-width text-right">
+                <a class="btn btn-secondary"
+                   href="{{ path("travel_group_new", {"delegation": delegation.id, "arrivalOrDeparture": arrivalOrDeparture}) }}">
+                    {{ "new.title"|trans({}, "travel_group") }}
+                </a>
+            </td>
+        {% else %}
+            <td>{{ travelGroup.dateTime|dateTimeFormat }}, {{ travelGroup.location }}</td>
+            <td class="text-right">
+            <span class="btn-group">
+                {{ own_macros.get_button(travelGroup.complete, travelGroup.reviewProgress, path("travel_group_edit", {"travelGroup": travelGroup.id}), "edit.title"|trans({}, "travel_group")) }}
+
+                <a class="btn btn-outline-danger"
+                   href="{{ path("travel_group_remove", {"travelGroup": travelGroup.id}) }}">
+                    <i class="fal fa-trash"></i>
+                </a>
+            </span>
+            </td>
+        {% endif %}
+    </tr>
+{% endmacro %}
+
 {% import _self as own_macros %}
 
 {% block single_content %}
@@ -27,62 +92,62 @@
 
     <p class="p-2 jumbotron mb-3 text-right text-secondary">
         {{ "view.legend.legend"|trans }}:
-        <button class="btn btn-sm btn-secondary">{{ "view.legend.data_missing"|trans }}</button>
-        <button class="btn btn-sm btn-outline-secondary">{{ "view.legend.data_complete"|trans }}</button>
-        <button class="btn btn-sm btn-success">{{ "view.legend.reviewed"|trans }}</button>
-        <button class="btn btn-sm btn-outline-success">{{ "view.legend.reviewed_and_locked"|trans }}</button>
+        <button class="btn btn-sm btn-secondary disabled">{{ "view.legend.data_missing"|trans }}</button>
+        <button class="btn btn-sm btn-outline-secondary disabled">{{ "view.legend.data_complete"|trans }}</button>
+        <button class="btn btn-sm btn-success disabled">{{ "view.legend.reviewed"|trans }}</button>
+        <button class="btn btn-sm btn-outline-success disabled">{{ "view.legend.reviewed_and_locked"|trans }}</button>
     </p>
 
     <p>
         {{ own_macros.get_button(delegation.attendanceComplete, delegation.attendanceReviewProgress, path("delegation_edit_attendance", {"delegation": delegation.id}), "edit_attendance.title"|trans({}, "delegation")) }}
         {{ own_macros.get_button(delegation.contributionComplete, delegation.contributionReviewProgress, path("delegation_edit_contribution", {"delegation": delegation.id}), "edit_contribution.title"|trans({}, "delegation")) }}
-        {{ own_macros.get_button(delegation.travelComplete, delegation.travelReviewProgress, path("delegation_edit_travel", {"delegation": delegation.id}), "edit_travel.title"|trans({}, "delegation")) }}
+        <a class="btn btn-link" href="{{ path("delegation_users", {"delegation": delegation.id}) }}">
+            {{ "users.title"|trans({"%name%": delegation.name}, "delegation") }}
+        </a>
     </p>
 
     {% if delegation.attendanceComplete %}
         <h2 class="mt-5">{{ "entity.plural"|trans({}, "entity_participant") }}</h2>
-        {% if delegation.expectedAttendance > delegation.participants|length %}
-            <p>
-                <a class="btn btn-secondary" href="{{ path("participant_new", {"delegation": delegation.id}) }}">
-                    {{ "new.title"|trans({}, "participant") }}
-                </a>
-            </p>
-        {% endif %}
-        {% if delegation.participants|length == 0 %}
-            <p class="alert alert-info">
-                {{ "view.no_participants_yet"|trans }}
-            </p>
-        {% else %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{ "enum.name"|trans({}, "enum_participant_role") }}</th>
+                <th>{{ "name"|trans({}, "trait_participant_personal_data") }}</th>
+                <th class="minimal-width"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {{ own_macros.get_participant_row(0, delegation) }}
+            {{ own_macros.get_participant_row(1, delegation) }}
+            {% for i in range(0, delegation.contestantCount-1) %}
+                {{ own_macros.get_participant_row(2, delegation, i) }}
+            {% endfor %}
+            {% for i in range(0, delegation.guestCount-1) %}
+                {{ own_macros.get_participant_row(3, delegation, i) }}
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if delegation.participants|length > 0 and delegation.participationMode == 0 %}
+            <h2 class="mt-5">{{ "entity.plural"|trans({}, "entity_travel_group") }}</h2>
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>{{ "enum.name"|trans({}, "enum_participant_role") }}</th>
-                    <th>{{ "name"|trans({}, "trait_participant_personal_data") }}</th>
+                    <th></th>
+                    <th>{{ "entity.plural"|trans({}, "entity_participant") }}</th>
+                    <th></th>
                     <th class="minimal-width"></th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for participant in delegation.participants %}
-                    <tr>
-                        <td>
-                            {{ participant.role|transParticipantRole }}
-                        </td>
-                        <td>
-                            {{ participant.name }}
-                        </td>
-                        <td class="minimal-width">
-                            <span class="btn-group">
-        {{ own_macros.get_button(participant.personalDataComplete, participant.personalDataReviewProgress, path("participant_edit_personal_data", {"participant": participant.id}), "edit_personal_data.title"|trans({}, "participant")) }}
-                                {{ own_macros.get_button(participant.immigrationDataComplete, participant.personalDataReviewProgress, path("participant_edit_immigration", {"participant": participant.id}), "edit_immigration.title"|trans({}, "participant")) }}
-                                {{ own_macros.get_button(participant.eventPresenceComplete, participant.eventPresenceReviewProgress, path("participant_edit_event_presence", {"participant": participant.id}), "edit_event_presence.title"|trans({}, "participant")) }}
-
-                                <a class="btn btn-outline-danger"
-                                   href="{{ path("participant_remove", {"participant": participant.id}) }}">
-                                    <i class="fal fa-trash"></i>
-                                </a>
-                            </span>
-                        </td>
-                    </tr>
+                {% for i in range(0,1) %}
+                    {% for travelGroup in delegation.travelGroupsByArrivalOrDeparture(i) %}
+                        {{ own_macros.get_travel_group_row(i, delegation, travelGroup.participants, travelGroup) }}
+                    {% endfor %}
+                    {% set participants = delegation.participantsWithoutTravelGroup(i) %}
+                    {% if participants|length > 0 %}
+                        {{ own_macros.get_travel_group_row(i, delegation, participants) }}
+                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>

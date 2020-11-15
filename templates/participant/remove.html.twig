@@ -1,6 +1,6 @@
 {% extends "_form_content.html.twig" %}
 
-{% block title %}{{ "remove.title"|trans }}{% endblock %}
-{% block description %}{{ "remove.description"|trans }}{% endblock %}
+{% block title %}{{ "remove.title"|trans({"%role%": role|transParticipantRole}) }}{% endblock %}
+{% block description %}{{ "remove.description"|trans({"%role%": role|transParticipantRole}) }}{% endblock %}
 
 {% trans_default_domain "participant" %}

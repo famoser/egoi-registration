@@ -1,0 +1,14 @@
+entity:
+  name: Travel group
+  plural: Travel groups
+
+participants: Travel group members
+location: Location
+date_time: Date and time
+details: Any additional details
+provider: Provider
+provider_help: like SBB or Easy Jet
+trip_number: Trait / Flight / Bus Number
+trip_number_help: like SW 101 or ICE 201
+
+description: Description (optional)

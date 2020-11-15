@@ -11,6 +11,7 @@
 
 namespace App\Entity\Traits;
 
+use App\Enum\Gender;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -20,7 +21,7 @@ trait ParticipantPersonalDataTrait
     /**
      * @var string|null
      *
-     * @Groups({"participant-export"})
+     * @Groups({"participant-export", "travel-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $givenName;
@@ -28,7 +29,7 @@ trait ParticipantPersonalDataTrait
     /**
      * @var string|null
      *
-     * @Groups({"participant-export"})
+     * @Groups({"participant-export", "travel-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $familyName;
@@ -50,12 +51,12 @@ trait ParticipantPersonalDataTrait
     private $email;
 
     /**
-     * @var string|null
+     * @var int|null
      *
-     * @Groups({"participant-export"})
-     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"participant-export", "travel-export"})
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private $phone;
+    private $gender = Gender::FEMALE;
 
     /**
      * @var string|null
@@ -63,7 +64,31 @@ trait ParticipantPersonalDataTrait
      * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
-    private $gender;
+    private $nameOnDocuments;
+
+    /**
+     * @var string|null
+     *
+     * @Groups({"participant-export"})
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $portrait;
+
+    /**
+     * @var string|null
+     *
+     * @Groups({"participant-export"})
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $papers;
+
+    /**
+     * @var string|null
+     *
+     * @Groups({"participant-export"})
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $consent;
 
     /**
      * @var int
@@ -118,22 +143,12 @@ trait ParticipantPersonalDataTrait
         $this->email = $email;
     }
 
-    public function getPhone(): ?string
-    {
-        return $this->phone;
-    }
-
-    public function setPhone(?string $phone): void
-    {
-        $this->phone = $phone;
-    }
-
-    public function getGender(): ?string
+    public function getGender(): ?int
     {
         return $this->gender;
     }
 
-    public function setGender(?string $gender): void
+    public function setGender(?int $gender): void
     {
         $this->gender = $gender;
     }
@@ -150,11 +165,57 @@ trait ParticipantPersonalDataTrait
 
     public function isPersonalDataComplete()
     {
-        return !empty($this->givenName) &&
+        $validation = !empty($this->givenName) &&
             !empty($this->familyName) &&
             !empty($this->birthday) &&
-            !empty($this->email) &&
-            !empty($this->phone) &&
-            !empty($this->gender);
+            !empty($this->gender) &&
+            !empty($this->nameOnDocuments) &&
+            !empty($this->portrait);
+
+        if ($this->isLeader()) {
+            $validation &= !empty($this->email);
+        }
+
+        return $validation;
+    }
+
+    public function getNameOnDocuments(): ?string
+    {
+        return $this->nameOnDocuments;
+    }
+
+    public function setNameOnDocuments(?string $nameOnDocuments): void
+    {
+        $this->nameOnDocuments = $nameOnDocuments;
+    }
+
+    public function getPortrait(): ?string
+    {
+        return $this->portrait;
+    }
+
+    public function setPortrait(?string $portrait): void
+    {
+        $this->portrait = $portrait;
+    }
+
+    public function getPapers(): ?string
+    {
+        return $this->papers;
+    }
+
+    public function setPapers(?string $papers): void
+    {
+        $this->papers = $papers;
+    }
+
+    public function getConsent(): ?string
+    {
+        return $this->consent;
+    }
+
+    public function setConsent(?string $consent): void
+    {
+        $this->consent = $consent;
     }
 }

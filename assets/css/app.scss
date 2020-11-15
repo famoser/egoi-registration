@@ -6,6 +6,7 @@ $red: #d13337;
 
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-select/dist/css/bootstrap-select.css';
+@import '~flatpickr/dist/flatpickr.css';
 
 // add a drop shadow
 @mixin shadow($shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16)) {
@@ -88,4 +89,8 @@ label.required::after {
 .minimal-width {
   white-space: nowrap;
   width: 1%;
+}
+
+.text-sm {
+  font-size: 0.8em;
 }

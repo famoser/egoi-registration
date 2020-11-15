@@ -14,9 +14,9 @@ namespace App\Entity;
 use App\Entity\Base\BaseEntity;
 use App\Entity\Traits\DelegationAttendanceTrait;
 use App\Entity\Traits\DelegationContributionTrait;
-use App\Entity\Traits\DelegationTravelDetailsTrait;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\TimeTrait;
+use App\Enum\ArrivalOrDeparture;
 use App\Helper\HashHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -33,12 +33,11 @@ class Delegation extends BaseEntity
 
     use DelegationAttendanceTrait;
     use DelegationContributionTrait;
-    use DelegationTravelDetailsTrait;
 
     /**
      * @var string
      *
-     * @Groups({"delegation-export", "participant-export"})
+     * @Groups({"delegation-export", "participant-export", "travel-group-export"})
      * @ORM\Column(type="text", unique=true)
      */
     private $name;
@@ -54,6 +53,7 @@ class Delegation extends BaseEntity
      * @var User[]|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="delegation")
+     * @ORM\OrderBy({"email" = "ASC"})
      */
     private $users;
 
@@ -65,10 +65,19 @@ class Delegation extends BaseEntity
      */
     private $participants;
 
+    /**
+     * @var TravelGroup[]|ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\TravelGroup", mappedBy="delegation")
+     * @ORM\OrderBy({"arrivalOrDeparture" = "ASC", "dateTime" = "ASC"})
+     */
+    private $travelGroups;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->participants = new ArrayCollection();
+        $this->travelGroups = new ArrayCollection();
     }
 
     public function getName(): string
@@ -108,5 +117,60 @@ class Delegation extends BaseEntity
     public function getParticipants()
     {
         return $this->participants;
+    }
+
+    /**
+     * @return TravelGroup[]|ArrayCollection
+     */
+    public function getTravelGroups()
+    {
+        return $this->travelGroups;
+    }
+
+    public function getParticipantWithRole(int $role, int $offset = 0): ?Participant
+    {
+        foreach ($this->participants as $participant) {
+            if ($participant->getRole() === $role && 0 === $offset--) {
+                return $participant;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @return TravelGroup[]
+     */
+    public function getTravelGroupsByArrivalOrDeparture(int $arrivalOrDeparture): array
+    {
+        $travelGroups = [];
+        foreach ($this->travelGroups as $travelGroup) {
+            if ($travelGroup->getArrivalOrDeparture() === $arrivalOrDeparture) {
+                $travelGroups[] = $travelGroup;
+            }
+        }
+
+        return $travelGroups;
+    }
+
+    /**
+     * @return Participant[]
+     */
+    public function getParticipantsWithoutTravelGroup(int $arrivalOrDeparture): array
+    {
+        $participants = [];
+        foreach ($this->getParticipants() as $participant) {
+            if (ArrivalOrDeparture::ARRIVAL === $arrivalOrDeparture) {
+                if (null === $participant->getArrivalTravelGroup()) {
+                    $participants[] = $participant;
+                }
+            } else {
+                if (null === $participant->getDepartureTravelGroup()) {
+                    $participants[] = $participant;
+                }
+            }
+        }
+
+        return $participants;
     }
 }

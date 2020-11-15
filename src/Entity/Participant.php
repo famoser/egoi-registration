@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="App\Repository\ParticipantRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class Participant extends BaseEntity
@@ -37,7 +37,7 @@ class Participant extends BaseEntity
     /**
      * @var int
      *
-     * @Groups({"participant-export"})
+     * @Groups({"participant-export", "travel-export"})
      * @ORM\Column(type="integer")
      */
     private $role = ParticipantRole::CONTESTANT;
@@ -49,6 +49,20 @@ class Participant extends BaseEntity
      * @ORM\ManyToOne(targetEntity="Delegation", inversedBy="participants")
      */
     private $delegation;
+
+    /**
+     * @var TravelGroup|null
+     *
+     * @ORM\ManyToOne (targetEntity="App\Entity\TravelGroup", inversedBy="arrivalParticipants")
+     */
+    private $arrivalTravelGroup;
+
+    /**
+     * @var TravelGroup|null
+     *
+     * @ORM\ManyToOne (targetEntity="App\Entity\TravelGroup", inversedBy="departureParticipants")
+     */
+    private $departureTravelGroup;
 
     public function getRole(): int
     {
@@ -68,5 +82,30 @@ class Participant extends BaseEntity
     public function setDelegation(Delegation $delegation): void
     {
         $this->delegation = $delegation;
+    }
+
+    public function getArrivalTravelGroup(): ?TravelGroup
+    {
+        return $this->arrivalTravelGroup;
+    }
+
+    public function setArrivalTravelGroup(?TravelGroup $arrivalTravelGroup): void
+    {
+        $this->arrivalTravelGroup = $arrivalTravelGroup;
+    }
+
+    public function getDepartureTravelGroup(): ?TravelGroup
+    {
+        return $this->departureTravelGroup;
+    }
+
+    public function setDepartureTravelGroup(?TravelGroup $departureTravelGroup): void
+    {
+        $this->departureTravelGroup = $departureTravelGroup;
+    }
+
+    public function isLeader(): bool
+    {
+        return ParticipantRole::LEADER === $this->role || ParticipantRole::DEPUTY_LEADER === $this->role;
     }
 }

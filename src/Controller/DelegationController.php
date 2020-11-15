@@ -14,12 +14,14 @@ namespace App\Controller;
 use App\Controller\Base\BaseDoctrineController;
 use App\Controller\Traits\ReviewableContentEditTrait;
 use App\Entity\Delegation;
+use App\Enum\ParticipantRole;
 use App\Form\Delegation\AddMultipleDelegationsType;
 use App\Form\Delegation\EditDelegationType;
 use App\Form\Delegation\RemoveDelegationType;
 use App\Security\Voter\DelegationVoter;
 use App\Service\Interfaces\ExportServiceInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -87,6 +89,18 @@ class DelegationController extends BaseDoctrineController
         return $this->render('delegation/view.html.twig', ['delegation' => $delegation]);
     }
 
+    /**
+     * @Route("/users/{delegation}", name="delegation_users")
+     *
+     * @return Response
+     */
+    public function usersAction(Delegation $delegation)
+    {
+        $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_VIEW, $delegation);
+
+        return $this->render('delegation/users.html.twig', ['delegation' => $delegation]);
+    }
+
     use ReviewableContentEditTrait;
 
     /**
@@ -96,7 +110,23 @@ class DelegationController extends BaseDoctrineController
      */
     public function editAttendanceAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
     {
-        return $this->editReviewableDelegationContent($request, $translator, $delegation, 'attendance');
+        $validation = function (FormInterface $form) use ($delegation, $translator) {
+            $result = ($delegation->getLeaderCount() > 0 || !$delegation->getParticipantWithRole(ParticipantRole::LEADER)) &&
+                ($delegation->getLeaderCount() > 1 || !$delegation->getParticipantWithRole(ParticipantRole::DEPUTY_LEADER)) &&
+                !$delegation->getParticipantWithRole(ParticipantRole::CONTESTANT, $delegation->getContestantCount()) &&
+                !$delegation->getParticipantWithRole(ParticipantRole::GUEST, $delegation->getGuestCount());
+
+            if (!$result) {
+                $message = $translator->trans('edit_attendance.error.too_few_spaces', [], 'delegation');
+                $this->displayError($message);
+
+                return false;
+            }
+
+            return true;
+        };
+
+        return $this->editReviewableDelegationContent($request, $translator, $delegation, 'attendance', $validation);
     }
 
     /**
@@ -110,13 +140,42 @@ class DelegationController extends BaseDoctrineController
     }
 
     /**
-     * @Route("/edit_travel/{delegation}", name="delegation_edit_travel")
+     * @Route("/registration_regenerate/{delegation}/", name="delegation_registration_regenerate")
      *
      * @return Response
      */
-    public function editTravelAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
+    public function registrationRegenerateAction(Delegation $delegation, TranslatorInterface $translator)
     {
-        return $this->editReviewableDelegationContent($request, $translator, $delegation, 'travel');
+        $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE, $delegation);
+
+        $delegation->generateRegistrationHash();
+        $this->fastSave($delegation);
+
+        $message = $translator->trans('registration_regenerate.success.regenerated', [], 'delegation');
+        $this->displaySuccess($message);
+
+        return $this->redirectToRoute('index');
+    }
+
+    /**
+     * @Route("/registration_regenerate_all/", name="delegation_registration_regenerate_all")
+     *
+     * @return Response
+     */
+    public function registrationRegenerateAllAction(TranslatorInterface $translator)
+    {
+        $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE);
+
+        $delegations = $this->getDoctrine()->getRepository(Delegation::class)->findAll();
+        foreach ($delegations as $delegation) {
+            $delegation->generateRegistrationHash();
+        }
+        $this->fastSave(...$delegations);
+
+        $message = $translator->trans('registration_regenerate_all.success.regenerated', [], 'delegation');
+        $this->displaySuccess($message);
+
+        return $this->redirectToRoute('index');
     }
 
     /**

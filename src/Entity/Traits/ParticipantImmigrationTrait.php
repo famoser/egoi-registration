@@ -61,14 +61,6 @@ trait ParticipantImmigrationTrait
      * @var string|null
      *
      * @Groups({"participant-export"})
-     * @ORM\Column(type="string", nullable=true)
-     */
-    private $passportImage;
-
-    /**
-     * @var string|null
-     *
-     * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $countryOfResidence;
@@ -137,16 +129,6 @@ trait ParticipantImmigrationTrait
     public function setPassportIssueCountry(?string $passportIssueCountry): void
     {
         $this->passportIssueCountry = $passportIssueCountry;
-    }
-
-    public function getPassportImage(): ?string
-    {
-        return $this->passportImage;
-    }
-
-    public function setPassportImage(?string $passportImage): void
-    {
-        $this->passportImage = $passportImage;
     }
 
     public function getCountryOfResidence(): ?string

@@ -24,6 +24,21 @@ remove:
 export:
   title: 'Export delegations'
 
+users:
+  title: 'Admins'
+  description: "See who can edit the delegation's data"
+  no_users_yet: 'No admins yet'
+
+registration_regenerate:
+  action: "regenerate"
+  success:
+    regenerated: "Regenerated registration URL"
+
+registration_regenerate_all:
+  action: "regenerate all"
+  success:
+    regenerated: "Regenerated all registration URLs"
+
 view:
   title: 'Delegation %name%'
   description: 'Register participants & other required data'
@@ -43,13 +58,15 @@ edit_attendance:
   submit: 'Save attendance'
   success:
     saved: 'Saved attendance'
+  error:
+    too_few_spaces: 'There are fewer places selected than already used. Please remove surplus participants first.'
 
 edit_contribution:
-  title: 'Contribution'
-  description: 'What your delegation can contribute to the event.'
-  submit: 'Save contribution'
+  title: 'Translations'
+  description: 'Translations of task statements your delegation can contribute.'
+  submit: 'Save'
   success:
-    saved: 'Saved contribution'
+    saved: 'Saved'
 
 edit_travel:
   title: 'Travel'
