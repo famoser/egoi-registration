@@ -24,22 +24,6 @@ trait ParticipantEventPresenceTrait
      * @Groups({"participant-export"})
      * @ORM\Column(type="text", nullable=true)
      */
-    private $badgeName;
-
-    /**
-     * @var string|null
-     *
-     * @Groups({"participant-export"})
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $badgeImage;
-
-    /**
-     * @var string|null
-     *
-     * @Groups({"participant-export"})
-     * @ORM\Column(type="text", nullable=true)
-     */
     private $diet = Diet::NONE;
 
     /**
@@ -57,26 +41,6 @@ trait ParticipantEventPresenceTrait
      * @ORM\Column(type="integer")
      */
     private $eventPresenceReviewProgress = ReviewProgress::NOT_EDITED;
-
-    public function getBadgeName(): ?string
-    {
-        return $this->badgeName;
-    }
-
-    public function setBadgeName(?string $badgeName): void
-    {
-        $this->badgeName = $badgeName;
-    }
-
-    public function getBadgeImage(): ?string
-    {
-        return $this->badgeImage;
-    }
-
-    public function setBadgeImage(?string $badgeImage): void
-    {
-        $this->badgeImage = $badgeImage;
-    }
 
     public function getDiet(): ?string
     {

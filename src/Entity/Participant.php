@@ -18,6 +18,7 @@ use App\Entity\Traits\ParticipantImmigrationTrait;
 use App\Entity\Traits\ParticipantPersonalDataTrait;
 use App\Entity\Traits\TimeTrait;
 use App\Enum\ParticipantRole;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -37,7 +38,7 @@ class Participant extends BaseEntity
     /**
      * @var int
      *
-     * @Groups({"participant-export"})
+     * @Groups({"participant-export", "travel-export"})
      * @ORM\Column(type="integer")
      */
     private $role = ParticipantRole::CONTESTANT;
@@ -49,6 +50,19 @@ class Participant extends BaseEntity
      * @ORM\ManyToOne(targetEntity="Delegation", inversedBy="participants")
      */
     private $delegation;
+
+    /**
+     * @var TravelGroup[]|ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\TravelGroup", mappedBy="participants")
+     * @ORM\OrderBy({"arrivalOrDeparture" = "ASC"})
+     */
+    private $travelGroups;
+
+    public function __construct()
+    {
+        $this->travelGroups = new ArrayCollection();
+    }
 
     public function getRole(): int
     {
@@ -68,5 +82,13 @@ class Participant extends BaseEntity
     public function setDelegation(Delegation $delegation): void
     {
         $this->delegation = $delegation;
+    }
+
+    /**
+     * @return TravelGroup[]|ArrayCollection
+     */
+    public function getTravelGroups()
+    {
+        return $this->travelGroups;
     }
 }

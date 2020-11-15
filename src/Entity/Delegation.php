@@ -14,7 +14,6 @@ namespace App\Entity;
 use App\Entity\Base\BaseEntity;
 use App\Entity\Traits\DelegationAttendanceTrait;
 use App\Entity\Traits\DelegationContributionTrait;
-use App\Entity\Traits\DelegationTravelDetailsTrait;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\TimeTrait;
 use App\Helper\HashHelper;
@@ -33,7 +32,6 @@ class Delegation extends BaseEntity
 
     use DelegationAttendanceTrait;
     use DelegationContributionTrait;
-    use DelegationTravelDetailsTrait;
 
     /**
      * @var string
@@ -66,10 +64,18 @@ class Delegation extends BaseEntity
      */
     private $participants;
 
+    /**
+     * @var TravelGroup[]|ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\TravelGroup", mappedBy="delegation")
+     */
+    private $travelGroups;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->participants = new ArrayCollection();
+        $this->travelGroups = new ArrayCollection();
     }
 
     public function getName(): string
@@ -109,5 +115,13 @@ class Delegation extends BaseEntity
     public function getParticipants()
     {
         return $this->participants;
+    }
+
+    /**
+     * @return TravelGroup[]|ArrayCollection
+     */
+    public function getTravelGroups()
+    {
+        return $this->travelGroups;
     }
 }

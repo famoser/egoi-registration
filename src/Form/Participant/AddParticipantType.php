@@ -11,17 +11,13 @@
 
 namespace App\Form\Participant;
 
-use App\Enum\ParticipantRole;
 use App\Form\Traits\EditParticipantPersonalDataType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class AddParticipantType extends AbstractParticipantType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('role', ChoiceType::class, ParticipantRole::getChoicesForBuilder());
-
         $builder->add('personal', EditParticipantPersonalDataType::class, ['inherit_data' => true, 'label' => 'trait.name']);
     }
 }

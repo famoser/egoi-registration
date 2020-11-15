@@ -55,6 +55,31 @@
             {{ form_row(form.gender) }}
         </div>
     </div>
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.portrait) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.nameOnDocuments) }}
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.papers) }}
+        </div>
+        <div class="col">
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.consent) }}
+        </div>
+        <div class="col">
+        </div>
+    </div>
 {% endblock %}
 
 {% block edit_participant_immigration_widget %}
@@ -90,13 +115,6 @@
             {{ form_row(form.passportValidityTo) }}
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            {{ form_row(form.passportImage) }}
-        </div>
-        <div class="col">
-        </div>
-    </div>
 {% endblock %}
 
 {% block edit_participant_event_presence_widget %}
@@ -110,15 +128,6 @@
     <div class="row">
         <div class="col">
             {{ form_row(form.allergies) }}
-        </div>
-    </div>
-    <hr/>
-    <div class="row">
-        <div class="col">
-            {{ form_row(form.badgeImage) }}
-        </div>
-        <div class="col">
-            {{ form_row(form.badgeName) }}
         </div>
     </div>
 {% endblock %}

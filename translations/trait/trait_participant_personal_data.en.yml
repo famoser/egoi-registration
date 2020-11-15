@@ -1,7 +1,5 @@
 trait:
   name: 'Personal data'
-  default:
-    gender: "Female"
 
 name: Name
 given_name: "Given name"
@@ -10,3 +8,14 @@ email: E-Mail
 phone: Phone
 birthday: Birthday
 gender: Gender
+
+portrait: 'Portrait (image)'
+portrait_help: '4:3, in color, neutral background. As on badge, diplomas, ...'
+name_on_documents: 'Desired name on EGOI documents'
+name_on_documents_help: 'as on badge, diplomas, website, ...'
+
+papers: 'Papers (image)'
+papers_help: 'Official ID including your name & date of birth. If onsite, then use the same ID you use for immigration.'
+
+consent: 'Consent (pdf)'
+consent_help: 'The signed legal documents required for your participation.'

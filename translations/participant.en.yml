@@ -1,25 +1,23 @@
 new:
-  title: 'Add participant'
-  description: 'Add an contestant, leader or guest.'
-  submit: 'Add participant'
+  title: 'Add %role%'
+  description: 'Add a %role%.'
+  submit: 'Add'
   success:
-    created: 'Participant created.'
-  error:
-    role_exceeded: 'You have exceeded the limit of these role.'
+    created: '%role% created.'
 
 edit:
-  title: 'Edit participant'
-  description: 'Edit participant.'
+  title: 'Edit %role%'
+  description: 'Edit %role%.'
   submit: 'Save changes'
   success:
-    edited: 'Participant changed.'
+    edited: '%role%  saved.'
 
 remove:
-  title: 'Remove participant'
-  description: 'Remove participant and all associated data.'
-  submit: 'Remove participant'
+  title: 'Remove %role%'
+  description: 'Remove %role% and all associated data.'
+  submit: 'Remove'
   success:
-    removed: 'Participant removed'
+    removed: '%role% removed.'
 
 export:
   title: 'Export participants'

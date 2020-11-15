@@ -12,10 +12,13 @@
 namespace App\Form\Traits;
 
 use App\Entity\Participant;
+use App\Enum\Gender;
 use App\Enum\ParticipantRole;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -29,7 +32,13 @@ class EditParticipantPersonalDataType extends AbstractType
         $builder->add('givenName', TextType::class, ['required' => false]);
         $builder->add('familyName', TextType::class, ['required' => false]);
         $builder->add('birthday', DateType::class, ['widget' => 'single_text', 'required' => false]);
-        $builder->add('gender', TextType::class, ['required' => false]);
+        $builder->add('gender', ChoiceType::class, Gender::getChoicesForBuilder() + ['required' => false]);
+
+        $builder->add('nameOnDocuments', TextType::class, ['required' => false, 'help' => 'name_on_documents_help']);
+        $builder->add('portrait', FileType::class, ['required' => false, 'help' => 'portrait_help']);
+
+        $builder->add('papers', FileType::class, ['required' => false, 'help' => 'papers_help']);
+        $builder->add('consent', FileType::class, ['required' => false, 'help' => 'consent_help']);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             /** @var Participant $participant */
