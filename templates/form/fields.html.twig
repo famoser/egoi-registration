@@ -156,3 +156,35 @@
         </div>
     </div>
 {% endblock %}
+
+
+{% block edit_travel_group_widget %}
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.participants) }}
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.location) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.dateTime) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.provider) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.tripNumber) }}
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.description) }}
+        </div>
+    </div>
+{% endblock %}

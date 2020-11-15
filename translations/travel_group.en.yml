@@ -6,7 +6,7 @@ new:
     created: 'Created travel group.'
 
 edit:
-  title: 'Edit travel group'
+  title: 'Edit'
   description: 'Edit travel group.'
   submit: 'Save changes'
   success:

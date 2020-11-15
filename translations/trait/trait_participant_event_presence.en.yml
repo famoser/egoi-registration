@@ -2,7 +2,7 @@ trait:
   name: Event
 
 diet: Diet
-allergies: Food / medication / other allergies
+allergies: Food / medication / other allergies (optional)
 
 single_room: Single room
 single_room_help: 'Only leaders eligible. %surcharge% surcharge.'

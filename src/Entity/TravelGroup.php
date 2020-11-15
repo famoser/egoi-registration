@@ -15,6 +15,7 @@ use App\Entity\Base\BaseEntity;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\TimeTrait;
 use App\Enum\ArrivalOrDeparture;
+use App\Enum\ReviewProgress;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -37,34 +38,34 @@ class TravelGroup extends BaseEntity
     private $arrivalOrDeparture = ArrivalOrDeparture::ARRIVAL;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @Groups({"travel-group-export"})
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $location;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      *
      * @Groups({"travel-group-export"})
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $dateTime;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @Groups({"travel-group-export"})
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $provider;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @Groups({"travel-group-export"})
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $tripNumber;
 
@@ -75,6 +76,14 @@ class TravelGroup extends BaseEntity
      * @ORM\Column(type="string", nullable=true)
      */
     private $description;
+
+    /**
+     * @var int
+     *
+     * @Groups({"travel-group-export"})
+     * @ORM\Column(type="integer")
+     */
+    private $reviewProgress = ReviewProgress::NOT_EDITED;
 
     /**
      * @var Delegation
@@ -116,42 +125,42 @@ class TravelGroup extends BaseEntity
         $this->arrivalOrDeparture = $arrivalOrDeparture;
     }
 
-    public function getLocation(): string
+    public function getLocation(): ?string
     {
         return $this->location;
     }
 
-    public function setLocation(string $location): void
+    public function setLocation(?string $location): void
     {
         $this->location = $location;
     }
 
-    public function getDateTime(): \DateTime
+    public function getDateTime(): ?\DateTime
     {
         return $this->dateTime;
     }
 
-    public function setDateTime(\DateTime $dateTime): void
+    public function setDateTime(?\DateTime $dateTime): void
     {
         $this->dateTime = $dateTime;
     }
 
-    public function getProvider(): string
+    public function getProvider(): ?string
     {
         return $this->provider;
     }
 
-    public function setProvider(string $provider): void
+    public function setProvider(?string $provider): void
     {
         $this->provider = $provider;
     }
 
-    public function getTripNumber(): string
+    public function getTripNumber(): ?string
     {
         return $this->tripNumber;
     }
 
-    public function setTripNumber(string $tripNumber): void
+    public function setTripNumber(?string $tripNumber): void
     {
         $this->tripNumber = $tripNumber;
     }
@@ -181,12 +190,43 @@ class TravelGroup extends BaseEntity
         return ArrivalOrDeparture::ARRIVAL === $this->arrivalOrDeparture ? $this->getArrivalParticipants() : $this->getDepartureParticipants();
     }
 
+    public function addParticipant(Participant $participant)
+    {
+        if (ArrivalOrDeparture::ARRIVAL === self::getArrivalOrDeparture()) {
+            $this->arrivalParticipants->add($participant);
+            $participant->setArrivalTravelGroup($this);
+        } else {
+            $this->departureParticipants->add($participant);
+            $participant->setDepartureTravelGroup($this);
+        }
+    }
+
+    public function removeParticipant($participant)
+    {
+        if (ArrivalOrDeparture::ARRIVAL === self::getArrivalOrDeparture()) {
+            $this->arrivalParticipants->removeElement($participant);
+            $participant->setArrivalTravelGroup(null);
+        } else {
+            $this->departureParticipants->removeElement($participant);
+            $participant->setDepartureTravelGroup(null);
+        }
+    }
+
     /**
      * @Groups({"travel-group-export"})
      */
     public function getParticipantCount()
     {
         return count($this->getParticipants());
+    }
+
+    public function setParticipants($participants)
+    {
+        if (ArrivalOrDeparture::ARRIVAL === self::getArrivalOrDeparture()) {
+            $this->arrivalParticipants = $participants;
+        } else {
+            $this->departureParticipants = $participants;
+        }
     }
 
     /**
@@ -203,5 +243,23 @@ class TravelGroup extends BaseEntity
     public function getDepartureParticipants()
     {
         return $this->departureParticipants;
+    }
+
+    public function getReviewProgress(): int
+    {
+        return $this->reviewProgress;
+    }
+
+    public function setReviewProgress(int $reviewProgress): void
+    {
+        $this->reviewProgress = $reviewProgress;
+    }
+
+    public function complete()
+    {
+        return !empty($this->location) &&
+            !empty($this->dateTime) &&
+            !empty($this->provider) &&
+            !empty($this->tripNumber);
     }
 }

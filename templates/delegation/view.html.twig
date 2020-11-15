@@ -50,6 +50,37 @@
         {% endif %}
     </tr>
 {% endmacro %}
+
+{% macro get_travel_group_row(arrivalOrDeparture, delegation, participants, travelGroup = null) %}
+    {% import _self as own_macros %}
+
+    <tr>
+        <td>{{ arrivalOrDeparture|transArrivalOrDeparture }}</td>
+        <td>{{ participants|map(p => p.givenName)|join(", ") }}</td>
+        {% if travelGroup is null %}
+            <td></td>
+            <td class="minimal-width text-right">
+                <a class="btn btn-secondary"
+                   href="{{ path("travel_group_new", {"delegation": delegation.id, "arrivalOrDeparture": arrivalOrDeparture}) }}">
+                    {{ "new.title"|trans({}, "travel_group") }}
+                </a>
+            </td>
+        {% else %}
+            <td>{{ travelGroup.dateTime|dateTimeFormat }}, {{ travelGroup.location }}</td>
+            <td class="text-right">
+            <span class="btn-group">
+                {{ own_macros.get_button(travelGroup.complete, travelGroup.reviewProgress, path("travel_group_edit", {"travelGroup": travelGroup.id}), "edit.title"|trans({}, "travel_group")) }}
+
+                <a class="btn btn-outline-danger"
+                   href="{{ path("travel_group_remove", {"travelGroup": travelGroup.id}) }}">
+                    <i class="fal fa-trash"></i>
+                </a>
+            </span>
+            </td>
+        {% endif %}
+    </tr>
+{% endmacro %}
+
 {% import _self as own_macros %}
 
 {% block single_content %}
@@ -96,6 +127,31 @@
             {% endfor %}
             </tbody>
         </table>
+
+        {% if delegation.participants|length > 0 and delegation.participationMode == 0 %}
+            <h2 class="mt-5">{{ "entity.plural"|trans({}, "entity_travel_group") }}</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>{{ "entity.plural"|trans({}, "entity_participant") }}</th>
+                    <th></th>
+                    <th class="minimal-width"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in range(0,1) %}
+                    {% for travelGroup in delegation.travelGroupsByArrivalOrDeparture(i) %}
+                        {{ own_macros.get_travel_group_row(i, delegation, travelGroup.participants, travelGroup) }}
+                    {% endfor %}
+                    {% set participants = delegation.participantsWithoutTravelGroup(i) %}
+                    {% if participants|length > 0 %}
+                        {{ own_macros.get_travel_group_row(i, delegation, participants) }}
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
     {% endif %}
 {% endblock %}
 

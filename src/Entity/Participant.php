@@ -18,12 +18,11 @@ use App\Entity\Traits\ParticipantImmigrationTrait;
 use App\Entity\Traits\ParticipantPersonalDataTrait;
 use App\Entity\Traits\TimeTrait;
 use App\Enum\ParticipantRole;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="App\Repository\ParticipantRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class Participant extends BaseEntity
@@ -61,14 +60,9 @@ class Participant extends BaseEntity
     /**
      * @var TravelGroup|null
      *
-     * @ORM\ManyToOne (targetEntity="App\Entity\TravelGroup", inversedBy="participants")
+     * @ORM\ManyToOne (targetEntity="App\Entity\TravelGroup", inversedBy="departureParticipants")
      */
     private $departureTravelGroup;
-
-    public function __construct()
-    {
-        $this->travelGroups = new ArrayCollection();
-    }
 
     public function getRole(): int
     {
@@ -90,12 +84,24 @@ class Participant extends BaseEntity
         $this->delegation = $delegation;
     }
 
-    /**
-     * @return TravelGroup[]|ArrayCollection
-     */
-    public function getTravelGroups()
+    public function getArrivalTravelGroup(): ?TravelGroup
     {
-        return $this->travelGroups;
+        return $this->arrivalTravelGroup;
+    }
+
+    public function setArrivalTravelGroup(?TravelGroup $arrivalTravelGroup): void
+    {
+        $this->arrivalTravelGroup = $arrivalTravelGroup;
+    }
+
+    public function getDepartureTravelGroup(): ?TravelGroup
+    {
+        return $this->departureTravelGroup;
+    }
+
+    public function setDepartureTravelGroup(?TravelGroup $departureTravelGroup): void
+    {
+        $this->departureTravelGroup = $departureTravelGroup;
     }
 
     public function isLeader(): bool

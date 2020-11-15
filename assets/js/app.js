@@ -5,6 +5,7 @@ const $ = require('jquery')
 require('bootstrap')
 require('typeface-open-sans')
 require('bootstrap-select')
+require('flatpickr')
 
 // attach jquery to window
 window.$ = $
@@ -26,6 +27,13 @@ $(document)
       .popover()
 
     $('select').selectpicker()
+
+    $('input[type=datetime-local]').flatpickr({
+      enableTime: true,
+      altFormat: 'F j, Y H:i',
+      altInput: true,
+      dateFormat: 'Z'
+    })
 
     // force reload on user browser button navigation
     $(window)

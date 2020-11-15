@@ -48,6 +48,9 @@ class TravelGroupController extends BaseDoctrineController
         $travelGroup = new TravelGroup();
         $travelGroup->setDelegation($delegation);
         $travelGroup->setArrivalOrDeparture($arrivalOrDeparture);
+        foreach ($delegation->getParticipantsWithoutTravelGroup($arrivalOrDeparture) as $participantWithoutTravelGroup) {
+            $travelGroup->addParticipant($participantWithoutTravelGroup);
+        }
 
         $form = $this->createForm(EditTravelGroupType::class, $travelGroup);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'travel_group', 'label' => 'new.submit']);
@@ -104,6 +107,12 @@ class TravelGroupController extends BaseDoctrineController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $participants = [];
+            foreach ($travelGroup->getParticipants()->toArray() as $participant) {
+                $travelGroup->removeParticipant($participant);
+                $participants[] = $participant;
+            }
+            $this->fastSave(...$participants);
             $this->fastRemove($travelGroup);
 
             $message = $translator->trans('remove.success.removed', [], 'travel_group');

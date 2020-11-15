@@ -16,6 +16,7 @@ use App\Entity\Traits\DelegationAttendanceTrait;
 use App\Entity\Traits\DelegationContributionTrait;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\TimeTrait;
+use App\Enum\ArrivalOrDeparture;
 use App\Helper\HashHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -135,5 +136,41 @@ class Delegation extends BaseEntity
         }
 
         return null;
+    }
+
+    /**
+     * @return TravelGroup[]
+     */
+    public function getTravelGroupsByArrivalOrDeparture(int $arrivalOrDeparture): array
+    {
+        $travelGroups = [];
+        foreach ($this->travelGroups as $travelGroup) {
+            if ($travelGroup->getArrivalOrDeparture() === $arrivalOrDeparture) {
+                $travelGroups[] = $travelGroup;
+            }
+        }
+
+        return $travelGroups;
+    }
+
+    /**
+     * @return Participant[]
+     */
+    public function getParticipantsWithoutTravelGroup(int $arrivalOrDeparture): array
+    {
+        $participants = [];
+        foreach ($this->getParticipants() as $participant) {
+            if (ArrivalOrDeparture::ARRIVAL === $arrivalOrDeparture) {
+                if (null === $participant->getArrivalTravelGroup()) {
+                    $participants[] = $participant;
+                }
+            } else {
+                if (null === $participant->getDepartureTravelGroup()) {
+                    $participants[] = $participant;
+                }
+            }
+        }
+
+        return $participants;
     }
 }
