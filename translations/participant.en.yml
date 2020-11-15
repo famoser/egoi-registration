@@ -38,7 +38,7 @@ edit_immigration:
 
 edit_event_presence:
   title: 'Onsite'
-  description: 'Event specific details when you are physically present.'
-  submit: 'Save event details'
+  description: 'Onsite details we need.'
+  submit: 'Save onsite details'
   success:
-    saved: 'Saved event details'
+    saved: 'Saved onsite details'

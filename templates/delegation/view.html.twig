@@ -16,6 +16,40 @@
         <a class="btn btn-secondary" href="{{ link }}">{{ content }}</a>
     {% endif %}
 {% endmacro %}
+
+{% macro get_participant_row(role, delegation, offset = 0) %}
+    {% import _self as own_macros %}
+
+    {% set participant = delegation.participantWithRole(role, offset) %}
+
+    <tr>
+        <td>{{ role|transParticipantRole }}</td>
+
+        {% if participant is null %}
+            <td></td>
+            <td class="minimal-width text-right">
+                <a class="btn btn-secondary"
+                   href="{{ path("participant_new", {"delegation": delegation.id, "role": role}) }}">
+                    {{ "new.title"|trans({"%role%": role|transParticipantRole}, "participant") }}
+                </a>
+            </td>
+        {% else %}
+            <td>{{ participant.name }}</td>
+            <td class="minimal-width">
+            <span class="btn-group">
+                {{ own_macros.get_button(participant.personalDataComplete, participant.personalDataReviewProgress, path("participant_edit_personal_data", {"participant": participant.id}), "edit_personal_data.title"|trans({}, "participant")) }}
+                {{ own_macros.get_button(participant.immigrationDataComplete, participant.personalDataReviewProgress, path("participant_edit_immigration", {"participant": participant.id}), "edit_immigration.title"|trans({}, "participant")) }}
+                {{ own_macros.get_button(participant.eventPresenceComplete, participant.eventPresenceReviewProgress, path("participant_edit_event_presence", {"participant": participant.id}), "edit_event_presence.title"|trans({}, "participant")) }}
+
+                <a class="btn btn-outline-danger"
+                   href="{{ path("participant_remove", {"participant": participant.id}) }}">
+                    <i class="fal fa-trash"></i>
+                </a>
+            </span>
+            </td>
+        {% endif %}
+    </tr>
+{% endmacro %}
 {% import _self as own_macros %}
 
 {% block single_content %}
@@ -43,52 +77,25 @@
 
     {% if delegation.attendanceComplete %}
         <h2 class="mt-5">{{ "entity.plural"|trans({}, "entity_participant") }}</h2>
-        {% if delegation.expectedAttendance > delegation.participants|length %}
-            <p>
-                <a class="btn btn-secondary" href="{{ path("participant_new", {"delegation": delegation.id, "role": 1}) }}">
-                    {{ "new.title"|trans({}, "participant") }}
-                </a>
-            </p>
-        {% endif %}
-        {% if delegation.participants|length == 0 %}
-            <p class="alert alert-info">
-                {{ "view.no_participants_yet"|trans }}
-            </p>
-        {% else %}
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>{{ "enum.name"|trans({}, "enum_participant_role") }}</th>
-                    <th>{{ "name"|trans({}, "trait_participant_personal_data") }}</th>
-                    <th class="minimal-width"></th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for participant in delegation.participants %}
-                    <tr>
-                        <td>
-                            {{ participant.role|transParticipantRole }}
-                        </td>
-                        <td>
-                            {{ participant.name }}
-                        </td>
-                        <td class="minimal-width">
-                            <span class="btn-group">
-        {{ own_macros.get_button(participant.personalDataComplete, participant.personalDataReviewProgress, path("participant_edit_personal_data", {"participant": participant.id}), "edit_personal_data.title"|trans({}, "participant")) }}
-                                {{ own_macros.get_button(participant.immigrationDataComplete, participant.personalDataReviewProgress, path("participant_edit_immigration", {"participant": participant.id}), "edit_immigration.title"|trans({}, "participant")) }}
-                                {{ own_macros.get_button(participant.eventPresenceComplete, participant.eventPresenceReviewProgress, path("participant_edit_event_presence", {"participant": participant.id}), "edit_event_presence.title"|trans({}, "participant")) }}
-
-                                <a class="btn btn-outline-danger"
-                                   href="{{ path("participant_remove", {"participant": participant.id}) }}">
-                                    <i class="fal fa-trash"></i>
-                                </a>
-                            </span>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{ "enum.name"|trans({}, "enum_participant_role") }}</th>
+                <th>{{ "name"|trans({}, "trait_participant_personal_data") }}</th>
+                <th class="minimal-width"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {{ own_macros.get_participant_row(0, delegation) }}
+            {{ own_macros.get_participant_row(1, delegation) }}
+            {% for i in range(0, delegation.contestantCount-1) %}
+                {{ own_macros.get_participant_row(2, delegation, i) }}
+            {% endfor %}
+            {% for i in range(0, delegation.guestCount-1) %}
+                {{ own_macros.get_participant_row(3, delegation, i) }}
+            {% endfor %}
+            </tbody>
+        </table>
     {% endif %}
 {% endblock %}
 

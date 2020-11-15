@@ -16,9 +16,9 @@ use App\Controller\Traits\ReviewableContentEditTrait;
 use App\Entity\Delegation;
 use App\Entity\Participant;
 use App\Enum\ParticipantRole;
-use App\Form\Participant\AddParticipantType;
 use App\Form\Participant\EditParticipantType;
 use App\Form\Participant\RemoveParticipantType;
+use App\Form\Traits\EditParticipantPersonalDataType;
 use App\Security\Voter\DelegationVoter;
 use App\Security\Voter\ParticipantVoter;
 use App\Service\Interfaces\ExportServiceInterface;
@@ -43,17 +43,18 @@ class ParticipantController extends BaseDoctrineController
     {
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_EDIT, $delegation);
 
-        if ($this->canRoleBeChosen($role, $translator, $delegation, $delegation->getParticipants()->toArray())) {
+        if (!$this->canRoleBeChosen($role, $translator, $delegation, $delegation->getParticipants()->toArray())) {
             throw new BadRequestException();
         }
 
         $participant = new Participant();
+        $participant->setRole($role);
         $participant->setDelegation($delegation);
         $participant->setCountryOfResidence($delegation->getName());
         $participant->setNationality($delegation->getName());
         $participant->setPlaceOfBirth($delegation->getName());
 
-        $form = $this->createForm(AddParticipantType::class, $participant);
+        $form = $this->createForm(EditParticipantPersonalDataType::class, $participant);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'new.submit']);
 
         $form->handleRequest($request);

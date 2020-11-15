@@ -14,12 +14,14 @@ namespace App\Controller;
 use App\Controller\Base\BaseDoctrineController;
 use App\Controller\Traits\ReviewableContentEditTrait;
 use App\Entity\Delegation;
+use App\Enum\ParticipantRole;
 use App\Form\Delegation\AddMultipleDelegationsType;
 use App\Form\Delegation\EditDelegationType;
 use App\Form\Delegation\RemoveDelegationType;
 use App\Security\Voter\DelegationVoter;
 use App\Service\Interfaces\ExportServiceInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -108,7 +110,23 @@ class DelegationController extends BaseDoctrineController
      */
     public function editAttendanceAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
     {
-        return $this->editReviewableDelegationContent($request, $translator, $delegation, 'attendance');
+        $validation = function (FormInterface $form) use ($delegation, $translator) {
+            $result = ($delegation->getLeaderCount() > 0 || !$delegation->getParticipantWithRole(ParticipantRole::LEADER)) &&
+                ($delegation->getLeaderCount() > 1 || !$delegation->getParticipantWithRole(ParticipantRole::DEPUTY_LEADER)) &&
+                !$delegation->getParticipantWithRole(ParticipantRole::CONTESTANT, $delegation->getContestantCount()) &&
+                !$delegation->getParticipantWithRole(ParticipantRole::GUEST, $delegation->getGuestCount());
+
+            if (!$result) {
+                $message = $translator->trans('edit_attendance.error.too_few_spaces', [], 'delegation');
+                $this->displayError($message);
+
+                return false;
+            }
+
+            return true;
+        };
+
+        return $this->editReviewableDelegationContent($request, $translator, $delegation, 'attendance', $validation);
     }
 
     /**
@@ -119,16 +137,6 @@ class DelegationController extends BaseDoctrineController
     public function editContributionAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
     {
         return $this->editReviewableDelegationContent($request, $translator, $delegation, 'contribution');
-    }
-
-    /**
-     * @Route("/edit_travel/{delegation}", name="delegation_edit_travel")
-     *
-     * @return Response
-     */
-    public function editTravelAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
-    {
-        return $this->editReviewableDelegationContent($request, $translator, $delegation, 'travel');
     }
 
     /**

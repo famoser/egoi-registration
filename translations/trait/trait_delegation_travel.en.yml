@@ -1,7 +1,0 @@
-trait:
-  name: Travel details
-
-location: Location of arrival
-travel_details: Travel details
-travel_details_help: How you will travel (train, airplane, ...), the company & an identifier of the route (like airplane number), exact arrival time, and anything else we might need to know
-

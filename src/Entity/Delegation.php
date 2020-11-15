@@ -124,4 +124,15 @@ class Delegation extends BaseEntity
     {
         return $this->travelGroups;
     }
+
+    public function getParticipantWithRole(int $role, int $offset = 0): ?Participant
+    {
+        foreach ($this->participants as $participant) {
+            if ($participant->getRole() === $role && 0 === $offset--) {
+                return $participant;
+            }
+        }
+
+        return null;
+    }
 }

@@ -1,0 +1,8 @@
+entity:
+  name: Travel group
+
+location: Location
+date_time: Date and time
+identifier: Train / Airplane identifier
+details: Any additional details
+

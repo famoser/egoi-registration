@@ -12,7 +12,6 @@
 namespace App\Entity\Traits;
 
 use App\Enum\Gender;
-use App\Enum\ParticipantRole;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -50,14 +49,6 @@ trait ParticipantPersonalDataTrait
      * @ORM\Column(type="text", nullable=true)
      */
     private $email;
-
-    /**
-     * @var string|null
-     *
-     * @Groups({"participant-export", "travel-export"})
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $phone;
 
     /**
      * @var int|null
@@ -152,16 +143,6 @@ trait ParticipantPersonalDataTrait
         $this->email = $email;
     }
 
-    public function getPhone(): ?string
-    {
-        return $this->phone;
-    }
-
-    public function setPhone(?string $phone): void
-    {
-        $this->phone = $phone;
-    }
-
     public function getGender(): ?int
     {
         return $this->gender;
@@ -191,7 +172,7 @@ trait ParticipantPersonalDataTrait
             !empty($this->nameOnDocuments) &&
             !empty($this->portrait);
 
-        if (ParticipantRole::LEADER === $this->role || ParticipantRole::DEPUTY_LEADER === $this->role) {
+        if ($this->isLeader()) {
             $validation &= !empty($this->email);
         }
 

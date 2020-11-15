@@ -58,6 +58,8 @@ edit_attendance:
   submit: 'Save attendance'
   success:
     saved: 'Saved attendance'
+  error:
+    too_few_spaces: 'There are fewer places selected than already used. Please remove surplus participants first.'
 
 edit_contribution:
   title: 'Translations'

@@ -91,4 +91,9 @@ class Participant extends BaseEntity
     {
         return $this->travelGroups;
     }
+
+    public function isLeader(): bool
+    {
+        return ParticipantRole::LEADER === $this->role || ParticipantRole::DEPUTY_LEADER === $this->role;
+    }
 }

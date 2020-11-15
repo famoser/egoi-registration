@@ -36,27 +36,27 @@ trait ReviewableContentEditTrait
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
-    private function editReviewableDelegationContent(Request $request, TranslatorInterface $translator, Delegation $delegation, string $editablePart)
+    private function editReviewableDelegationContent(Request $request, TranslatorInterface $translator, Delegation $delegation, string $editablePart, ?callable $validation = null)
     {
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_EDIT, $delegation);
 
-        return $this->editReviewableContentBase($request, $translator, $delegation, $delegation, 'delegation', $editablePart);
+        return $this->editReviewableContentBase($request, $translator, $delegation, $delegation, 'delegation', $editablePart, $validation);
     }
 
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
-    private function editReviewableParticipantContent(Request $request, TranslatorInterface $translator, Participant $participant, string $editablePart)
+    private function editReviewableParticipantContent(Request $request, TranslatorInterface $translator, Participant $participant, string $editablePart, ?callable $validation = null)
     {
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
 
-        return $this->editReviewableContentBase($request, $translator, $participant->getDelegation(), $participant, 'participant', $editablePart);
+        return $this->editReviewableContentBase($request, $translator, $participant->getDelegation(), $participant, 'participant', $editablePart, $validation);
     }
 
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
-    private function editReviewableContentBase(Request $request, TranslatorInterface $translator, Delegation $delegation, BaseEntity $entity, string $collection, string $editablePart): Response
+    private function editReviewableContentBase(Request $request, TranslatorInterface $translator, Delegation $delegation, BaseEntity $entity, string $collection, string $editablePart, ?callable $validation): Response
     {
         // normalizers
         $editablePart = strtolower($editablePart);
@@ -79,12 +79,14 @@ trait ReviewableContentEditTrait
         if ($form->isSubmitted() && $form->isValid() && !$readOnly) {
             $entity->$setter(ReviewProgress::EDITED);
 
-            $this->fastSave($entity);
+            if (is_callable($validation) && $validation($form)) {
+                $this->fastSave($entity);
 
-            $message = $translator->trans($templatePrefix.'.success.saved', [], $collection);
-            $this->displaySuccess($message);
+                $message = $translator->trans($templatePrefix.'.success.saved', [], $collection);
+                $this->displaySuccess($message);
 
-            return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
+                return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
+            }
         }
 
         return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'readonly' => $readOnly]);

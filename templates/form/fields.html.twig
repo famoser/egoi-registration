@@ -37,16 +37,6 @@
             {{ form_row(form.familyName) }}
         </div>
     </div>
-    {% if form.email is defined and form.phone is defined %}
-    <div class="row">
-        <div class="col">
-            {{ form_row(form.email) }}
-        </div>
-        <div class="col">
-            {{ form_row(form.phone) }}
-        </div>
-    </div>
-    {% endif %}
     <div class="row">
         <div class="col">
             {{ form_row(form.birthday) }}
@@ -55,6 +45,15 @@
             {{ form_row(form.gender) }}
         </div>
     </div>
+    {% if form.email is defined %}
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.email) }}
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    {% endif %}
     <hr/>
     <div class="row">
         <div class="col">
@@ -118,6 +117,32 @@
 {% endblock %}
 
 {% block edit_participant_event_presence_widget %}
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.phone) }}
+        </div>
+        <div class="col">
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.shirtSize) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.shirtFit) }}
+        </div>
+    </div>
+    {% if form.singleRoom is defined %}
+        <div class="row">
+            <div class="col">
+                {{ form_row(form.singleRoom) }}
+            </div>
+            <div class="col">
+            </div>
+        </div>
+    {% endif %}
+    <hr/>
     <div class="row">
         <div class="col">
             {{ form_row(form.diet) }}

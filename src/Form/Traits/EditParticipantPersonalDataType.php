@@ -13,7 +13,6 @@ namespace App\Form\Traits;
 
 use App\Entity\Participant;
 use App\Enum\Gender;
-use App\Enum\ParticipantRole;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -45,9 +44,8 @@ class EditParticipantPersonalDataType extends AbstractType
             $participant = $event->getData();
             $form = $event->getForm();
 
-            if (ParticipantRole::LEADER === $participant->getRole() || ParticipantRole::DEPUTY_LEADER === $participant->getRole()) {
+            if ($participant->isLeader()) {
                 $form->add('email', EmailType::class, ['required' => false]);
-                $form->add('phone', TextType::class, ['required' => false]);
             }
         });
     }
