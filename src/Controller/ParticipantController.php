@@ -56,9 +56,9 @@ class ParticipantController extends BaseDoctrineController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!$this->canRoleBeChosen($participant)) {
+            if (!$this->canRoleBeChosen($delegation, $participant)) {
                 $message = $translator->trans('new.error.role_exceeded', [], 'participant');
-                $this->displaySuccess($message);
+                $this->displayError($message);
             } else {
                 $this->fastSave($participant);
 
@@ -173,12 +173,11 @@ class ParticipantController extends BaseDoctrineController
         return $this->render('participant/edit.html.twig', ['form' => $form->createView()]);
     }
 
-    private function canRoleBeChosen(Participant $changedRoleParticipant): bool
+    private function canRoleBeChosen(Delegation $delegation, Participant $changedRoleParticipant): bool
     {
-        $participants = $this->getDoctrine()->getRepository(Participant::class)->findAll();
         $sameRoleCount = 0;
 
-        foreach ($participants as $participant) {
+        foreach ($delegation->getParticipants() as $participant) {
             if ($participant === $changedRoleParticipant || $participant->getRole() !== $changedRoleParticipant->getRole()) {
                 continue;
             }
@@ -186,10 +185,18 @@ class ParticipantController extends BaseDoctrineController
             ++$sameRoleCount;
         }
 
-        if (ParticipantRole::CONTESTANT === $changedRoleParticipant->getRole()) {
+        /*
+         * leader if only single leader count
+         * leader & deputy leader if two leaders
+         * contestants if quota not exceeded
+         * guest if quota not exceeded
+         */
+        if (ParticipantRole::LEADER === $changedRoleParticipant->getRole()) {
+            return 0 === $sameRoleCount;
+        } elseif (ParticipantRole::DEPUTY_LEADER === $changedRoleParticipant->getRole()) {
+            return 0 === $sameRoleCount && $changedRoleParticipant->getDelegation()->getLeaderCount() > 1;
+        } elseif (ParticipantRole::CONTESTANT === $changedRoleParticipant->getRole()) {
             return $changedRoleParticipant->getDelegation()->getContestantCount() > $sameRoleCount;
-        } elseif (ParticipantRole::LEADER === $changedRoleParticipant->getRole()) {
-            return $changedRoleParticipant->getDelegation()->getLeaderCount() > $sameRoleCount;
         } else {
             return $changedRoleParticipant->getDelegation()->getGuestCount() > $sameRoleCount;
         }
