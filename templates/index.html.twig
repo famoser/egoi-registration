@@ -80,7 +80,7 @@
                     {% for participant in delegation.participants %}
                         <tr>
                             <td>
-                                {{ participant.role|participantRoleFilter }}
+                                {{ participant.role|transParticipantRole }}
                             </td>
                             <td>
                                 {{ participant.name }}
