@@ -42,7 +42,8 @@ class UserFixture extends Fixture implements OrderedFixtureInterface
             ['ch@egoi.org', 'asdf'],
             ['ch_secondary@egoi.org', 'asdf'],
         ];
-        for ($i = 0; $i < count($delegationUsers); ++$i) {
+        $delegationUserCount = count($delegationUsers);
+        for ($i = 0; $i < $delegationUserCount; ++$i) {
             $user = new User();
             $user->setEmail($delegationUsers[$i][0]);
             $user->setPasswordFromPlain($delegationUsers[$i][1]);

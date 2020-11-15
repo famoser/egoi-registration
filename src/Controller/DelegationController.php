@@ -21,7 +21,6 @@ use App\Form\Delegation\RemoveDelegationType;
 use App\Security\Voter\DelegationVoter;
 use App\Service\Interfaces\ExportServiceInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -110,7 +109,7 @@ class DelegationController extends BaseDoctrineController
      */
     public function editAttendanceAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
     {
-        $validation = function (FormInterface $form) use ($delegation, $translator) {
+        $validation = function () use ($delegation, $translator) {
             $result = ($delegation->getLeaderCount() > 0 || !$delegation->getParticipantWithRole(ParticipantRole::LEADER)) &&
                 ($delegation->getLeaderCount() > 1 || !$delegation->getParticipantWithRole(ParticipantRole::DEPUTY_LEADER)) &&
                 !$delegation->getParticipantWithRole(ParticipantRole::CONTESTANT, $delegation->getContestantCount()) &&
