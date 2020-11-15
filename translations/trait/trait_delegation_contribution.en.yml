@@ -1,5 +1,5 @@
 trait:
   name: Contributions
 
-translations: Translations
-translations_help: In which language(s) your delegation can provide translations
+translations: Languages
+translations_help: In which language(s) your delegation will translate task statements
