@@ -36,7 +36,7 @@ class Delegation extends BaseEntity
     /**
      * @var string
      *
-     * @Groups({"delegation-export", "participant-export"})
+     * @Groups({"delegation-export", "participant-export", "travel-group-export"})
      * @ORM\Column(type="text", unique=true)
      */
     private $name;
@@ -68,6 +68,7 @@ class Delegation extends BaseEntity
      * @var TravelGroup[]|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\TravelGroup", mappedBy="delegation")
+     * @ORM\OrderBy({"arrivalOrDeparture" = "ASC", "dateTime" = "ASC"})
      */
     private $travelGroups;
 

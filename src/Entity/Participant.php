@@ -52,12 +52,18 @@ class Participant extends BaseEntity
     private $delegation;
 
     /**
-     * @var TravelGroup[]|ArrayCollection
+     * @var TravelGroup|null
      *
-     * @ORM\ManyToMany(targetEntity="App\Entity\TravelGroup", mappedBy="participants")
-     * @ORM\OrderBy({"arrivalOrDeparture" = "ASC"})
+     * @ORM\ManyToOne (targetEntity="App\Entity\TravelGroup", inversedBy="arrivalParticipants")
      */
-    private $travelGroups;
+    private $arrivalTravelGroup;
+
+    /**
+     * @var TravelGroup|null
+     *
+     * @ORM\ManyToOne (targetEntity="App\Entity\TravelGroup", inversedBy="participants")
+     */
+    private $departureTravelGroup;
 
     public function __construct()
     {

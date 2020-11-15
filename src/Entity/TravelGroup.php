@@ -31,7 +31,7 @@ class TravelGroup extends BaseEntity
     /**
      * @var int
      *
-     * @Groups({"participant-export"})
+     * @Groups({"travel-group-export"})
      * @ORM\Column(type="integer")
      */
     private $arrivalOrDeparture = ArrivalOrDeparture::ARRIVAL;
@@ -39,7 +39,7 @@ class TravelGroup extends BaseEntity
     /**
      * @var string
      *
-     * @Groups({"travel-export"})
+     * @Groups({"travel-group-export"})
      * @ORM\Column(type="string")
      */
     private $location;
@@ -47,7 +47,7 @@ class TravelGroup extends BaseEntity
     /**
      * @var \DateTime
      *
-     * @Groups({"travel-export"})
+     * @Groups({"travel-group-export"})
      * @ORM\Column(type="datetime")
      */
     private $dateTime;
@@ -55,23 +55,31 @@ class TravelGroup extends BaseEntity
     /**
      * @var string
      *
-     * @Groups({"travel-export"})
+     * @Groups({"travel-group-export"})
      * @ORM\Column(type="string")
      */
-    private $identifier;
+    private $provider;
+
+    /**
+     * @var string
+     *
+     * @Groups({"travel-group-export"})
+     * @ORM\Column(type="string")
+     */
+    private $tripNumber;
 
     /**
      * @var string|null
      *
-     * @Groups({"travel-export"})
+     * @Groups({"travel-group-export"})
      * @ORM\Column(type="string", nullable=true)
      */
-    private $details;
+    private $description;
 
     /**
      * @var Delegation
      *
-     * @Groups({"travel-export"})
+     * @Groups({"travel-group-export"})
      * @ORM\ManyToOne (targetEntity="App\Entity\Delegation", inversedBy="travelGroups")
      */
     private $delegation;
@@ -79,14 +87,23 @@ class TravelGroup extends BaseEntity
     /**
      * @var Participant[]|ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="App\Entity\Participant", inversedBy="travelGroups")
+     * @ORM\OneToMany(targetEntity="App\Entity\Participant", mappedBy="arrivalTravelGroup")
      * @ORM\OrderBy({"role" = "ASC", "givenName" = "ASC"})
      */
-    private $participants;
+    private $arrivalParticipants;
+
+    /**
+     * @var Participant[]|ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Participant", mappedBy="departureTravelGroup")
+     * @ORM\OrderBy({"role" = "ASC", "givenName" = "ASC"})
+     */
+    private $departureParticipants;
 
     public function __construct()
     {
-        $this->participants = new ArrayCollection();
+        $this->arrivalParticipants = new ArrayCollection();
+        $this->departureParticipants = new ArrayCollection();
     }
 
     public function getArrivalOrDeparture(): int
@@ -119,24 +136,34 @@ class TravelGroup extends BaseEntity
         $this->dateTime = $dateTime;
     }
 
-    public function getIdentifier(): string
+    public function getProvider(): string
     {
-        return $this->identifier;
+        return $this->provider;
     }
 
-    public function setIdentifier(string $identifier): void
+    public function setProvider(string $provider): void
     {
-        $this->identifier = $identifier;
+        $this->provider = $provider;
     }
 
-    public function getDetails(): ?string
+    public function getTripNumber(): string
     {
-        return $this->details;
+        return $this->tripNumber;
     }
 
-    public function setDetails(?string $details): void
+    public function setTripNumber(string $tripNumber): void
     {
-        $this->details = $details;
+        $this->tripNumber = $tripNumber;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): void
+    {
+        $this->description = $description;
     }
 
     public function getDelegation(): Delegation
@@ -149,19 +176,32 @@ class TravelGroup extends BaseEntity
         $this->delegation = $delegation;
     }
 
-    /**
-     * @return Participant[]|ArrayCollection
-     */
     public function getParticipants()
     {
-        return $this->participants;
+        return ArrivalOrDeparture::ARRIVAL === $this->arrivalOrDeparture ? $this->getArrivalParticipants() : $this->getDepartureParticipants();
     }
 
     /**
-     * @param Participant[]|ArrayCollection $participants
+     * @Groups({"travel-group-export"})
      */
-    public function setParticipants($participants): void
+    public function getParticipantCount()
     {
-        $this->participants = $participants;
+        return count($this->getParticipants());
+    }
+
+    /**
+     * @return Participant[]|ArrayCollection
+     */
+    public function getArrivalParticipants()
+    {
+        return $this->arrivalParticipants;
+    }
+
+    /**
+     * @return Participant[]|ArrayCollection
+     */
+    public function getDepartureParticipants()
+    {
+        return $this->departureParticipants;
     }
 }
