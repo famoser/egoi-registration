@@ -11,6 +11,8 @@ edit:
   submit: 'Save changes'
   success:
     edited: '%role%  saved.'
+  error:
+    role_already_taken: 'Role "%role%" is already occupied.'
 
 remove:
   title: 'Remove %role%'

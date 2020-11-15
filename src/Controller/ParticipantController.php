@@ -43,7 +43,7 @@ class ParticipantController extends BaseDoctrineController
     {
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_EDIT, $delegation);
 
-        if (!$this->canRoleBeChosen($role, $translator, $delegation, $delegation->getParticipants()->toArray())) {
+        if (!$this->canRoleBeChosen($role, $delegation, $delegation->getParticipants()->toArray())) {
             throw new BadRequestException();
         }
 
@@ -157,19 +157,29 @@ class ParticipantController extends BaseDoctrineController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->fastSave($participant);
+            $delegation = $participant->getDelegation();
+            $otherParticipants = array_filter($delegation->getParticipants()->toArray(), function (Participant $other) use ($participant) {
+                return $other !== $participant;
+            });
+            if ($this->canRoleBeChosen($participant->getRole(), $delegation, $otherParticipants)) {
+                $this->fastSave($participant);
 
-            $roleTranslation = ParticipantRole::getTranslationForValue($participant->getRole(), $translator);
-            $message = $translator->trans('edit.success.edited', ['%role%' => $roleTranslation], 'participant');
-            $this->displaySuccess($message);
+                $roleTranslation = ParticipantRole::getTranslationForValue($participant->getRole(), $translator);
+                $message = $translator->trans('edit.success.edited', ['%role%' => $roleTranslation], 'participant');
+                $this->displaySuccess($message);
 
-            return $this->redirectToRoute('delegation_view', ['delegation' => $participant->getDelegation()->getId()]);
+                return $this->redirectToRoute('index');
+            } else {
+                $roleTranslation = ParticipantRole::getTranslationForValue($participant->getRole(), $translator);
+                $message = $translator->trans('edit.error.role_already_taken', ['%role%' => $roleTranslation], 'participant');
+                $this->displayError($message);
+            }
         }
 
-        return $this->render('participant/edit.html.twig', ['form' => $form->createView()]);
+        return $this->render('participant/edit.html.twig', ['form' => $form->createView(), 'role' => $participant->getRole()]);
     }
 
-    private function canRoleBeChosen(int $role, TranslatorInterface $translator, Delegation $delegation, array $participants): bool
+    private function canRoleBeChosen(int $role, Delegation $delegation, array $participants): bool
     {
         if ($role > 3 || $role < 0) {
             return false;
@@ -177,7 +187,7 @@ class ParticipantController extends BaseDoctrineController
 
         $sameRoleCount = 0;
 
-        foreach ($delegation->getParticipants() as $participant) {
+        foreach ($participants as $participant) {
             if ($role !== $participant->getRole()) {
                 continue;
             }
