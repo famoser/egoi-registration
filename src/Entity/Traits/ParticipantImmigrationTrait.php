@@ -168,7 +168,6 @@ trait ParticipantImmigrationTrait
             !empty($this->passportValidityFrom) &&
             !empty($this->passportValidityTo) &&
             !empty($this->passportIssueCountry) &&
-            !empty($this->passportImage) &&
             !empty($this->countryOfResidence) &&
             !empty($this->placeOfBirth);
     }

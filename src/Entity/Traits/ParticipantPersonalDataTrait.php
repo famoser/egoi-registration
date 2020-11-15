@@ -163,22 +163,6 @@ trait ParticipantPersonalDataTrait
         $this->personalDataReviewProgress = $personalDataReviewProgress;
     }
 
-    public function isPersonalDataComplete()
-    {
-        $validation = !empty($this->givenName) &&
-            !empty($this->familyName) &&
-            !empty($this->birthday) &&
-            !empty($this->gender) &&
-            !empty($this->nameOnDocuments) &&
-            !empty($this->portrait);
-
-        if ($this->isLeader()) {
-            $validation &= !empty($this->email);
-        }
-
-        return $validation;
-    }
-
     public function getNameOnDocuments(): ?string
     {
         return $this->nameOnDocuments;
@@ -217,5 +201,23 @@ trait ParticipantPersonalDataTrait
     public function setConsent(?string $consent): void
     {
         $this->consent = $consent;
+    }
+
+    abstract public function isLeader(): bool;
+
+    public function isPersonalDataComplete()
+    {
+        $validation = !empty($this->givenName) &&
+            !empty($this->familyName) &&
+            !empty($this->birthday) &&
+            !empty($this->gender) &&
+            !empty($this->nameOnDocuments) &&
+            !empty($this->portrait);
+
+        if ($this->isLeader()) {
+            $validation &= !empty($this->email);
+        }
+
+        return $validation;
     }
 }

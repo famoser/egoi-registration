@@ -27,18 +27,25 @@ class DelegationFixture extends Fixture implements OrderedFixtureInterface
         $entries = [
             ['Germany'],
             ['Great Britain'],
-            ['Switzerland'],
         ];
 
         foreach ($entries as $entry) {
-            $delegation = new Delegation();
-            $delegation->setName($entry[0]);
-            $manager->persist($delegation);
+            $this->createAndPersistDelegation($manager, $entry[0]);
         }
 
+        $delegation = $this->createAndPersistDelegation($manager, 'Switzerland');
         $this->addReference(self::DELEGATION_SWISS, $delegation);
 
         $manager->flush();
+    }
+
+    private function createAndPersistDelegation(ObjectManager $manager, string $name): Delegation
+    {
+        $delegation = new Delegation();
+        $delegation->setName($name);
+        $manager->persist($delegation);
+
+        return $delegation;
     }
 
     public function getOrder()

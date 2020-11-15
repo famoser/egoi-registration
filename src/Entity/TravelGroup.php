@@ -192,7 +192,7 @@ class TravelGroup extends BaseEntity
 
     public function addParticipant(Participant $participant)
     {
-        if (ArrivalOrDeparture::ARRIVAL === self::getArrivalOrDeparture()) {
+        if (ArrivalOrDeparture::ARRIVAL === $this->arrivalOrDeparture) {
             $this->arrivalParticipants->add($participant);
             $participant->setArrivalTravelGroup($this);
         } else {
@@ -203,7 +203,7 @@ class TravelGroup extends BaseEntity
 
     public function removeParticipant($participant)
     {
-        if (ArrivalOrDeparture::ARRIVAL === self::getArrivalOrDeparture()) {
+        if (ArrivalOrDeparture::ARRIVAL === $this->arrivalOrDeparture) {
             $this->arrivalParticipants->removeElement($participant);
             $participant->setArrivalTravelGroup(null);
         } else {
@@ -218,15 +218,6 @@ class TravelGroup extends BaseEntity
     public function getParticipantCount()
     {
         return count($this->getParticipants());
-    }
-
-    public function setParticipants($participants)
-    {
-        if (ArrivalOrDeparture::ARRIVAL === self::getArrivalOrDeparture()) {
-            $this->arrivalParticipants = $participants;
-        } else {
-            $this->departureParticipants = $participants;
-        }
     }
 
     /**

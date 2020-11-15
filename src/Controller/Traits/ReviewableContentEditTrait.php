@@ -27,12 +27,26 @@ use App\Enum\ReviewProgress;
 use App\Security\Voter\DelegationVoter;
 use App\Security\Voter\ParticipantVoter;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 trait ReviewableContentEditTrait
 {
+    abstract protected function denyAccessUnlessGranted($attribute, $subject = null, string $message = 'Access Denied.'): void;
+
+    abstract protected function createForm(string $type, $data = null, array $options = []): FormInterface;
+
+    abstract protected function fastSave(...$entities);
+
+    abstract protected function displaySuccess($message, $link = null);
+
+    abstract protected function redirectToRoute(string $route, array $parameters = [], int $status = 302): RedirectResponse;
+
+    abstract protected function render(string $view, array $parameters = [], Response $response = null): Response;
+
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */

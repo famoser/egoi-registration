@@ -146,12 +146,13 @@ trait ParticipantEventPresenceTrait
         $this->singleRoom = $singleRoom;
     }
 
+    abstract public function isLeader(): bool;
+
     public function isEventPresenceComplete()
     {
         $validation = !empty($this->shirtSize) &&
             !empty($this->shirtFit) &&
             !empty($this->phone) &&
-            !empty($this->badgeImage) &&
             !empty($this->diet) &&
             !empty($this->allergies);
 
