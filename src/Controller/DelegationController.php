@@ -132,6 +132,45 @@ class DelegationController extends BaseDoctrineController
     }
 
     /**
+     * @Route("/registration_regenerate/{delegation}/", name="delegation_registration_regenerate")
+     *
+     * @return Response
+     */
+    public function registrationRegenerateAction(Delegation $delegation, TranslatorInterface $translator)
+    {
+        $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE, $delegation);
+
+        $delegation->generateRegistrationHash();
+        $this->fastSave($delegation);
+
+        $message = $translator->trans('registration_regenerate.success.regenerated', [], 'delegation');
+        $this->displaySuccess($message);
+
+        return $this->redirectToRoute('index');
+    }
+
+    /**
+     * @Route("/registration_regenerate_all/", name="delegation_registration_regenerate_all")
+     *
+     * @return Response
+     */
+    public function registrationRegenerateAllAction(TranslatorInterface $translator)
+    {
+        $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE);
+
+        $delegations = $this->getDoctrine()->getRepository(Delegation::class)->findAll();
+        foreach ($delegations as $delegation) {
+            $delegation->generateRegistrationHash();
+        }
+        $this->fastSave(...$delegations);
+
+        $message = $translator->trans('registration_regenerate_all.success.regenerated', [], 'delegation');
+        $this->displaySuccess($message);
+
+        return $this->redirectToRoute('index');
+    }
+
+    /**
      * @Route("/remove/{delegation}/", name="delegation_remove")
      *
      * @return Response

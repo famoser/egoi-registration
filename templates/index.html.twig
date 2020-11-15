@@ -24,7 +24,9 @@
             <thead>
             <tr>
                 <th>{{ "entity.name"|trans({}, "entity_delegation") }}</th>
-                <th>{{ "index.delegation_overview.registration_url"|trans() }}</th>
+                <th>{{ "index.delegation_overview.registration_url"|trans() }}
+                    <a class="text-sm text-warning"  href="{{ path("delegation_registration_regenerate_all") }}">{{ "registration_regenerate_all.action"|trans({}, "delegation") }}</a>
+                </th>
                 <td class="minimal-width"></td>
             </tr>
             </thead>
@@ -39,9 +41,7 @@
                            href="{{ path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash}) }}">
                             {{ absolute_url(path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash})) }}
                         </a>
-                        {% if delegation.users|length > 0 %}
-                            <span class="bade badge-pill badge-success">{{ "index.delegation_overview.registration_url_used"|trans() }}</span>
-                        {% endif %}
+                        <a class="text-sm text-warning" href="{{ path("delegation_registration_regenerate", {"delegation": delegation.id}) }}">{{ "registration_regenerate.action"|trans({}, "delegation") }}</a>
                     </td>
                     <td>
                         <span class="btn-group">

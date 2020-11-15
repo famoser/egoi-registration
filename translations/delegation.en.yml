@@ -29,6 +29,16 @@ users:
   description: "See who can edit the delegation's data"
   no_users_yet: 'No admins yet'
 
+registration_regenerate:
+  action: "regenerate"
+  success:
+    regenerated: "Regenerated registration URL"
+
+registration_regenerate_all:
+  action: "regenerate all"
+  success:
+    regenerated: "Regenerated all registration URLs"
+
 view:
   title: 'Delegation %name%'
   description: 'Register participants & other required data'
