@@ -20,19 +20,23 @@ class DelegationFixture extends Fixture implements OrderedFixtureInterface
 {
     const ORDER = 0;
 
+    public const DELEGATION_SWISS = 'DELEGATION_SWISS';
+
     public function load(ObjectManager $manager)
     {
         $entries = [
-            ['Switzlerland'],
             ['Germany'],
             ['Great Britain'],
+            ['Switzerland'],
         ];
 
         foreach ($entries as $entry) {
-            $user = new Delegation();
-            $user->setName($entry[0]);
-            $manager->persist($user);
+            $delegation = new Delegation();
+            $delegation->setName($entry[0]);
+            $manager->persist($delegation);
         }
+
+        $this->addReference(self::DELEGATION_SWISS, $delegation);
 
         $manager->flush();
     }

@@ -24,6 +24,11 @@ remove:
 export:
   title: 'Export delegations'
 
+users:
+  title: 'Admins'
+  description: "See who can edit the delegation's data"
+  no_users_yet: 'No admins yet'
+
 view:
   title: 'Delegation %name%'
   description: 'Register participants & other required data'

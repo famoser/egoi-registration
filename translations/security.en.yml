@@ -10,7 +10,7 @@ login:
     account_disabled: 'This Account is deactivated.'
 
 register:
-  title: 'Create an account.'
+  title: 'Welcome, %name%!'
   description: 'Register your delegation for the next EGOI.'
   submit: "Create account"
   back_to_login: 'Back to Login.'

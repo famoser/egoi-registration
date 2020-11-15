@@ -1,0 +1,46 @@
+{% extends "_single_content.html.twig" %}
+
+{% block title %}{{ "users.title"|trans }}{% endblock %}
+{% block description %}{{ "users.description"|trans }}{% endblock %}
+
+{% trans_default_domain "delegation" %}
+
+{% block single_content %}
+    {% if delegation.users|length == 0 %}
+        <p class="alert alert-info">
+            {{ "users.no_users_yet"|trans }}
+        </p>
+    {% else %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{ "email"|trans({}, "trait_user") }}</th>
+                <th>{{ "createdAt"|trans({}, "trait_time") }}</th>
+                <th class="minimal-width"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in delegation.users %}
+                <tr>
+                    <td>
+                        {{ user.email }}
+                    </td>
+                    <td>
+                        {{ user.createdAt|dateTimeFormat }}
+                    </td>
+                    <td class="minimal-width">
+                        <a class="btn btn-outline-danger"
+                           href="{{ path("user_remove", {"user": user.id}) }}">
+                            <i class="fal fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+
+{% block navbar %}
+
+{% endblock %}

@@ -1,0 +1,13 @@
+index:
+  title: 'Users'
+  description: 'See who can login & edit content.'
+  admin: 'admin'
+
+remove:
+  title: 'Remove user'
+  description: 'Remove user.'
+  submit: 'Remove user'
+  success:
+    removed: 'User removed'
+  error:
+    can_not_remove_last_admin: 'You can not remove yourself as you are the only remaining administrator.'

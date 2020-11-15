@@ -87,6 +87,18 @@ class DelegationController extends BaseDoctrineController
         return $this->render('delegation/view.html.twig', ['delegation' => $delegation]);
     }
 
+    /**
+     * @Route("/users/{delegation}", name="delegation_users")
+     *
+     * @return Response
+     */
+    public function usersAction(Delegation $delegation)
+    {
+        $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_VIEW, $delegation);
+
+        return $this->render('delegation/users.html.twig', ['delegation' => $delegation]);
+    }
+
     use ReviewableContentEditTrait;
 
     /**

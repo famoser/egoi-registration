@@ -1,6 +1,7 @@
 enum:
   name: Role
 
-contestant: Contestant
 leader: Leader
+deputy_leader: Deputy Leader
+contestant: Contestant
 guest: Guest

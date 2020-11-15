@@ -9,14 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Enum;
+namespace App\Form\User;
 
-use App\Enum\Base\BaseEnum;
+use App\Form\Base\RemoveType;
 
-class ParticipantRole extends BaseEnum
+class RemoveUserType extends RemoveType
 {
-    const LEADER = 0;
-    const DEPUTY_LEADER = 1;
-    const CONTESTANT = 2;
-    const GUEST = 3;
 }

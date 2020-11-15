@@ -119,7 +119,7 @@ class SecurityController extends BaseFormController
             return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
         }
 
-        return $this->render('security/register.html.twig', ['form' => $form->createView()]);
+        return $this->render('security/register.html.twig', ['form' => $form->createView(), 'delegation' => $delegation]);
     }
 
     /**

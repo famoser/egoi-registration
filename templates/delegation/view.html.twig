@@ -27,16 +27,19 @@
 
     <p class="p-2 jumbotron mb-3 text-right text-secondary">
         {{ "view.legend.legend"|trans }}:
-        <button class="btn btn-sm btn-secondary">{{ "view.legend.data_missing"|trans }}</button>
-        <button class="btn btn-sm btn-outline-secondary">{{ "view.legend.data_complete"|trans }}</button>
-        <button class="btn btn-sm btn-success">{{ "view.legend.reviewed"|trans }}</button>
-        <button class="btn btn-sm btn-outline-success">{{ "view.legend.reviewed_and_locked"|trans }}</button>
+        <button class="btn btn-sm btn-secondary disabled">{{ "view.legend.data_missing"|trans }}</button>
+        <button class="btn btn-sm btn-outline-secondary disabled">{{ "view.legend.data_complete"|trans }}</button>
+        <button class="btn btn-sm btn-success disabled">{{ "view.legend.reviewed"|trans }}</button>
+        <button class="btn btn-sm btn-outline-success disabled">{{ "view.legend.reviewed_and_locked"|trans }}</button>
     </p>
 
     <p>
         {{ own_macros.get_button(delegation.attendanceComplete, delegation.attendanceReviewProgress, path("delegation_edit_attendance", {"delegation": delegation.id}), "edit_attendance.title"|trans({}, "delegation")) }}
         {{ own_macros.get_button(delegation.contributionComplete, delegation.contributionReviewProgress, path("delegation_edit_contribution", {"delegation": delegation.id}), "edit_contribution.title"|trans({}, "delegation")) }}
         {{ own_macros.get_button(delegation.travelComplete, delegation.travelReviewProgress, path("delegation_edit_travel", {"delegation": delegation.id}), "edit_travel.title"|trans({}, "delegation")) }}
+        <a class="btn btn-link" href="{{ path("delegation_users", {"delegation": delegation.id}) }}">
+            {{ "users.title"|trans({"%name%": delegation.name}, "delegation") }}
+        </a>
     </p>
 
     {% if delegation.attendanceComplete %}

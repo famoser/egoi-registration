@@ -54,6 +54,7 @@ class Delegation extends BaseEntity
      * @var User[]|ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="delegation")
+     * @ORM\OrderBy({"email" = "ASC"})
      */
     private $users;
 

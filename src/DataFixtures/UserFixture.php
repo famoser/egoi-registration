@@ -36,18 +36,20 @@ class UserFixture extends Fixture implements OrderedFixtureInterface
             $manager->persist($user);
         }
 
-        $delegations = $manager->getRepository(Delegation::class)->findAll();
+        /** @var Delegation $delegation */
+        $delegation = $this->getReference(DelegationFixture::DELEGATION_SWISS);
         $delegationUsers = [
             ['ch@egoi.org', 'asdf'],
+            ['ch_secondary@egoi.org', 'asdf'],
         ];
-        for ($i = 0; $i < count($delegationUsers) && $i < count($delegations); ++$i) {
+        for ($i = 0; $i < count($delegationUsers); ++$i) {
             $user = new User();
             $user->setEmail($delegationUsers[$i][0]);
             $user->setPasswordFromPlain($delegationUsers[$i][1]);
             $user->setIsEnabled(true);
 
-            $user->setDelegation($delegations[$i]);
-            $delegations[$i]->getUsers()->add($user);
+            $user->setDelegation($delegation);
+            $delegation->getUsers()->add($user);
 
             $manager->persist($user);
         }
