@@ -39,7 +39,7 @@ view:
 
 edit_attendance:
   title: 'Attendance'
-  description: 'Specify how many athletes, leaders and guests will attend and if onsite or online.'
+  description: 'Specify how many contestants, leaders and guests will attend and if onsite or online.'
   submit: 'Save attendance'
   success:
     saved: 'Saved attendance'

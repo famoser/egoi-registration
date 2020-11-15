@@ -24,7 +24,7 @@ trait DelegationAttendanceTrait
      * @Groups({"delegation-export"})
      * @ORM\Column(type="integer")
      */
-    private $athleteCount = 0;
+    private $contestantCount = 0;
 
     /**
      * @var int
@@ -58,14 +58,14 @@ trait DelegationAttendanceTrait
      */
     private $attendanceReviewProgress = ReviewProgress::NOT_EDITED;
 
-    public function getAthleteCount(): int
+    public function getContestantCount(): int
     {
-        return $this->athleteCount;
+        return $this->contestantCount;
     }
 
-    public function setAthleteCount(int $athleteCount): void
+    public function setContestantCount(int $contestantCount): void
     {
-        $this->athleteCount = $athleteCount;
+        $this->contestantCount = $contestantCount;
     }
 
     public function getLeaderCount(): int
@@ -110,7 +110,7 @@ trait DelegationAttendanceTrait
 
     public function expectedAttendance()
     {
-        return $this->leaderCount + $this->athleteCount + $this->guestCount;
+        return $this->leaderCount + $this->contestantCount + $this->guestCount;
     }
 
     public function isAttendanceComplete()

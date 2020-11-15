@@ -1,7 +1,7 @@
 trait:
   name: Attendance
 
-athlete_count: Number of athletes
+contestant_count: Number of contestants
 leader_count: Number of leaders
 guest_count: Number of guests
 participation_mode: Participation mode

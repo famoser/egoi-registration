@@ -23,14 +23,14 @@ class EditParticipantImmigrationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('nationality', TextType::class);
-        $builder->add('passportNumber', TextType::class);
-        $builder->add('passportValidityFrom', DateType::class, ['widget' => 'single_text']);
-        $builder->add('passportValidityTo', DateType::class, ['widget' => 'single_text']);
-        $builder->add('passportIssueCountry', TextType::class);
-        $builder->add('passportImage', FileType::class);
-        $builder->add('countryOfResidence', TextType::class, ['help' => 'country_of_residence_help']);
-        $builder->add('placeOfBirth', TextType::class, ['help' => 'place_of_birth_help']);
+        $builder->add('nationality', TextType::class, ['required' => false]);
+        $builder->add('passportNumber', TextType::class, ['required' => false]);
+        $builder->add('passportValidityFrom', DateType::class, ['widget' => 'single_text', 'required' => false]);
+        $builder->add('passportValidityTo', DateType::class, ['widget' => 'single_text', 'required' => false]);
+        $builder->add('passportIssueCountry', TextType::class, ['required' => false]);
+        $builder->add('passportImage', FileType::class, ['required' => false]);
+        $builder->add('countryOfResidence', TextType::class, ['help' => 'country_of_residence_help', 'required' => false]);
+        $builder->add('placeOfBirth', TextType::class, ['help' => 'place_of_birth_help', 'required' => false]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -15,7 +15,7 @@ use App\Enum\Base\BaseEnum;
 
 class ParticipantRole extends BaseEnum
 {
-    const ATHLETE = 0;
+    const CONTESTANT = 0;
     const LEADER = 1;
     const GUEST = 2;
 }

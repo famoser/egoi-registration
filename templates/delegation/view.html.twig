@@ -56,6 +56,7 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
+                    <th>{{ "enum.name"|trans({}, "enum_participant_role") }}</th>
                     <th>{{ "name"|trans({}, "trait_participant_personal_data") }}</th>
                     <th class="minimal-width"></th>
                 </tr>
@@ -63,6 +64,9 @@
                 <tbody>
                 {% for participant in delegation.participants %}
                     <tr>
+                        <td>
+                            {{ participant.role|transParticipantRole }}
+                        </td>
                         <td>
                             {{ participant.name }}
                         </td>

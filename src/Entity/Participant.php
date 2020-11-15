@@ -40,7 +40,7 @@ class Participant extends BaseEntity
      * @Groups({"participant-export"})
      * @ORM\Column(type="integer")
      */
-    private $role = ParticipantRole::ATHLETE;
+    private $role = ParticipantRole::CONTESTANT;
 
     /**
      * @var Delegation

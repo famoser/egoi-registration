@@ -1,3 +1,6 @@
-athlete: Athlete
+enum:
+  name: Role
+
+contestant: Contestant
 leader: Leader
 guest: Guest

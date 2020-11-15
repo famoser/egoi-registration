@@ -186,8 +186,8 @@ class ParticipantController extends BaseDoctrineController
             ++$sameRoleCount;
         }
 
-        if (ParticipantRole::ATHLETE === $changedRoleParticipant->getRole()) {
-            return $changedRoleParticipant->getDelegation()->getAthleteCount() > $sameRoleCount;
+        if (ParticipantRole::CONTESTANT === $changedRoleParticipant->getRole()) {
+            return $changedRoleParticipant->getDelegation()->getContestantCount() > $sameRoleCount;
         } elseif (ParticipantRole::LEADER === $changedRoleParticipant->getRole()) {
             return $changedRoleParticipant->getDelegation()->getLeaderCount() > $sameRoleCount;
         } else {

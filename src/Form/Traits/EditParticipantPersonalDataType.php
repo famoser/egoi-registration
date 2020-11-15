@@ -23,12 +23,12 @@ class EditParticipantPersonalDataType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('givenName', TextType::class);
-        $builder->add('familyName', TextType::class);
-        $builder->add('email', EmailType::class);
-        $builder->add('phone', TextType::class);
-        $builder->add('birthday', DateType::class, ['widget' => 'single_text']);
-        $builder->add('gender', TextType::class);
+        $builder->add('givenName', TextType::class, ['required' => false]);
+        $builder->add('familyName', TextType::class, ['required' => false]);
+        $builder->add('email', EmailType::class, ['required' => false]);
+        $builder->add('phone', TextType::class, ['required' => false]);
+        $builder->add('birthday', DateType::class, ['widget' => 'single_text', 'required' => false]);
+        $builder->add('gender', TextType::class, ['required' => false]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

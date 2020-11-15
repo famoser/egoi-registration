@@ -23,7 +23,7 @@ class EditDelegationAttendanceType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('athleteCount', IntegerType::class, ['attr' => ['min' => 1, 'max' => 4]]);
+        $builder->add('contestantCount', IntegerType::class, ['attr' => ['min' => 1, 'max' => 4]]);
         $builder->add('leaderCount', IntegerType::class, ['attr' => ['min' => 1, 'max' => 2]]);
         $builder->add('guestCount', IntegerType::class, ['attr' => ['min' => 0, 'max' => 5]]);
         $builder->add('participationMode', ChoiceType::class, ParticipantMode::getChoicesForBuilder());

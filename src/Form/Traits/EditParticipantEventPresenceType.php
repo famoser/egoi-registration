@@ -25,9 +25,9 @@ class EditParticipantEventPresenceType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('badgeName', TextType::class);
-        $builder->add('badgeImage', FileType::class);
-        $builder->add('diet', ChoiceType::class, Diet::getChoicesForBuilder());
+        $builder->add('badgeName', TextType::class, ['required' => false]);
+        $builder->add('badgeImage', FileType::class, ['required' => false]);
+        $builder->add('diet', ChoiceType::class, Diet::getChoicesForBuilder() + ['required' => false]);
         $builder->add('allergies', TextareaType::class, ['required' => false]);
     }
 

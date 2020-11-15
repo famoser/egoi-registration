@@ -1,6 +1,6 @@
 new:
   title: 'Add participant'
-  description: 'Add an athlete, leader or guest.'
+  description: 'Add an contestant, leader or guest.'
   submit: 'Add participant'
   success:
     created: 'Participant created.'
