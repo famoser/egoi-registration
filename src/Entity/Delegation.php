@@ -175,6 +175,11 @@ class Delegation extends BaseEntity
         return $participants;
     }
 
+    public function missingParticipants()
+    {
+        return max(0, $this->expectedAttendance() - count($this->getParticipants()));
+    }
+
     public function getParticipantReviewProgress()
     {
         $chapter = $this->summarizeParticipants(
