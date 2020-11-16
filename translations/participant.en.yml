@@ -6,6 +6,9 @@ new:
     created: '%role% created.'
   error:
     portrait_upload_failed: 'Portrait upload failed.'
+    papers_upload_failed: 'Papers upload failed.'
+    consent_upload_failed: 'Consent upload failed.'
+  download: 'download'
 
 edit:
   title: 'Edit %role%'
@@ -47,5 +50,7 @@ edit_event_presence:
   success:
     saved: 'Saved onsite details'
 
-image_download:
+file_archive_download:
   portrait: 'Download portraits'
+  papers: 'Download papers'
+  consent: 'Download conset'

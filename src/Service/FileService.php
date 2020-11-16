@@ -68,19 +68,9 @@ class FileService implements FileServiceInterface
         $this->translator = $translator;
     }
 
-    public function uploadPortrait(Participant $participant, UploadedFile $file): bool
+    public function replacePortrait(Participant $participant, UploadedFile $file): bool
     {
-        $folder = $this->getOrCreateDelegationFolder(self::PORTRAIT, $participant->getDelegation());
-
-        $filename = $this->getFilename(self::PORTRAIT, $participant);
-        $newFilename = sprintf('%s_%s.%s', $filename, uniqid(), $file->guessExtension());
-
-        // Move the file to the directory where brochures are stored
-        try {
-            $file->move($folder, $newFilename);
-        } catch (FileException $e) {
-            $this->logger->error('failed to save file.'.$e->getMessage(), ['exception' => $e]);
-
+        if (!$this->upload($participant, self::PORTRAIT, $file, $folder, $filename)) {
             return false;
         }
 
@@ -89,23 +79,73 @@ class FileService implements FileServiceInterface
             unlink($folder.'/'.$participant->getPortrait());
         }
 
-        $participant->setPortrait($newFilename);
+        $participant->setPortrait($filename);
 
         return true;
     }
 
-    public function download(Participant $participant, string $type, string $filename): Response
+    public function replacePapers(Participant $participant, UploadedFile $file): bool
     {
-        if (self::PORTRAIT === $type) {
-            return $this->downloadPortrait($participant, $filename);
+        if (!$this->upload($participant, self::PAPERS, $file, $folder, $filename)) {
+            return false;
         }
 
-        throw new NotFoundHttpException();
+        // remove old
+        if ($participant->getPapers()) {
+            unlink($folder.'/'.$participant->getPapers());
+        }
+
+        $participant->setPapers($filename);
+
+        return true;
     }
 
-    public function downloadAll(string $type): Response
+    public function replaceConsent(Participant $participant, UploadedFile $file): bool
     {
-        if (!in_array($type, [self::PORTRAIT])) {
+        if (!$this->upload($participant, self::CONSENT, $file, $folder, $filename)) {
+            return false;
+        }
+
+        // remove old
+        if ($participant->getConsent()) {
+            unlink($folder.'/'.$participant->getConsent());
+        }
+
+        $participant->setConsent($filename);
+
+        return true;
+    }
+
+    public function downloadPortrait(Participant $participant, string $filename): Response
+    {
+        if ($participant->getPortrait() !== $filename) {
+            throw new NotFoundHttpException();
+        }
+
+        return $this->download($participant, self::PORTRAIT, $filename, true);
+    }
+
+    public function downloadPapers(Participant $participant, string $filename): Response
+    {
+        if ($participant->getPapers() !== $filename) {
+            throw new NotFoundHttpException();
+        }
+
+        return $this->download($participant, self::PAPERS, $filename, true);
+    }
+
+    public function downloadConsent(Participant $participant, string $filename): Response
+    {
+        if ($participant->getConsent() !== $filename) {
+            throw new NotFoundHttpException();
+        }
+
+        return $this->download($participant, self::CONSENT, $filename, false);
+    }
+
+    public function downloadArchive(string $type): Response
+    {
+        if (!in_array($type, self::FILES)) {
             throw new NotFoundHttpException();
         }
 
@@ -120,13 +160,28 @@ class FileService implements FileServiceInterface
         return $response;
     }
 
-    private function downloadPortrait(Participant $participant, string $filename): Response
+    private function upload(Participant $participant, string $type, UploadedFile $file, ?string &$folder, ?string &$filename): bool
     {
-        if ($participant->getPortrait() !== $filename) {
-            throw new NotFoundHttpException();
+        $folder = $this->getOrCreateDelegationFolder($type, $participant->getDelegation());
+
+        $proposedFilename = $this->getFilename($type, $participant);
+        $filename = sprintf('%s_%s.%s', $proposedFilename, uniqid(), $file->guessExtension());
+
+        // Move the file to the directory where brochures are stored
+        try {
+            $file->move($folder, $filename);
+        } catch (FileException $e) {
+            $this->logger->error('failed to save file.'.$e->getMessage(), ['exception' => $e]);
+
+            return false;
         }
 
-        $folder = $this->getOrCreateDelegationFolder(self::PORTRAIT, $participant->getDelegation());
+        return true;
+    }
+
+    private function download(Participant $participant, string $type, string $filename, bool $inline): BinaryFileResponse
+    {
+        $folder = $this->getOrCreateDelegationFolder($type, $participant->getDelegation());
         $filePath = $folder.'/'.$filename;
 
         if (!file_exists($filePath)) {
@@ -134,14 +189,19 @@ class FileService implements FileServiceInterface
         }
 
         $response = new BinaryFileResponse($filePath);
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE);
+        $response->setContentDisposition($inline ? ResponseHeaderBag::DISPOSITION_INLINE : ResponseHeaderBag::DISPOSITION_ATTACHMENT);
 
         return $response;
     }
 
     private function getOrCreateFolder(string $type): string
     {
-        return $this->persistentDir.'/'.$type;
+        $targetDir = $this->persistentDir.'/'.$type;
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0777, true);
+        }
+
+        return $targetDir;
     }
 
     private function getOrCreateDelegationFolder(string $type, Delegation $delegation): string
@@ -186,6 +246,7 @@ class FileService implements FileServiceInterface
             RecursiveIteratorIterator::LEAVES_ONLY
         );
 
+        $empty = true;
         foreach ($files as $name => $file) {
             // Skip directories (they would be added automatically)
             if (!$file->isDir()) {
@@ -195,7 +256,12 @@ class FileService implements FileServiceInterface
 
                 // Add current file to archive
                 $zip->addFile($filePath, $relativePath);
+                $empty = false;
             }
+        }
+
+        if ($empty) {
+            $zip->addFromString('.empty', 'no files found.');
         }
 
         // Zip archive will be created only after closing object

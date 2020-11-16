@@ -29,6 +29,7 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -79,8 +80,24 @@ class ParticipantController extends BaseDoctrineController
     {
         $file = $form->get('portraitFile')->getData();
         if ($file instanceof UploadedFile) {
-            if (!$fileService->uploadPortrait($participant, $file)) {
+            if (!$fileService->replacePortrait($participant, $file)) {
                 $message = $translator->trans('new.error.portrait_upload_failed', [], 'participant');
+                $this->displayError($message);
+            }
+        }
+
+        $file = $form->get('papersFile')->getData();
+        if ($file instanceof UploadedFile) {
+            if (!$fileService->replacePapers($participant, $file)) {
+                $message = $translator->trans('new.error.papers_upload_failed', [], 'participant');
+                $this->displayError($message);
+            }
+        }
+
+        $file = $form->get('consentFile')->getData();
+        if ($file instanceof UploadedFile) {
+            if (!$fileService->replaceConsent($participant, $file)) {
+                $message = $translator->trans('new.error.consent_upload_failed', [], 'participant');
                 $this->displayError($message);
             }
         }
@@ -89,27 +106,36 @@ class ParticipantController extends BaseDoctrineController
     }
 
     /**
-     * @Route("/image/{participant}/{type}/{filename}", name="participant_image")
+     * @Route("/download/{participant}/{type}/{filename}", name="participant_download")
      *
      * @return Response
      */
-    public function imageAction(Participant $participant, string $type, string $filename, FileServiceInterface $fileService)
+    public function downloadAction(Participant $participant, string $type, string $filename, FileServiceInterface $fileService)
     {
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
 
-        return $fileService->download($participant, $type, $filename);
+        switch ($type) {
+            case FileServiceInterface::PORTRAIT:
+                return $fileService->downloadPortrait($participant, $filename);
+            case FileServiceInterface::PAPERS:
+                return $fileService->downloadPapers($participant, $filename);
+            case FileServiceInterface::CONSENT:
+                return $fileService->downloadConsent($participant, $filename);
+            default:
+                throw new NotFoundHttpException();
+        }
     }
 
     /**
-     * @Route("/image_all/{type}", name="participant_image_all")
+     * @Route("/download_archive/{type}", name="participant_download_archive")
      *
      * @return Response
      */
-    public function imageDownloadAction(string $type, FileServiceInterface $fileService)
+    public function downloadArchiveAction(string $type, FileServiceInterface $fileService)
     {
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_MODERATE);
 
-        return $fileService->downloadAll($type);
+        return $fileService->downloadArchive($type);
     }
 
     use ReviewableContentEditTrait;

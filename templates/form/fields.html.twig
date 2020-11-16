@@ -75,6 +75,11 @@
         </div>
         <div class="col">
         </div>
+        {% if "papers_url" in form.papersFile.vars.attr|keys %}
+            <div class="col-12">
+                <img class="w-50" src="{{ form.papersFile.vars.attr["papers_url"] }}" alt="portrait">
+            </div>
+        {% endif %}
     </div>
     <hr/>
     <div class="row">
@@ -83,7 +88,15 @@
         </div>
         <div class="col">
         </div>
+        {% if "consent_url" in form.consentFile.vars.attr|keys %}
+            <div class="col-12">
+                <a class="btn btn-outline-secondary" href="{{ form.consentFile.vars.attr["consent_url"] }}">
+                    {{ "new.download"|trans({}, "participant") }}
+                </a>
+            </div>
+        {% endif %}
     </div>
+    <hr/>
 {% endblock %}
 
 {% block edit_participant_immigration_widget %}

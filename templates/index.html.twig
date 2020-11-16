@@ -24,7 +24,11 @@
             </span>
             <span class="btn-group">
                 <a class="btn btn-outline-secondary"
-                   href="{{ path("participant_image_all", {"type": "portrait"}) }}">{{ "image_download.portrait"|trans({}, "participant") }}</a>
+                   href="{{ path("participant_download_archive", {"type": "portrait"}) }}">{{ "file_archive_download.portrait"|trans({}, "participant") }}</a>
+                <a class="btn btn-outline-secondary"
+                   href="{{ path("participant_download_archive", {"type": "papers"}) }}">{{ "file_archive_download.papers"|trans({}, "participant") }}</a>
+                <a class="btn btn-outline-secondary"
+                   href="{{ path("participant_download_archive", {"type": "consent"}) }}">{{ "file_archive_download.consent"|trans({}, "participant") }}</a>
             </span>
         </p>
 

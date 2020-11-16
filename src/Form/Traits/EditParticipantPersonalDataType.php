@@ -58,15 +58,23 @@ class EditParticipantPersonalDataType extends AbstractType
             $defaultOptions = ['required' => false, 'mapped' => false];
             $portraitOptions = $defaultOptions + ['help' => 'portrait_file_help', 'constraints' => $this->createFileConstraints('1m', true)];
             if ($participant->getPortrait()) {
-                $url = $this->urlGenerator->generate('participant_image', ['participant' => $participant->getId(), 'filename' => $participant->getPortrait(), 'type' => FileServiceInterface::PORTRAIT]);
+                $url = $this->urlGenerator->generate('participant_download', ['participant' => $participant->getId(), 'filename' => $participant->getPortrait(), 'type' => FileServiceInterface::PORTRAIT]);
                 $portraitOptions += ['attr' => ['portrait_url' => $url]];
             }
             $form->add('portraitFile', FileType::class, $portraitOptions);
 
             $papersOptions = $defaultOptions + ['help' => 'papers_file_help', 'constraints' => $this->createFileConstraints('5m', true)];
+            if ($participant->getPapers()) {
+                $url = $this->urlGenerator->generate('participant_download', ['participant' => $participant->getId(), 'filename' => $participant->getPapers(), 'type' => FileServiceInterface::PAPERS]);
+                $papersOptions += ['attr' => ['papers_url' => $url]];
+            }
             $form->add('papersFile', FileType::class, $papersOptions);
 
             $consentOptions = $defaultOptions + ['help' => 'consent_file_help', 'constraints' => $this->createFileConstraints('10m', false)];
+            if ($participant->getConsent()) {
+                $url = $this->urlGenerator->generate('participant_download', ['participant' => $participant->getId(), 'filename' => $participant->getConsent(), 'type' => FileServiceInterface::CONSENT]);
+                $consentOptions += ['attr' => ['consent_url' => $url]];
+            }
             $form->add('consentFile', FileType::class, $consentOptions);
         });
     }

@@ -18,10 +18,22 @@ use Symfony\Component\HttpFoundation\Response;
 interface FileServiceInterface
 {
     public const PORTRAIT = 'portrait';
+    public const PAPERS = 'papers';
+    public const CONSENT = 'consent';
 
-    public function uploadPortrait(Participant $participant, UploadedFile $file): bool;
+    public const FILES = [self::PORTRAIT, self::PAPERS, self::CONSENT];
 
-    public function download(Participant $participant, string $type, string $filename): Response;
+    public function replacePortrait(Participant $participant, UploadedFile $file): bool;
 
-    public function downloadAll(string $type): Response;
+    public function replacePapers(Participant $participant, UploadedFile $file): bool;
+
+    public function replaceConsent(Participant $participant, UploadedFile $file): bool;
+
+    public function downloadPortrait(Participant $participant, string $filename): Response;
+
+    public function downloadPapers(Participant $participant, string $filename): Response;
+
+    public function downloadConsent(Participant $participant, string $filename): Response;
+
+    public function downloadArchive(string $type): Response;
 }
