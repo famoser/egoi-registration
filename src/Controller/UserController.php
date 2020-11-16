@@ -27,31 +27,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class UserController extends BaseDoctrineController
 {
     /**
-     * @Route("", name="user_index")
-     *
-     * @return Response
-     */
-    public function indexAction()
-    {
-        $this->denyAccessUnlessGranted(UserVoter::USER_VIEW);
-
-        $users = $this->getDoctrine()->getRepository(User::class)->findAll();
-
-        $usersByDelegations = [];
-        foreach ($users as $user) {
-            if (null === $user->getDelegation()) {
-                $usersByDelegations[''][] = $user;
-            } else {
-                $usersByDelegations[$user->getDelegation()->getName()][] = $user;
-            }
-        }
-
-        ksort($usersByDelegations);
-
-        return $this->render('user/index.html.twig', ['users' => $users]);
-    }
-
-    /**
      * @Route("/remove/{user}/", name="user_remove")
      *
      * @return Response
