@@ -8,9 +8,7 @@ new:
 edit:
   title: 'Edit'
   description: 'Edit travel group.'
-  submit: 'Save changes'
-  success:
-    edited: 'Travel group changed.'
+  save_name: 'travel group'
 
 remove:
   title: 'Remove travel group'

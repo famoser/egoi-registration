@@ -12,6 +12,7 @@
 namespace App\Controller;
 
 use App\Controller\Base\BaseDoctrineController;
+use App\Controller\Traits\ReviewableContentEditTrait;
 use App\Entity\Delegation;
 use App\Entity\TravelGroup;
 use App\Enum\ArrivalOrDeparture;
@@ -68,6 +69,8 @@ class TravelGroupController extends BaseDoctrineController
         return $this->render('travel_group/new.html.twig', ['form' => $form->createView()]);
     }
 
+    use ReviewableContentEditTrait;
+
     /**
      * @Route("/edit/{travelGroup}", name="travel_group_edit")
      *
@@ -77,20 +80,19 @@ class TravelGroupController extends BaseDoctrineController
     {
         $this->denyAccessUnlessGranted(TravelGroupVoter::TRAVEL_GROUP_EDIT, $travelGroup);
 
-        $form = $this->createForm(EditTravelGroupType::class, $travelGroup, ['required' => false]);
-        $form->add('submit', SubmitType::class, ['translation_domain' => 'travel_group', 'label' => 'edit.submit']);
+        return $this->editReviewableContent($request, $translator, $travelGroup->getDelegation(), $travelGroup, 'travel_group');
+    }
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->fastSave($travelGroup);
+    /**
+     * @Route("/review/{travelGroup}", name="travel_group_review")
+     *
+     * @return Response
+     */
+    public function reviewAction(Request $request, TravelGroup $travelGroup, TranslatorInterface $translator)
+    {
+        $this->denyAccessUnlessGranted(TravelGroupVoter::TRAVEL_GROUP_MODERATE, $travelGroup);
 
-            $message = $translator->trans('edit.success.edited', [], 'travel_group');
-            $this->displaySuccess($message);
-
-            return $this->redirectToRoute('delegation_view', ['delegation' => $travelGroup->getDelegation()->getId()]);
-        }
-
-        return $this->render('travel_group/edit.html.twig', ['form' => $form->createView()]);
+        return $this->reviewReviewableContent($request, $translator, $travelGroup, 'travel_group');
     }
 
     /**

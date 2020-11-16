@@ -34,7 +34,7 @@ class BaseController extends AbstractController
      * @param string $message the translation message to display
      * @param string $link
      */
-    protected function displayError($message, $link = null)
+    protected function displayError(string $message, string $link = null)
     {
         $this->displayFlash('danger', $message, $link);
     }
@@ -43,7 +43,7 @@ class BaseController extends AbstractController
      * @param string $message the translation message to display
      * @param string $link
      */
-    protected function displaySuccess($message, $link = null)
+    protected function displaySuccess(string $message, string $link = null)
     {
         $this->displayFlash('success', $message, $link);
     }
@@ -52,7 +52,7 @@ class BaseController extends AbstractController
      * @param string $message the translation message to display
      * @param string $link
      */
-    protected function displayDanger($message, $link = null)
+    protected function displayDanger(string $message, string $link = null)
     {
         $this->displayFlash('danger', $message, $link);
     }
@@ -61,7 +61,16 @@ class BaseController extends AbstractController
      * @param string $message the translation message to display
      * @param string $link
      */
-    protected function displayInfo($message, $link = null)
+    protected function displayWarning(string $message, string $link = null)
+    {
+        $this->displayFlash('warning', $message, $link);
+    }
+
+    /**
+     * @param string $message the translation message to display
+     * @param string $link
+     */
+    protected function displayInfo(string $message, string $link = null)
     {
         $this->displayFlash('info', $message, $link);
     }
@@ -76,6 +85,6 @@ class BaseController extends AbstractController
         if (null !== $link) {
             $message = '<a href="'.$link.'">'.$message.'</a>';
         }
-        $this->get('session')->getFlashBag()->set($type, $message);
+        $this->get('session')->getFlashBag()->add($type, $message);
     }
 }
