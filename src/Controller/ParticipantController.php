@@ -22,8 +22,11 @@ use App\Form\Traits\EditParticipantPersonalDataType;
 use App\Security\Voter\DelegationVoter;
 use App\Security\Voter\ParticipantVoter;
 use App\Service\Interfaces\ExportServiceInterface;
+use App\Service\Interfaces\FileServiceInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -39,7 +42,7 @@ class ParticipantController extends BaseDoctrineController
      *
      * @return Response
      */
-    public function newAction(Request $request, Delegation $delegation, int $role, TranslatorInterface $translator)
+    public function newAction(Request $request, Delegation $delegation, int $role, TranslatorInterface $translator, FileServiceInterface $fileService)
     {
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_EDIT, $delegation);
 
@@ -60,6 +63,7 @@ class ParticipantController extends BaseDoctrineController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->fastSave($participant);
+            $this->processImages($form, $participant, $translator, $fileService);
 
             $roleTranslation = ParticipantRole::getTranslationForValue($role, $translator);
             $message = $translator->trans('new.success.created', ['%role%' => $roleTranslation], 'participant');
@@ -71,6 +75,30 @@ class ParticipantController extends BaseDoctrineController
         return $this->render('participant/new.html.twig', ['form' => $form->createView(), 'role' => $role]);
     }
 
+    private function processImages(FormInterface $form, Participant $participant, TranslatorInterface $translator, FileServiceInterface $fileService)
+    {
+        dump($form->get('portraitFile'));
+        $file = $form->get('portraitFile')->getData();
+        if ($file instanceof UploadedFile) {
+            if (!$fileService->uploadPortrait($participant, $file)) {
+                $message = $translator->trans('new.error.portrait_upload_failed', [], 'participant');
+                $this->displayError($message);
+            }
+        }
+
+        $this->fastSave($participant);
+    }
+
+    /**
+     * @Route("/image/{participant}/{type}/{filename}", name="participant_image")
+     *
+     * @return Response
+     */
+    public function imageAction(Participant $participant, string $type, string $filename, FileServiceInterface $fileService)
+    {
+        return $fileService->download($participant, $type, $filename);
+    }
+
     use ReviewableContentEditTrait;
 
     /**
@@ -78,9 +106,15 @@ class ParticipantController extends BaseDoctrineController
      *
      * @return Response
      */
-    public function editPersonalDataAction(Request $request, Participant $participant, TranslatorInterface $translator)
+    public function editPersonalDataAction(Request $request, Participant $participant, TranslatorInterface $translator, FileServiceInterface $fileService)
     {
-        return $this->editReviewableParticipantContent($request, $translator, $participant, 'personal_data');
+        $validator = function (FormInterface $form) use ($participant, $translator, $fileService) {
+            $this->processImages($form, $participant, $translator, $fileService);
+
+            return true;
+        };
+
+        return $this->editReviewableParticipantContent($request, $translator, $participant, 'personal_data', $validator);
     }
 
     /**
@@ -148,7 +182,7 @@ class ParticipantController extends BaseDoctrineController
      *
      * @return Response
      */
-    public function editAction(Request $request, Participant $participant, TranslatorInterface $translator)
+    public function editAction(Request $request, Participant $participant, TranslatorInterface $translator, FileServiceInterface $fileService)
     {
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_MODERATE, $participant);
 
@@ -163,6 +197,7 @@ class ParticipantController extends BaseDoctrineController
             });
             if ($this->canRoleBeChosen($participant->getRole(), $delegation, $otherParticipants)) {
                 $this->fastSave($participant);
+                $this->processImages($form->get('personalData'), $participant, $translator, $fileService);
 
                 $roleTranslation = ParticipantRole::getTranslationForValue($participant->getRole(), $translator);
                 $message = $translator->trans('edit.success.edited', ['%role%' => $roleTranslation], 'participant');
@@ -195,20 +230,18 @@ class ParticipantController extends BaseDoctrineController
             ++$sameRoleCount;
         }
 
-        /*
-         * leader if only single leader count
-         * leader & deputy leader if two leaders
-         * contestants if quota not exceeded
-         * guest if quota not exceeded
-         */
-        if (ParticipantRole::LEADER === $role) {
-            $result = 0 === $sameRoleCount;
-        } elseif (ParticipantRole::DEPUTY_LEADER === $role) {
-            $result = 0 === $sameRoleCount && $delegation->getLeaderCount() > 1;
-        } elseif (ParticipantRole::CONTESTANT === $role) {
-            $result = $delegation->getContestantCount() > $sameRoleCount;
-        } else {
-            $result = $delegation->getGuestCount() > $sameRoleCount;
+        switch ($role) {
+            case ParticipantRole::LEADER:
+                $result = 0 === $sameRoleCount;
+                break;
+            case ParticipantRole::DEPUTY_LEADER:
+                $result = 0 === $sameRoleCount && $delegation->getLeaderCount() > 1; // only allow deputy leader if two leaders chosen
+                break;
+            case ParticipantRole::CONTESTANT:
+                $result = $delegation->getContestantCount() > $sameRoleCount;
+                break;
+            default:
+                $result = $delegation->getGuestCount() > $sameRoleCount;
         }
 
         if (!$result) {

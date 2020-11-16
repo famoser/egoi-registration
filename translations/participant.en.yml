@@ -4,6 +4,8 @@ new:
   submit: 'Add'
   success:
     created: '%role% created.'
+  error:
+    portrait_upload_failed: 'Portrait upload failed.'
 
 edit:
   title: 'Edit %role%'

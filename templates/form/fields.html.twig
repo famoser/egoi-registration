@@ -57,16 +57,21 @@
     <hr/>
     <div class="row">
         <div class="col">
-            {{ form_row(form.portrait) }}
+            {{ form_row(form.portraitFile) }}
         </div>
         <div class="col">
             {{ form_row(form.nameOnDocuments) }}
         </div>
+        {% if "portrait_url" in form.portraitFile.vars.attr|keys %}
+            <div class="col-12">
+                <img class="w-50" src="{{ form.portraitFile.vars.attr["portrait_url"] }}" alt="portrait">
+            </div>
+        {% endif %}
     </div>
     <hr/>
     <div class="row">
         <div class="col">
-            {{ form_row(form.papers) }}
+            {{ form_row(form.papersFile) }}
         </div>
         <div class="col">
         </div>
@@ -74,7 +79,7 @@
     <hr/>
     <div class="row">
         <div class="col">
-            {{ form_row(form.consent) }}
+            {{ form_row(form.consentFile) }}
         </div>
         <div class="col">
         </div>

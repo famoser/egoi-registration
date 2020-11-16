@@ -35,6 +35,11 @@ $(document)
       dateFormat: 'Z'
     })
 
+    $('.custom-file-input').on('change', function (event) {
+      const fileName = event.target.files[0].name
+      $(this).next('.custom-file-label').html(fileName)
+    })
+
     // force reload on user browser button navigation
     $(window)
       .on('popstate', () => {
