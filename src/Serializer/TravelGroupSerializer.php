@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -31,6 +31,8 @@ class TravelGroupSerializer implements ContextAwareNormalizerInterface
 
     /**
      * @param TravelGroup $travelGroup
+     *
+     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
     public function normalize($travelGroup, string $format = null, array $context = [])
     {

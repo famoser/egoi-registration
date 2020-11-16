@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -11,7 +11,7 @@
 
 namespace App\Controller;
 
-use App\Controller\Base\BaseFormController;
+use App\Controller\Base\BaseDoctrineController;
 use App\Entity\Delegation;
 use App\Entity\User;
 use App\Form\User\RegisterType;
@@ -35,12 +35,12 @@ use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class SecurityController extends BaseFormController
+class SecurityController extends BaseDoctrineController
 {
     /**
      * @Route("/login", name="login")
      */
-    public function login(AuthenticationUtils $authenticationUtils, LoggerInterface $logger): Response
+    public function login(AuthenticationUtils $authenticationUtils, LoggerInterface $logger, TranslatorInterface $translator): Response
     {
         if ($this->getUser()) {
             return $this->redirectToRoute('index');
@@ -49,13 +49,13 @@ class SecurityController extends BaseFormController
         // show last auth error
         $error = $authenticationUtils->getLastAuthenticationError();
         if ($error instanceof DisabledException) {
-            $this->displayError($this->getTranslator()->trans('login.errors.account_disabled', [], 'security'));
+            $this->displayError($translator->trans('login.errors.account_disabled', [], 'security'));
         } elseif ($error instanceof BadCredentialsException) {
-            $this->displayError($this->getTranslator()->trans('login.errors.password_wrong', [], 'security'));
+            $this->displayError($translator->trans('login.errors.password_wrong', [], 'security'));
         } elseif ($error instanceof UsernameNotFoundException) {
-            $this->displayError($this->getTranslator()->trans('login.errors.email_not_found', [], 'security'));
+            $this->displayError($translator->trans('login.errors.email_not_found', [], 'security'));
         } elseif (null !== $error) {
-            $this->displayError($this->getTranslator()->trans('login.errors.login_failed', [], 'security'));
+            $this->displayError($translator->trans('login.errors.login_failed', [], 'security'));
             $logger->error('login failed', ['exception' => $error]);
         }
 

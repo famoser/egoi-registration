@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -40,22 +40,14 @@ class UserController extends BaseDoctrineController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $admins = $this->getDoctrine()->getRepository(User::class)->findBy(['isAdmin' => true]);
-            if (1 === count($admins) && $admins[0] === $this->getUser() && $admins[0] === $user) {
-                $message = $translator->trans('remove.error.can_not_remove_last_admin', [], 'user');
-                $this->displayError($message);
-            } else {
-                $this->fastRemove($user);
+            $delegation = $user->getDelegation();
 
-                $message = $translator->trans('remove.success.removed', [], 'user');
-                $this->displaySuccess($message);
-            }
+            $this->fastRemove($user);
 
-            if ($this->getUser()->getDelegation()) {
-                return $this->redirectToRoute('delegation_users', ['delegation' => $user->getDelegation()->getId()]);
-            }
+            $message = $translator->trans('remove.success.removed', [], 'user');
+            $this->displaySuccess($message);
 
-            return $this->redirectToRoute('user_index');
+            return $this->redirectToRoute('delegation_users', ['delegation' => $delegation->getId()]);
         }
 
         return $this->render('user/remove.html.twig', ['form' => $form->createView()]);
