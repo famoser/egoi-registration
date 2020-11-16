@@ -65,6 +65,8 @@
 {% endblock %}
 
 {% block edit_participant_personal_data_widget %}
+    {% import _self as own_macros %}
+
     <div class="row">
         <div class="col">
             {{ form_row(form.givenName) }}
@@ -133,9 +135,13 @@
         {% endif %}
     </div>
     <hr/>
+
+    {{ own_macros.form_row_buttons(form) }}
 {% endblock %}
 
 {% block edit_participant_immigration_widget %}
+    {% import _self as own_macros %}
+
     <div class="row">
         <div class="col">
             {{ form_row(form.nationality) }}
@@ -168,9 +174,13 @@
             {{ form_row(form.passportValidityTo) }}
         </div>
     </div>
+
+    {{ own_macros.form_row_buttons(form) }}
 {% endblock %}
 
 {% block edit_participant_event_presence_widget %}
+    {% import _self as own_macros %}
+
     <div class="row">
         <div class="col">
             {{ form_row(form.phone) }}
@@ -209,10 +219,13 @@
             {{ form_row(form.allergies) }}
         </div>
     </div>
+
+    {{ own_macros.form_row_buttons(form) }}
 {% endblock %}
 
-
 {% block edit_travel_group_widget %}
+    {% import _self as own_macros %}
+
     <div class="row">
         <div class="col">
             {{ form_row(form.participants) }}
@@ -241,4 +254,6 @@
             {{ form_row(form.description) }}
         </div>
     </div>
+
+    {{ own_macros.form_row_buttons(form) }}
 {% endblock %}

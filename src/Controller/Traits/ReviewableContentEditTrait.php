@@ -80,6 +80,16 @@ trait ReviewableContentEditTrait
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
+    private function reviewParticipantContent(Request $request, TranslatorInterface $translator, Participant $participant, string $editablePart)
+    {
+        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_MODERATE, $participant);
+
+        return $this->reviewContentBase($request, $translator, $participant, 'participant', $editablePart);
+    }
+
+    /**
+     * assumes that $editablePart follows some conventions, then generates & processes form.
+     */
     private function editReviewableContentBase(Request $request, TranslatorInterface $translator, Delegation $delegation, BaseEntity $entity, string $collection, string $editablePart, ?callable $validation = null): Response
     {
         list($templatePrefix, $translationSaveNameKey, $collection, $getter, $setter, $formType) = $this->applyConventions($editablePart, $collection);

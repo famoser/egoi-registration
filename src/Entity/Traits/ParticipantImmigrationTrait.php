@@ -161,7 +161,7 @@ trait ParticipantImmigrationTrait
         $this->immigrationReviewProgress = $immigrationReviewProgress;
     }
 
-    public function isImmigrationDataComplete()
+    public function isImmigrationComplete()
     {
         return !empty($this->nationality) &&
             !empty($this->passportNumber) &&

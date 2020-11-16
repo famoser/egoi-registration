@@ -192,7 +192,7 @@ class Delegation extends BaseEntity
                 return $participant->getImmigrationReviewProgress();
             },
             function (Participant $participant) {
-                return $participant->isImmigrationDataComplete();
+                return $participant->isImmigrationComplete();
             }
         );
         $summary['immigration'] = $chapter;

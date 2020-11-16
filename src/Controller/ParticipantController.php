@@ -157,6 +157,16 @@ class ParticipantController extends BaseDoctrineController
     }
 
     /**
+     * @Route("/review_personal_data/{participant}", name="participant_review_personal_data")
+     *
+     * @return Response
+     */
+    public function reviewPersonalDataAction(Request $request, Participant $participant, TranslatorInterface $translator)
+    {
+        return $this->reviewParticipantContent($request, $translator, $participant, 'personal_data');
+    }
+
+    /**
      * @Route("/edit_immigration/{participant}", name="participant_edit_immigration")
      *
      * @return Response
@@ -167,6 +177,16 @@ class ParticipantController extends BaseDoctrineController
     }
 
     /**
+     * @Route("/review_immigration/{participant}", name="participant_review_immigration")
+     *
+     * @return Response
+     */
+    public function reviewImmigrationAction(Request $request, Participant $participant, TranslatorInterface $translator)
+    {
+        return $this->reviewParticipantContent($request, $translator, $participant, 'immigration');
+    }
+
+    /**
      * @Route("/edit_event_presence/{participant}", name="participant_edit_event_presence")
      *
      * @return Response
@@ -174,6 +194,16 @@ class ParticipantController extends BaseDoctrineController
     public function editEventPresenceAction(Request $request, Participant $participant, TranslatorInterface $translator)
     {
         return $this->editReviewableParticipantContent($request, $translator, $participant, 'event_presence');
+    }
+
+    /**
+     * @Route("/review_event_presence/{participant}", name="participant_review_event_presence")
+     *
+     * @return Response
+     */
+    public function reviewEventPresenceAction(Request $request, Participant $participant, TranslatorInterface $translator)
+    {
+        return $this->reviewParticipantContent($request, $translator, $participant, 'event_presence');
     }
 
     /**
