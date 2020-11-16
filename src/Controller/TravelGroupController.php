@@ -133,7 +133,7 @@ class TravelGroupController extends BaseDoctrineController
     {
         $this->denyAccessUnlessGranted(TravelGroupVoter::TRAVEL_GROUP_MODERATE);
 
-        $travelGroups = $this->getDoctrine()->getRepository(TravelGroup::class)->findBy([], ['familyName' => 'ASC']);
+        $travelGroups = $this->getDoctrine()->getRepository(TravelGroup::class)->findBy([], ['arrivalOrDeparture' => 'ASC', 'dateTime' => 'ASC']);
 
         return $exportService->exportToCsv($travelGroups, 'travel-group-export', 'travel_group');
     }

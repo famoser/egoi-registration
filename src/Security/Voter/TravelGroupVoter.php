@@ -32,6 +32,10 @@ class TravelGroupVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
+        if (self::TRAVEL_GROUP_MODERATE === $attribute) {
+            return true;
+        }
+
         return self::TRAVEL_GROUP_EDIT === $attribute && $subject instanceof TravelGroup;
     }
 

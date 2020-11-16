@@ -32,7 +32,7 @@ class DelegationVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        if (null === $subject && self::DELEGATION_MODERATE === $attribute) {
+        if (self::DELEGATION_MODERATE === $attribute) {
             return true;
         }
 
@@ -64,11 +64,7 @@ class DelegationVoter extends Voter
                 return true;
             }
 
-            if (self::DELEGATION_MODERATE === $attribute) {
-                return $userIsAdmin;
-            }
-
-            return $user->getDelegation() === $subject;
+            return in_array($attribute, [self::DELEGATION_VIEW, self::DELEGATION_EDIT]) && $user->getDelegation() === $subject;
         }
 
         throw new \LogicException('Unknown user payload '.serialize($user).'!');
