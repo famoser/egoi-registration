@@ -32,23 +32,17 @@ export:
 edit_personal_data:
   title: 'Personal data'
   description: 'Edit name, phone & email'
-  submit: 'Save personal data'
-  success:
-    saved: 'Saved personal data'
+  save_name: 'personal data'
 
 edit_immigration:
   title: 'Immigration'
   description: 'Information necessary for entering the country.'
-  submit: 'Save immigration details'
-  success:
-    saved: 'Saved immigration details'
+  save_name: 'immigration details'
 
 edit_event_presence:
   title: 'Onsite'
   description: 'Onsite details we need.'
-  submit: 'Save onsite details'
-  success:
-    saved: 'Saved onsite details'
+  save_name: 'onsite details'
 
 file_archive_download:
   portrait: 'Download portraits'

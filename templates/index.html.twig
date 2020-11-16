@@ -6,6 +6,32 @@
 {% trans_default_domain "index" %}
 {% set fluid = true %}
 
+{% macro get_badge(isComplete, reviewProgress, link, content) %}
+    {% if reviewProgress == 2 %} {# reviewed #}
+        <a class="badge badge-success" href="{{ link }}">{{ content }}</a>
+    {% elseif isComplete %}
+        <a class="badge badge-warning" href="{{ link }}">{{ content }}</a>
+    {% else %}
+        <a class="badge badge-danger" href="{{ link }}">{{ content }}</a>
+    {% endif %}
+{% endmacro %}
+
+{% macro get_review_progress(summary) %}
+    {% if summary["data_missing"] > 0 %}
+        <span class="badge badge-danger">{{ summary["data_missing"] }}</span>
+    {% endif %}
+
+    {% if summary["pending_review"] > 0 %}
+        <span class="badge badge-warning">{{ summary["pending_review"] }}</span>
+    {% endif %}
+
+    {% if summary["reviewed"] > 0 %}
+        <span class="badge badge-success">{{ summary["reviewed"] }}</span>
+    {% endif %}
+{% endmacro %}
+
+{% import _self as own_macros %}
+
 {% block content %}
     <div class="tile">
         <h1>{{ "index.title"|trans }}</h1>
@@ -30,13 +56,25 @@
         {% else %}
             <table class="table table-striped">
                 <thead>
-                <tr>
+                <tr class="bg-light">
                     <th>{{ "entity.name"|trans({}, "entity_delegation") }}</th>
-                    <th>{{ "index.delegation_overview.registration_url"|trans() }}
+                    <th>{{ "registration_hash"|trans({}, "entity_delegation") }}
                         <a class="text-sm text-warning"
                            href="{{ path("delegation_registration_regenerate_all") }}">{{ "registration_regenerate_all.action"|trans({}, "delegation") }}</a>
                     </th>
-                    <td class="minimal-width"></td>
+                    <th></th>
+                    <th class="border-left" colspan="3">{{ "entity.plural"|trans({}, "entity_participant") }}</th>
+                    <th class="border-left" colspan="2">{{ "entity.plural"|trans({}, "entity_travel_group") }}</th>
+                    <td class="border-left minimal-width"></td>
+                </tr>
+                <tr>
+                    <th colspan="3"></th>
+                    <th class="border-left">{{ "trait.name"|trans({}, "trait_participant_personal_data") }}</th>
+                    <th>{{ "trait.name"|trans({}, "trait_participant_immigration") }}</th>
+                    <th>{{ "trait.name"|trans({}, "trait_participant_event_presence") }}</th>
+                    <th class="border-left">{{ 0|transArrivalOrDeparture }}</th>
+                    <th>{{ 1|transArrivalOrDeparture }}</th>
+                    <td class="border-left"></td>
                 </tr>
                 </thead>
                 <tbody>
@@ -48,14 +86,36 @@
                         <td>
                             <a target="_blank"
                                href="{{ path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash}) }}">
-                                {{ absolute_url(path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash})) }}
+                                {{ delegation.registrationHash }}
                             </a>
                             <a class="text-sm text-warning"
                                href="{{ path("delegation_registration_regenerate", {"delegation": delegation.id}) }}">{{ "registration_regenerate.action"|trans({}, "delegation") }}</a>
+                            <br/>
+                            {{ delegation.users|map(p => p.email)|join(", ") }}
                         </td>
                         <td>
+                            {{ own_macros.get_badge(delegation.attendanceComplete, delegation.attendanceReviewProgress, path("delegation_review_attendance", {"delegation": delegation.id}), "edit_attendance.title"|trans({}, "delegation")) }}
+                            {{ own_macros.get_badge(delegation.contributionComplete, delegation.contributionReviewProgress, path("delegation_review_contribution", {"delegation": delegation.id}), "edit_contribution.title"|trans({}, "delegation")) }}
+                        </td>
+                        <td class="border-left">
+                            {{ own_macros.get_review_progress(participant_review_progresses[delegation.id]["personal_data"]) }}
+                        </td>
+                        <td>
+                            {{ own_macros.get_review_progress(participant_review_progresses[delegation.id]["immigration"]) }}
+                        </td>
+                        <td>
+                            {{ own_macros.get_review_progress(participant_review_progresses[delegation.id]["onsite"]) }}
+                        </td>
+                        <td class="border-left">
+                            {{ own_macros.get_review_progress(travel_group_review_progresses[delegation.id]["arrival"]) }}
+                        </td>
+                        <td>
+                            {{ own_macros.get_review_progress(travel_group_review_progresses[delegation.id]["departure"]) }}
+                        </td>
+                        <td class="border-left">
                             <span class="btn-group">
-                                <a class="btn btn-link" href="{{ path("delegation_view", {"delegation": delegation.id}) }}">
+                                <a class="btn btn-link"
+                                   href="{{ path("delegation_view", {"delegation": delegation.id}) }}">
                                     {{ "index.impersonate"|trans }}
                                 </a>
                                 <a class="btn btn-outline-secondary"
@@ -96,7 +156,7 @@
     </div>
     {% for delegation in delegations %}
         {% if delegation.users|length > 0 or delegation.participants|length > 0 or delegation.travelGroups|length > 0 %}
-            <div class="tile mt-5">
+            <div class="tile ml-3 mt-5 mr-3">
             <h2>{{ delegation.name }}</h2>
 
             <h3 class="mt-4">{{ "entity.plural"|trans({}, "entity_participant") }}</h3>

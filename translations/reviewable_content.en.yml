@@ -1,0 +1,8 @@
+edit:
+  submit: 'Save'
+  submit_and_lock: 'Save and lock editing'
+  submit_and_unlock: 'Save and unlock editing'
+  success:
+    saved: 'Saved %save_name%'
+    saved_and_locked: 'Saved & locked %save_name% from further editing'
+    saved_and_unlocked: 'Saved & unlocked %save_name% for further editing'

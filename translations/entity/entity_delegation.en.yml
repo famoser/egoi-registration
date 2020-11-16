@@ -5,3 +5,4 @@ entity:
 name: "Name"
 comma_separated_delegation_names: "Delegations (comma separated)"
 comma_separated_delegation_names_help: "Duplicate names are eliminated automatically. The delegation name will be assumed to be identical to the nationality of the participants to prefill form values. "
+registration_hash: 'registration secret'

@@ -60,6 +60,16 @@ trait ReviewableContentEditTrait
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
+    private function reviewDelegationContent(Request $request, TranslatorInterface $translator, Delegation $delegation, string $editablePart)
+    {
+        $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE, $delegation);
+
+        return $this->reviewContentBase($request, $translator, $delegation, 'delegation', $editablePart);
+    }
+
+    /**
+     * assumes that $editablePart follows some conventions, then generates & processes form.
+     */
     private function editReviewableParticipantContent(Request $request, TranslatorInterface $translator, Participant $participant, string $editablePart, ?callable $validation = null)
     {
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
@@ -70,7 +80,73 @@ trait ReviewableContentEditTrait
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
-    private function editReviewableContentBase(Request $request, TranslatorInterface $translator, Delegation $delegation, BaseEntity $entity, string $collection, string $editablePart, ?callable $validation): Response
+    private function editReviewableContentBase(Request $request, TranslatorInterface $translator, Delegation $delegation, BaseEntity $entity, string $collection, string $editablePart, ?callable $validation = null): Response
+    {
+        list($templatePrefix, $translationSaveNameKey, $collection, $getter, $setter, $formType) = $this->applyConventions($editablePart, $collection);
+        $saveName = $translator->trans($translationSaveNameKey, [], $collection);
+
+        $readOnly = ReviewProgress::REVIEWED_AND_LOCKED === $entity->$getter();
+        $form = $this->createForm($formType, $entity, ['disabled' => $readOnly]);
+        if (!$readOnly) {
+            $form->add('submit', SubmitType::class, ['translation_domain' => 'reviewable_content', 'label' => 'edit.submit']);
+        }
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid() && !$readOnly) {
+            $entity->$setter(ReviewProgress::EDITED);
+
+            if (is_callable($validation) && $validation($form)) {
+                $this->fastSave($entity);
+
+                $message = $translator->trans('edit.success.saved', ['%save_name%' => $saveName], 'reviewable_content');
+                $this->displaySuccess($message);
+
+                return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
+            }
+        }
+
+        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView()]);
+    }
+
+    /**
+     * assumes that $editablePart follows some conventions, then generates & processes form.
+     */
+    private function reviewContentBase(Request $request, TranslatorInterface $translator, BaseEntity $entity, string $collection, string $editablePart): Response
+    {
+        list($templatePrefix, $translationSaveNameKey, $collection, $getter, $setter, $formType) = $this->applyConventions($editablePart, $collection);
+        $saveName = $translator->trans($translationSaveNameKey, [], $collection);
+
+        $form = $this->createForm($formType, $entity);
+        $form->add('submit', SubmitType::class, ['translation_domain' => 'reviewable_content', 'label' => 'edit.submit']);
+        if (ReviewProgress::REVIEWED_AND_LOCKED !== $entity->$getter()) {
+            $form->add('submit_and_lock', SubmitType::class, ['translation_domain' => 'reviewable_content', 'label' => 'edit.submit_and_lock']);
+        } else {
+            $form->add('submit_and_unlock', SubmitType::class, ['translation_domain' => 'reviewable_content', 'label' => 'edit.submit_and_unlock']);
+        }
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->has('submit_and_lock') && $form->get('submit_and_lock')->isClicked()) {
+                $entity->$setter(ReviewProgress::REVIEWED_AND_LOCKED);
+                $message = $translator->trans('edit.success.saved_and_locked', ['%save_name%' => $saveName], 'reviewable_content');
+            } elseif ($form->has('submit_and_unlock') && $form->get('submit_and_unlock')->isClicked()) {
+                $entity->$setter(ReviewProgress::EDITED);
+                $message = $translator->trans('edit.success.saved_and_unlocked', ['%save_name%' => $saveName], 'reviewable_content');
+            } else {
+                $message = $translator->trans('edit.success.saved', ['%save_name%' => $saveName], 'reviewable_content');
+            }
+
+            $this->displaySuccess($message);
+            $this->fastSave($entity);
+
+            return $this->redirectToRoute('index');
+        }
+
+        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView()]);
+    }
+
+    private function applyConventions(string $editablePart, string $collection): array
     {
         // normalizers
         $editablePart = strtolower($editablePart);
@@ -83,26 +159,9 @@ trait ReviewableContentEditTrait
         $getter = 'get'.$editablePartPascalCase.'ReviewProgress';
         $setter = 'set'.$editablePartPascalCase.'ReviewProgress';
         $formType = 'App\Form\Traits\Edit'.$collectionFirstCharacterUppercase.$editablePartPascalCase.'Type';
+        $translationSaveNameKey = $templatePrefix.'.save_name';
         // end CONVENTIONS TO FOLLOW
 
-        $readOnly = ReviewProgress::REVIEWED_AND_LOCKED === $entity->$getter();
-        $form = $this->createForm($formType, $entity, ['disabled' => $readOnly]);
-        $form->add('submit', SubmitType::class, ['translation_domain' => $collection, 'label' => $templatePrefix.'.submit']);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid() && !$readOnly) {
-            $entity->$setter(ReviewProgress::EDITED);
-
-            if (is_callable($validation) && $validation($form)) {
-                $this->fastSave($entity);
-
-                $message = $translator->trans($templatePrefix.'.success.saved', [], $collection);
-                $this->displaySuccess($message);
-
-                return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
-            }
-        }
-
-        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'readonly' => $readOnly]);
+        return [$templatePrefix, $translationSaveNameKey, $collection, $getter, $setter, $formType];
     }
 }

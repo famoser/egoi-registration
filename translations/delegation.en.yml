@@ -57,22 +57,11 @@ view:
 edit_attendance:
   title: 'Attendance'
   description: 'Specify how many contestants, leaders and guests will attend and if onsite or online.'
-  submit: 'Save attendance'
-  success:
-    saved: 'Saved attendance'
+  save_name: 'attendance'
   error:
     too_few_spaces: 'There are fewer places selected than already used. Please remove surplus participants first.'
 
 edit_contribution:
   title: 'Translations'
   description: 'Translations of task statements your delegation can contribute.'
-  submit: 'Save'
-  success:
-    saved: 'Saved'
-
-edit_travel:
-  title: 'Travel'
-  description: 'How your delegation will arrive to the event.'
-  submit: 'Save travel details'
-  success:
-    saved: 'Saved travel details'
+  save_name: 'translations'

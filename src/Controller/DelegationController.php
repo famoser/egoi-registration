@@ -140,6 +140,26 @@ class DelegationController extends BaseDoctrineController
     }
 
     /**
+     * @Route("/review_attendance/{delegation}", name="delegation_review_attendance")
+     *
+     * @return Response
+     */
+    public function reviewAttendanceAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
+    {
+        return $this->reviewDelegationContent($request, $translator, $delegation, 'attendance');
+    }
+
+    /**
+     * @Route("/review_contribution/{delegation}", name="delegation_review_contribution")
+     *
+     * @return Response
+     */
+    public function reviewContributionAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
+    {
+        return $this->reviewDelegationContent($request, $translator, $delegation, 'contribution');
+    }
+
+    /**
      * @Route("/registration_regenerate/{delegation}/", name="delegation_registration_regenerate")
      *
      * @return Response

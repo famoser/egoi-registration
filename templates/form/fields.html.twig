@@ -9,7 +9,41 @@
     </div>
 {% endblock %}
 
+{% macro form_row_buttons(form) %}
+    <div class="row mt-4">
+        <div class="col">
+            {% if form.submit is defined %}
+                {% if form.submit_and_lock is defined or form.submit_and_unlock is defined %}
+                    {{ form_widget(form.submit, {'attr': {'class': 'btn btn-outline-primary'}}) }}
+                {% else %}
+                    {{ form_widget(form.submit) }}
+                {% endif %}
+            {% endif %}
+            {% if form.submit_and_lock is defined %}
+                {{ form_widget(form.submit_and_lock, {'attr': {'class': 'btn btn-success'}}) }}
+            {% endif %}
+            {% if form.submit_and_unlock is defined %}
+                {{ form_widget(form.submit_and_unlock, {'attr': {'class': 'btn btn-warning'}}) }}
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% block edit_delegation_contribution_widget %}
+    {% import _self as own_macros %}
+
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.translations) }}
+        </div>
+    </div>
+
+    {{ own_macros.form_row_buttons(form) }}
+{% endblock %}
+
 {% block edit_delegation_attendance_widget %}
+    {% import _self as own_macros %}
+
     <div class="row">
         <div class="col">
             {{ form_row(form.contestantCount) }}
@@ -26,6 +60,8 @@
             {{ form_row(form.participationMode) }}
         </div>
     </div>
+
+    {{ own_macros.form_row_buttons(form) }}
 {% endblock %}
 
 {% block edit_participant_personal_data_widget %}
