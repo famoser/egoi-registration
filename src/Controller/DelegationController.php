@@ -20,6 +20,7 @@ use App\Form\Delegation\EditDelegationType;
 use App\Form\Delegation\RemoveDelegationType;
 use App\Security\Voter\DelegationVoter;
 use App\Service\Interfaces\ExportServiceInterface;
+use App\Service\Interfaces\FileServiceInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -182,7 +183,7 @@ class DelegationController extends BaseDoctrineController
      *
      * @return Response
      */
-    public function removeAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
+    public function removeAction(Request $request, Delegation $delegation, TranslatorInterface $translator, FileServiceInterface $fileService)
     {
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE, $delegation);
 
@@ -194,6 +195,7 @@ class DelegationController extends BaseDoctrineController
             $toRemove = [$delegation];
             foreach ($delegation->getParticipants() as $participant) {
                 $toRemove[] = $participant;
+                $fileService->removeFiles($participant);
             }
             foreach ($delegation->getUsers() as $user) {
                 $toRemove[] = $user;

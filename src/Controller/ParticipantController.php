@@ -181,7 +181,7 @@ class ParticipantController extends BaseDoctrineController
      *
      * @return Response
      */
-    public function removeAction(Request $request, Participant $participant, TranslatorInterface $translator)
+    public function removeAction(Request $request, Participant $participant, TranslatorInterface $translator, FileServiceInterface $fileService)
     {
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
 
@@ -190,6 +190,7 @@ class ParticipantController extends BaseDoctrineController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $fileService->removeFiles($participant);
             $this->fastRemove($participant);
 
             $roleTranslation = ParticipantRole::getTranslationForValue($participant->getRole(), $translator);
