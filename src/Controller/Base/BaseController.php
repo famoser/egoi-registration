@@ -30,57 +30,32 @@ class BaseController extends AbstractController
         return parent::getSubscribedServices() + ['session' => '?'.SessionInterface::class];
     }
 
-    /**
-     * @param string $message the translation message to display
-     * @param string $link
-     */
     protected function displayError(string $message, string $link = null)
     {
         $this->displayFlash('danger', $message, $link);
     }
 
-    /**
-     * @param string $message the translation message to display
-     * @param string $link
-     */
     protected function displaySuccess(string $message, string $link = null)
     {
         $this->displayFlash('success', $message, $link);
     }
 
-    /**
-     * @param string $message the translation message to display
-     * @param string $link
-     */
     protected function displayDanger(string $message, string $link = null)
     {
         $this->displayFlash('danger', $message, $link);
     }
 
-    /**
-     * @param string $message the translation message to display
-     * @param string $link
-     */
     protected function displayWarning(string $message, string $link = null)
     {
         $this->displayFlash('warning', $message, $link);
     }
 
-    /**
-     * @param string $message the translation message to display
-     * @param string $link
-     */
     protected function displayInfo(string $message, string $link = null)
     {
         $this->displayFlash('info', $message, $link);
     }
 
-    /**
-     * @param $type
-     * @param $message
-     * @param string $link
-     */
-    private function displayFlash($type, $message, $link = null)
+    private function displayFlash(string $type, string $message, string $link = null)
     {
         if (null !== $link) {
             $message = '<a href="'.$link.'">'.$message.'</a>';
