@@ -53,4 +53,4 @@ edit_event_presence:
 file_archive_download:
   portrait: 'Download portraits'
   papers: 'Download papers'
-  consent: 'Download conset'
+  consent: 'Download consent'

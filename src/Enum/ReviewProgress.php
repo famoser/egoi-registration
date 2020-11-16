@@ -17,6 +17,5 @@ class ReviewProgress extends BaseEnum
 {
     const NOT_EDITED = 0;
     const EDITED = 1;
-    const REVIEWED = 2;
-    const REVIEWED_AND_LOCKED = 3;
+    const REVIEWED_AND_LOCKED = 2;
 }

@@ -11,115 +11,132 @@
         <h1>{{ "index.title"|trans }}</h1>
         <p>{{ "index.description"|trans }}</p>
 
+        <p class="p-2 jumbotron mb-3 text-right text-secondary">
+            {{ "index.legend.legend"|trans }}:
+            <span class="badge badge-danger">{{ "index.legend.data_missing"|trans }}</span>
+            <span class="badge badge-warning">{{ "index.legend.data_complete"|trans }}</span>
+            <span class="badge badge-success">{{ "index.legend.reviewed_and_locked"|trans }}</span>
+        </p>
+
         <p>
             <a class="btn btn-outline-primary"
                href="{{ path("delegation_new") }}">{{ "new.title"|trans({}, "delegation") }}</a>
-            <span class="btn-group">
-                <a class="btn btn-outline-secondary"
-                   href="{{ path("delegation_export") }}">{{ "export.title"|trans({}, "delegation") }}</a>
-                <a class="btn btn-outline-secondary"
-                   href="{{ path("participant_export") }}">{{ "export.title"|trans({}, "participant") }}</a>
-                <a class="btn btn-outline-secondary"
-                   href="{{ path("travel_group_export") }}">{{ "export.title"|trans({}, "travel_group") }}</a>
-            </span>
-            <span class="btn-group">
-                <a class="btn btn-outline-secondary"
-                   href="{{ path("participant_download_archive", {"type": "portrait"}) }}">{{ "file_archive_download.portrait"|trans({}, "participant") }}</a>
-                <a class="btn btn-outline-secondary"
-                   href="{{ path("participant_download_archive", {"type": "papers"}) }}">{{ "file_archive_download.papers"|trans({}, "participant") }}</a>
-                <a class="btn btn-outline-secondary"
-                   href="{{ path("participant_download_archive", {"type": "consent"}) }}">{{ "file_archive_download.consent"|trans({}, "participant") }}</a>
-            </span>
         </p>
 
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>{{ "entity.name"|trans({}, "entity_delegation") }}</th>
-                <th>{{ "index.delegation_overview.registration_url"|trans() }}
-                    <a class="text-sm text-warning"
-                       href="{{ path("delegation_registration_regenerate_all") }}">{{ "registration_regenerate_all.action"|trans({}, "delegation") }}</a>
-                </th>
-                <td class="minimal-width"></td>
-            </tr>
-            </thead>
-            <tbody>
-            {% for delegation in delegations %}
+        {% if delegations|length == 0 %}
+            <p class="alert alert-info">
+                {{ "index.info.add_delegations"|trans }}
+            </p>
+        {% else %}
+            <table class="table table-striped">
+                <thead>
                 <tr>
-                    <td>
-                        {{ delegation.name }}
-                    </td>
-                    <td>
-                        <a target="_blank"
-                           href="{{ path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash}) }}">
-                            {{ absolute_url(path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash})) }}
-                        </a>
+                    <th>{{ "entity.name"|trans({}, "entity_delegation") }}</th>
+                    <th>{{ "index.delegation_overview.registration_url"|trans() }}
                         <a class="text-sm text-warning"
-                           href="{{ path("delegation_registration_regenerate", {"delegation": delegation.id}) }}">{{ "registration_regenerate.action"|trans({}, "delegation") }}</a>
-                    </td>
-                    <td>
-                        <span class="btn-group">
-                            <a class="btn btn-link" href="{{ path("delegation_view", {"delegation": delegation.id}) }}">
-                                {{ "index.impersonate"|trans }}
-                            </a>
-                            <a class="btn btn-outline-secondary"
-                               href="{{ path("delegation_edit", {"delegation": delegation.id}) }}">
-                                <i class="fal fa-pencil"></i>
-                            </a>
-
-                            <a class="btn btn-outline-danger"
-                               href="{{ path("delegation_remove", {"delegation": delegation.id}) }}">
-                                <i class="fal fa-trash"></i>
-                            </a>
-                        </span>
-                    </td>
+                           href="{{ path("delegation_registration_regenerate_all") }}">{{ "registration_regenerate_all.action"|trans({}, "delegation") }}</a>
+                    </th>
+                    <td class="minimal-width"></td>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-        {% for delegation in delegations %}
-            {% if delegation.users|length > 0 %}
-                <h2 class="mt-5">{{ delegation.name }}</h2>
-
-                <table class="table table-striped">
-                    <thead>
+                </thead>
+                <tbody>
+                {% for delegation in delegations %}
                     <tr>
-                        <th>{{ "role"|trans({}, "entity_participant") }}</th>
-                        <th>{{ "entity.name"|trans({}, "entity_participant") }}</th>
-                        <td class="minimal-width"></td>
+                        <td>
+                            {{ delegation.name }}
+                        </td>
+                        <td>
+                            <a target="_blank"
+                               href="{{ path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash}) }}">
+                                {{ absolute_url(path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash})) }}
+                            </a>
+                            <a class="text-sm text-warning"
+                               href="{{ path("delegation_registration_regenerate", {"delegation": delegation.id}) }}">{{ "registration_regenerate.action"|trans({}, "delegation") }}</a>
+                        </td>
+                        <td>
+                            <span class="btn-group">
+                                <a class="btn btn-link" href="{{ path("delegation_view", {"delegation": delegation.id}) }}">
+                                    {{ "index.impersonate"|trans }}
+                                </a>
+                                <a class="btn btn-outline-secondary"
+                                   href="{{ path("delegation_edit", {"delegation": delegation.id}) }}">
+                                    <i class="fal fa-pencil"></i>
+                                </a>
+
+                                <a class="btn btn-outline-danger"
+                                   href="{{ path("delegation_remove", {"delegation": delegation.id}) }}">
+                                    <i class="fal fa-trash"></i>
+                                </a>
+                            </span>
+                        </td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for participant in delegation.participants %}
-                        <tr>
-                            <td>
-                                {{ participant.role|transParticipantRole }}
-                            </td>
-                            <td>
-                                {{ participant.name }}
-                            </td>
-                            <td>
-                                <span class="btn-group">
-                                    <a class="btn btn-outline-secondary"
-                                       href="{{ path("participant_edit", {"participant": participant.id}) }}">
-                                        <i class="fal fa-pencil"></i>
-                                    </a>
+                {% endfor %}
+                </tbody>
+            </table>
 
-                                    <a class="btn btn-outline-danger"
-                                       href="{{ path("participant_remove", {"participant": participant.id}) }}">
-                                        <i class="fal fa-trash"></i>
-                                    </a>
-                                </span>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
-
-        {% endfor %}
+            <p>
+                <span class="btn-group">
+                    <a class="btn btn-outline-secondary"
+                       href="{{ path("delegation_export") }}">{{ "export.title"|trans({}, "delegation") }}</a>
+                    <a class="btn btn-outline-secondary"
+                       href="{{ path("participant_export") }}">{{ "export.title"|trans({}, "participant") }}</a>
+                    <a class="btn btn-outline-secondary"
+                       href="{{ path("travel_group_export") }}">{{ "export.title"|trans({}, "travel_group") }}</a>
+                </span>
+                <span class="btn-group">
+                    <a class="btn btn-outline-secondary"
+                       href="{{ path("participant_download_archive", {"type": "portrait"}) }}">{{ "file_archive_download.portrait"|trans({}, "participant") }}</a>
+                    <a class="btn btn-outline-secondary"
+                       href="{{ path("participant_download_archive", {"type": "papers"}) }}">{{ "file_archive_download.papers"|trans({}, "participant") }}</a>
+                    <a class="btn btn-outline-secondary"
+                       href="{{ path("participant_download_archive", {"type": "consent"}) }}">{{ "file_archive_download.consent"|trans({}, "participant") }}</a>
+                </span>
+            </p>
+        {% endif %}
     </div>
+    {% for delegation in delegations %}
+        {% if delegation.users|length > 0 or delegation.participants|length > 0 or delegation.travelGroups|length > 0 %}
+            <div class="tile mt-5">
+            <h2>{{ delegation.name }}</h2>
+
+            <h3 class="mt-4">{{ "entity.plural"|trans({}, "entity_participant") }}</h3>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{{ "role"|trans({}, "entity_participant") }}</th>
+                    <th>{{ "entity.name"|trans({}, "entity_participant") }}</th>
+                    <td class="minimal-width"></td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for participant in delegation.participants %}
+                    <tr>
+                        <td>
+                            {{ participant.role|transParticipantRole }}
+                        </td>
+                        <td>
+                            {{ participant.name }}
+                        </td>
+                        <td>
+                            <span class="btn-group">
+                                <a class="btn btn-outline-secondary"
+                                   href="{{ path("participant_edit", {"participant": participant.id}) }}">
+                                    <i class="fal fa-pencil"></i>
+                                </a>
+
+                                <a class="btn btn-outline-danger"
+                                   href="{{ path("participant_remove", {"participant": participant.id}) }}">
+                                    <i class="fal fa-trash"></i>
+                                </a>
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        </div>
+    {% endfor %}
 {% endblock %}
 
 {% block navbar %}
