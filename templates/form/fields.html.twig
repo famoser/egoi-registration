@@ -57,28 +57,46 @@
     <hr/>
     <div class="row">
         <div class="col">
-            {{ form_row(form.portrait) }}
+            {{ form_row(form.portraitFile) }}
         </div>
         <div class="col">
             {{ form_row(form.nameOnDocuments) }}
         </div>
+        {% if "portrait_url" in form.portraitFile.vars.attr|keys %}
+            <div class="col-12">
+                <img class="w-50" src="{{ form.portraitFile.vars.attr["portrait_url"] }}" alt="portrait">
+            </div>
+        {% endif %}
     </div>
     <hr/>
     <div class="row">
         <div class="col">
-            {{ form_row(form.papers) }}
+            {{ form_row(form.papersFile) }}
         </div>
         <div class="col">
         </div>
+        {% if "papers_url" in form.papersFile.vars.attr|keys %}
+            <div class="col-12">
+                <img class="w-50" src="{{ form.papersFile.vars.attr["papers_url"] }}" alt="portrait">
+            </div>
+        {% endif %}
     </div>
     <hr/>
     <div class="row">
         <div class="col">
-            {{ form_row(form.consent) }}
+            {{ form_row(form.consentFile) }}
         </div>
         <div class="col">
         </div>
+        {% if "consent_url" in form.consentFile.vars.attr|keys %}
+            <div class="col-12">
+                <a class="btn btn-outline-secondary" href="{{ form.consentFile.vars.attr["consent_url"] }}">
+                    {{ "new.download"|trans({}, "participant") }}
+                </a>
+            </div>
+        {% endif %}
     </div>
+    <hr/>
 {% endblock %}
 
 {% block edit_participant_immigration_widget %}

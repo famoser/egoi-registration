@@ -31,11 +31,11 @@ class ParticipantSerializer implements ContextAwareNormalizerInterface
     }
 
     /**
-     * @param Participant $participant
+     * @param Participant $travelGroup
      */
-    public function normalize($participant, string $format = null, array $context = [])
+    public function normalize($travelGroup, string $format = null, array $context = [])
     {
-        $data = $this->normalizer->normalize($participant, $format, $context);
+        $data = $this->normalizer->normalize($travelGroup, $format, $context);
 
         if (isset($data['diet'])) {
             $data['diet'] = Diet::getTranslationForValue($data['diet'], $this->translator);

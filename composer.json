@@ -42,7 +42,8 @@
     "twig/cssinliner-extra": "^3.0",
     "twig/extra-bundle": "^3.0",
     "twig/inky-extra": "^3.0",
-    "twig/twig": "^2.12|^3.0"
+    "twig/twig": "^2.12|^3.0",
+    "ext-zip": "*"
   },
   "require-dev": {
     "brainmaestro/composer-git-hooks": "^2.8",

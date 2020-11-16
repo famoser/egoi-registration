@@ -33,16 +33,16 @@ class DelegationSerializer implements ContextAwareNormalizerInterface
     }
 
     /**
-     * @param Delegation $participant
+     * @param Delegation $travelGroup
      */
-    public function normalize($participant, string $format = null, array $context = [])
+    public function normalize($travelGroup, string $format = null, array $context = [])
     {
-        $data = $this->normalizer->normalize($participant, $format, $context);
+        $data = $this->normalizer->normalize($travelGroup, $format, $context);
 
         if ('delegation-export' === $context['groups']) {
             $data['registration_url'] = $this->router->generate('register', [
-                'delegationName' => $participant->getName(),
-                'registrationHash' => $participant->getRegistrationHash(),
+                'delegationName' => $travelGroup->getName(),
+                'registrationHash' => $travelGroup->getRegistrationHash(),
             ], UrlGeneratorInterface::ABSOLUTE_URL);
         }
 

@@ -9,13 +9,13 @@ phone: Phone
 birthday: Birthday
 gender: Gender
 
-portrait: 'Portrait (image)'
-portrait_help: '4:3, in color, neutral background. As on badge, diplomas, ...'
+portrait_file: 'Portrait (jpg preferred, png, gif)'
+portrait_file_help: '3:4, in color, neutral background. As on badge, diplomas, ...'
 name_on_documents: 'Desired name on EGOI documents'
 name_on_documents_help: 'as on badge, diplomas, website, ...'
 
-papers: 'Papers (image)'
-papers_help: 'Official ID including your name & date of birth. If onsite, then use the same ID you use for immigration.'
+papers_file: 'Papers (jpg preferred, png, gif)'
+papers_file_help: 'Official ID including your name & date of birth. If onsite, then use the same ID you use for immigration.'
 
-consent: 'Consent (pdf)'
-consent_help: 'The signed legal documents required for your participation.'
+consent_file: 'Consent (pdf)'
+consent_file_help: 'The signed legal documents required for your participation.'

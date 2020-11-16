@@ -32,7 +32,7 @@ class ParticipantVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        if (null === $subject && self::PARTICIPANT_MODERATE === $attribute) {
+        if (self::PARTICIPANT_MODERATE === $attribute) {
             return true;
         }
 
@@ -64,11 +64,7 @@ class ParticipantVoter extends Voter
                 return true;
             }
 
-            if (self::PARTICIPANT_MODERATE === $attribute) {
-                return false;
-            }
-
-            return $user->getDelegation() === $subject->getDelegation();
+            return in_array($attribute, [self::PARTICIPANT_VIEW, self::PARTICIPANT_EDIT]) && $user->getDelegation() === $subject->getDelegation();
         }
 
         throw new \LogicException('Unknown user payload '.serialize($user).'!');
