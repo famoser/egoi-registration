@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -41,7 +41,9 @@ trait ReviewableContentEditTrait
 
     abstract protected function fastSave(...$entities);
 
-    abstract protected function displaySuccess($message, $link = null);
+    abstract protected function displaySuccess(string $message, string $link = null);
+
+    abstract protected function displayWarning(string $message, string $link = null);
 
     abstract protected function redirectToRoute(string $route, array $parameters = [], int $status = 302): RedirectResponse;
 
@@ -54,7 +56,17 @@ trait ReviewableContentEditTrait
     {
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_EDIT, $delegation);
 
-        return $this->editReviewableContentBase($request, $translator, $delegation, $delegation, 'delegation', $editablePart, $validation);
+        return $this->editReviewableContent($request, $translator, $delegation, $delegation, 'delegation', $editablePart, $validation);
+    }
+
+    /**
+     * assumes that $editablePart follows some conventions, then generates & processes form.
+     */
+    private function reviewDelegationContent(Request $request, TranslatorInterface $translator, Delegation $delegation, string $editablePart)
+    {
+        $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE, $delegation);
+
+        return $this->reviewReviewableContent($request, $translator, $delegation, 'delegation', $editablePart);
     }
 
     /**
@@ -64,30 +76,32 @@ trait ReviewableContentEditTrait
     {
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
 
-        return $this->editReviewableContentBase($request, $translator, $participant->getDelegation(), $participant, 'participant', $editablePart, $validation);
+        return $this->editReviewableContent($request, $translator, $participant->getDelegation(), $participant, 'participant', $editablePart, $validation);
     }
 
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
-    private function editReviewableContentBase(Request $request, TranslatorInterface $translator, Delegation $delegation, BaseEntity $entity, string $collection, string $editablePart, ?callable $validation): Response
+    private function reviewParticipantContent(Request $request, TranslatorInterface $translator, Participant $participant, string $editablePart)
     {
-        // normalizers
-        $editablePart = strtolower($editablePart);
-        $templatePrefix = 'edit_'.$editablePart;
-        $editablePartPascalCase = str_replace('_', '', ucwords($editablePart, '_'));
-        $collection = strtolower($collection);
-        $collectionFirstCharacterUppercase = strtoupper(substr($collection, 0, 1)).substr($collection, 1);
+        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_MODERATE, $participant);
 
-        // CONVENTIONS TO FOLLOW
-        $getter = 'get'.$editablePartPascalCase.'ReviewProgress';
-        $setter = 'set'.$editablePartPascalCase.'ReviewProgress';
-        $formType = 'App\Form\Traits\Edit'.$collectionFirstCharacterUppercase.$editablePartPascalCase.'Type';
-        // end CONVENTIONS TO FOLLOW
+        return $this->reviewReviewableContent($request, $translator, $participant, 'participant', $editablePart);
+    }
+
+    /**
+     * assumes that $editablePart follows some conventions, then generates & processes form.
+     */
+    private function editReviewableContent(Request $request, TranslatorInterface $translator, Delegation $delegation, BaseEntity $entity, string $collection, string $editablePart = '', ?callable $validation = null): Response
+    {
+        list($templatePrefix, $translationSaveNameKey, $getter, $setter, $formType) = $this->applyConventions($collection, $editablePart);
+        $saveName = $translator->trans($translationSaveNameKey, [], $collection);
 
         $readOnly = ReviewProgress::REVIEWED_AND_LOCKED === $entity->$getter();
         $form = $this->createForm($formType, $entity, ['disabled' => $readOnly]);
-        $form->add('submit', SubmitType::class, ['translation_domain' => $collection, 'label' => $templatePrefix.'.submit']);
+        if (!$readOnly) {
+            $form->add('submit', SubmitType::class, ['translation_domain' => 'reviewable_content', 'label' => 'edit.submit']);
+        }
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid() && !$readOnly) {
@@ -96,13 +110,76 @@ trait ReviewableContentEditTrait
             if (is_callable($validation) && $validation($form)) {
                 $this->fastSave($entity);
 
-                $message = $translator->trans($templatePrefix.'.success.saved', [], $collection);
+                $message = $translator->trans('edit.success.saved', ['%save_name%' => $saveName], 'reviewable_content');
                 $this->displaySuccess($message);
 
                 return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
             }
         }
 
-        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'readonly' => $readOnly]);
+        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView()]);
+    }
+
+    /**
+     * assumes that $editablePart follows some conventions, then generates & processes form.
+     */
+    private function reviewReviewableContent(Request $request, TranslatorInterface $translator, BaseEntity $entity, string $collection, string $editablePart = ''): Response
+    {
+        list($templatePrefix, $translationSaveNameKey, $getter, $setter, $formType) = $this->applyConventions($collection, $editablePart);
+        $saveName = $translator->trans($translationSaveNameKey, [], $collection);
+
+        $form = $this->createForm($formType, $entity);
+        $form->add('submit', SubmitType::class, ['translation_domain' => 'reviewable_content', 'label' => 'edit.submit']);
+        if (ReviewProgress::REVIEWED_AND_LOCKED !== $entity->$getter()) {
+            $form->add('submit_and_lock', SubmitType::class, ['translation_domain' => 'reviewable_content', 'label' => 'edit.submit_and_lock']);
+        } else {
+            $form->add('submit_and_unlock', SubmitType::class, ['translation_domain' => 'reviewable_content', 'label' => 'edit.submit_and_unlock']);
+        }
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->has('submit_and_lock') && $form->get('submit_and_lock')->isClicked()) {
+                $entity->$setter(ReviewProgress::REVIEWED_AND_LOCKED);
+                $message = $translator->trans('edit.success.saved_and_locked', ['%save_name%' => $saveName], 'reviewable_content');
+                $this->displaySuccess($message);
+            } elseif ($form->has('submit_and_unlock') && $form->get('submit_and_unlock')->isClicked()) {
+                $entity->$setter(ReviewProgress::EDITED);
+                $message = $translator->trans('edit.success.saved_and_unlocked', ['%save_name%' => $saveName], 'reviewable_content');
+                $this->displayWarning($message);
+            } else {
+                $message = $translator->trans('edit.success.saved', ['%save_name%' => $saveName], 'reviewable_content');
+                $this->displaySuccess($message);
+            }
+
+            $this->fastSave($entity);
+
+            return $this->redirectToRoute('index');
+        }
+
+        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView()]);
+    }
+
+    private function applyConventions(string $collection, string $editablePart = ''): array
+    {
+        $collectionPascalCase = str_replace('_', '', ucwords($collection, '_'));
+        $templatePrefix = 'edit';
+        if (strlen($editablePart) > 0) {
+            $templatePrefix .= '_'.$editablePart;
+            $editablePartPascalCase = str_replace('_', '', ucwords($editablePart, '_'));
+            $folder = 'Traits';
+        } else {
+            $editablePartPascalCase = '';
+            $folder = $collectionPascalCase;
+        }
+
+        // conventions
+        $getter = 'get'.$editablePartPascalCase.'ReviewProgress';
+        $setter = 'set'.$editablePartPascalCase.'ReviewProgress';
+        $formType = 'App\Form\\'.$folder.'\\Edit'.$collectionPascalCase.$editablePartPascalCase.'Type';
+        $translationSaveNameKey = $templatePrefix.'.save_name';
+        // end conventions
+
+        return [$templatePrefix, $translationSaveNameKey, $getter, $setter, $formType];
     }
 }

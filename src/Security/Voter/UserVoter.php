@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -53,7 +53,7 @@ class UserVoter extends Voter
                 return true;
             }
 
-            return self::USER_REMOVE === $attribute && null !== $subject && $user->getDelegation() === $subject->getDelegation();
+            return self::USER_REMOVE === $attribute && null !== $subject && !$subject->isAdmin() && $user->getDelegation() === $subject->getDelegation();
         }
 
         throw new \LogicException('Unknown user payload '.serialize($user).'!');

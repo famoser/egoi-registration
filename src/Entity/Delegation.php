@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -17,6 +17,7 @@ use App\Entity\Traits\DelegationContributionTrait;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\TimeTrait;
 use App\Enum\ArrivalOrDeparture;
+use App\Enum\ReviewProgress;
 use App\Helper\HashHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -172,5 +173,92 @@ class Delegation extends BaseEntity
         }
 
         return $participants;
+    }
+
+    public function missingParticipants()
+    {
+        return max(0, $this->expectedAttendance() - count($this->getParticipants()));
+    }
+
+    public function getParticipantReviewProgress()
+    {
+        $chapter = $this->summarizeParticipants(
+            function (Participant $participant) {
+                return $participant->getPersonalDataReviewProgress();
+            },
+            function (Participant $participant) {
+                return $participant->isPersonalDataComplete();
+            }
+        );
+        $summary['personal_data'] = $chapter;
+
+        $chapter = $this->summarizeParticipants(
+            function (Participant $participant) {
+                return $participant->getImmigrationReviewProgress();
+            },
+            function (Participant $participant) {
+                return $participant->isImmigrationComplete();
+            }
+        );
+        $summary['immigration'] = $chapter;
+
+        $chapter = $this->summarizeParticipants(
+            function (Participant $participant) {
+                return $participant->getEventPresenceReviewProgress();
+            },
+            function (Participant $participant) {
+                return $participant->isEventPresenceComplete();
+            }
+        );
+        $summary['onsite'] = $chapter;
+
+        return $summary;
+    }
+
+    public function getTravelGroupReviewProgress()
+    {
+        $chapter = $this->summarizeTravelGroup(
+            function (Participant $participant) {
+                return $participant->getArrivalTravelGroup();
+            }
+        );
+        $summary['arrival'] = $chapter;
+
+        $chapter = $this->summarizeTravelGroup(
+            function (Participant $participant) {
+                return $participant->getDepartureTravelGroup();
+            }
+        );
+        $summary['departure'] = $chapter;
+
+        return $summary;
+    }
+
+    private function summarizeTravelGroup(callable $getTravelGroup)
+    {
+        return $this->summarizeParticipants(
+            function (Participant $participant) use ($getTravelGroup) {
+                return $getTravelGroup($participant) ? $getTravelGroup($participant)->getReviewProgress() : ReviewProgress::NOT_EDITED;
+            },
+            function (Participant $participant) use ($getTravelGroup) {
+                return $getTravelGroup($participant) ? $getTravelGroup($participant)->complete() : false;
+            }
+        );
+    }
+
+    private function summarizeParticipants(callable $getReviewProgress, callable $getIsComplete)
+    {
+        $chapter = ['data_missing' => $this->expectedAttendance(), 'pending_review' => 0, 'reviewed' => 0];
+        foreach ($this->participants as $participant) {
+            if (ReviewProgress::REVIEWED_AND_LOCKED === $getReviewProgress($participant)) {
+                --$chapter['data_missing'];
+                ++$chapter['reviewed'];
+            } elseif ($getIsComplete($participant)) {
+                --$chapter['data_missing'];
+                ++$chapter['pending_review'];
+            }
+        }
+
+        return $chapter;
     }
 }

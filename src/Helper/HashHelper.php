@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -83,7 +83,6 @@ class HashHelper
                 ',',
                 array_map(
                     function ($issue) {
-                        /* @var IdTrait $issue */
                         return $issue->getId();
                     },
                     $innerEntities)

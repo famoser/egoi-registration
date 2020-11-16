@@ -6,10 +6,8 @@
 {% trans_default_domain "delegation" %}
 
 {% macro get_button(isComplete, reviewProgress, link, content) %}
-    {% if reviewProgress == 3 %} {# reviewed & locked #}
+    {% if reviewProgress == 2 %} {# reviewed #}
         <a class="btn btn-outline-success" href="{{ link }}">{{ content }}</a>
-    {% elseif reviewProgress == 2 %} {# reviewed #}
-        <a class="btn btn-success" href="{{ link }}">{{ content }}</a>
     {% elseif isComplete %}
         <a class="btn btn-outline-secondary" href="{{ link }}">{{ content }}</a>
     {% else %}
@@ -38,7 +36,7 @@
             <td class="minimal-width">
             <span class="btn-group">
                 {{ own_macros.get_button(participant.personalDataComplete, participant.personalDataReviewProgress, path("participant_edit_personal_data", {"participant": participant.id}), "edit_personal_data.title"|trans({}, "participant")) }}
-                {{ own_macros.get_button(participant.immigrationDataComplete, participant.personalDataReviewProgress, path("participant_edit_immigration", {"participant": participant.id}), "edit_immigration.title"|trans({}, "participant")) }}
+                {{ own_macros.get_button(participant.immigrationComplete, participant.personalDataReviewProgress, path("participant_edit_immigration", {"participant": participant.id}), "edit_immigration.title"|trans({}, "participant")) }}
                 {{ own_macros.get_button(participant.eventPresenceComplete, participant.eventPresenceReviewProgress, path("participant_edit_event_presence", {"participant": participant.id}), "edit_event_presence.title"|trans({}, "participant")) }}
 
                 <a class="btn btn-outline-danger"
@@ -94,7 +92,6 @@
         {{ "view.legend.legend"|trans }}:
         <button class="btn btn-sm btn-secondary disabled">{{ "view.legend.data_missing"|trans }}</button>
         <button class="btn btn-sm btn-outline-secondary disabled">{{ "view.legend.data_complete"|trans }}</button>
-        <button class="btn btn-sm btn-success disabled">{{ "view.legend.reviewed"|trans }}</button>
         <button class="btn btn-sm btn-outline-success disabled">{{ "view.legend.reviewed_and_locked"|trans }}</button>
     </p>
 
@@ -108,6 +105,7 @@
 
     {% if delegation.attendanceComplete %}
         <h2 class="mt-5">{{ "entity.plural"|trans({}, "entity_participant") }}</h2>
+        <p>{{ "view.participant_purpose"|trans }}</p>
         <table class="table table-striped">
             <thead>
             <tr>
@@ -130,6 +128,7 @@
 
         {% if delegation.participants|length > 0 and delegation.participationMode == 0 %}
             <h2 class="mt-5">{{ "entity.plural"|trans({}, "entity_travel_group") }}</h2>
+            <p>{{ "view.travel_group_purpose"|trans }}</p>
             <table class="table table-striped">
                 <thead>
                 <tr>

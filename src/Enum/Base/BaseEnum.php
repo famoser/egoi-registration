@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -12,7 +12,6 @@
 namespace App\Enum\Base;
 
 use ReflectionClass;
-use ReflectionException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class BaseEnum
@@ -63,20 +62,14 @@ abstract class BaseEnum
     private function getChoicesForBuilderInternal()
     {
         $res = [];
-        try {
-            $reflection = new ReflectionClass(static::class);
-            $choices = $reflection->getConstants();
+        $reflection = new ReflectionClass(static::class);
+        $choices = $reflection->getConstants();
 
-            foreach ($choices as $name => $value) {
-                $res[mb_strtolower($name)] = $value;
-            }
-
-            return ['choices' => $res, 'choice_translation_domain' => 'enum_'.$this->camelCaseToTranslation($reflection->getShortName())];
-        } catch (ReflectionException $e) {
-            //this never happens due to ReflectionClass is passed the class of the $this object (always valid)
+        foreach ($choices as $name => $value) {
+            $res[mb_strtolower($name)] = $value;
         }
 
-        return $res;
+        return ['choices' => $res, 'choice_translation_domain' => 'enum_'.$this->camelCaseToTranslation($reflection->getShortName())];
     }
 
     /**
@@ -88,17 +81,13 @@ abstract class BaseEnum
      */
     private function getTranslationForValueInternal($enumValue, TranslatorInterface $translator)
     {
-        try {
-            $reflection = new ReflectionClass(static::class);
-            $choices = $reflection->getConstants();
+        $reflection = new ReflectionClass(static::class);
+        $choices = $reflection->getConstants();
 
-            foreach ($choices as $name => $value) {
-                if ($value === $enumValue) {
-                    return $translator->trans(mb_strtolower($name), [], 'enum_'.$this->camelCaseToTranslation($reflection->getShortName()));
-                }
+        foreach ($choices as $name => $value) {
+            if ($value === $enumValue) {
+                return $translator->trans(mb_strtolower($name), [], 'enum_'.$this->camelCaseToTranslation($reflection->getShortName()));
             }
-        } catch (ReflectionException $e) {
-            //this never happens due to ReflectionClass is passed the class of the $this object (always valid)
         }
 
         return '';

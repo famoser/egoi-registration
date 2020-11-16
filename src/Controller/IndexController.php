@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -30,6 +30,16 @@ class IndexController extends BaseController
     {
         $delegations = $this->getDoctrine()->getRepository(Delegation::class)->findBy([], ['name' => 'ASC']);
 
-        return $this->render('index.html.twig', ['delegations' => $delegations]);
+        $participantReviewProgresses = [];
+        foreach ($delegations as $delegation) {
+            $participantReviewProgresses[$delegation->getId()] = $delegation->getParticipantReviewProgress();
+        }
+
+        $travelGroupReviewProgresses = [];
+        foreach ($delegations as $delegation) {
+            $travelGroupReviewProgresses[$delegation->getId()] = $delegation->getTravelGroupReviewProgress();
+        }
+
+        return $this->render('index.html.twig', ['delegations' => $delegations, 'participant_review_progresses' => $participantReviewProgresses, 'travel_group_review_progresses' => $travelGroupReviewProgresses]);
     }
 }

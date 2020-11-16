@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -161,7 +161,7 @@ trait ParticipantImmigrationTrait
         $this->immigrationReviewProgress = $immigrationReviewProgress;
     }
 
-    public function isImmigrationDataComplete()
+    public function isImmigrationComplete()
     {
         return !empty($this->nationality) &&
             !empty($this->passportNumber) &&

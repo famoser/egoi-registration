@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -22,6 +22,7 @@ class BaseController extends AbstractController
      */
     protected function getUser()
     {
+        /* @noinspection PhpIncompatibleReturnTypeInspection */
         return parent::getUser();
     }
 
@@ -30,52 +31,36 @@ class BaseController extends AbstractController
         return parent::getSubscribedServices() + ['session' => '?'.SessionInterface::class];
     }
 
-    /**
-     * @param string $message the translation message to display
-     * @param string $link
-     */
-    protected function displayError($message, $link = null)
+    protected function displayError(string $message, string $link = null)
     {
         $this->displayFlash('danger', $message, $link);
     }
 
-    /**
-     * @param string $message the translation message to display
-     * @param string $link
-     */
-    protected function displaySuccess($message, $link = null)
+    protected function displaySuccess(string $message, string $link = null)
     {
         $this->displayFlash('success', $message, $link);
     }
 
-    /**
-     * @param string $message the translation message to display
-     * @param string $link
-     */
-    protected function displayDanger($message, $link = null)
+    protected function displayDanger(string $message, string $link = null)
     {
         $this->displayFlash('danger', $message, $link);
     }
 
-    /**
-     * @param string $message the translation message to display
-     * @param string $link
-     */
-    protected function displayInfo($message, $link = null)
+    protected function displayWarning(string $message, string $link = null)
+    {
+        $this->displayFlash('warning', $message, $link);
+    }
+
+    protected function displayInfo(string $message, string $link = null)
     {
         $this->displayFlash('info', $message, $link);
     }
 
-    /**
-     * @param $type
-     * @param $message
-     * @param string $link
-     */
-    private function displayFlash($type, $message, $link = null)
+    private function displayFlash(string $type, string $message, string $link = null)
     {
         if (null !== $link) {
             $message = '<a href="'.$link.'">'.$message.'</a>';
         }
-        $this->get('session')->getFlashBag()->set($type, $message);
+        $this->get('session')->getFlashBag()->add($type, $message);
     }
 }

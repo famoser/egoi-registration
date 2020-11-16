@@ -6,3 +6,13 @@ index:
   delegation_overview:
     registration_url_used: 'used'
     registration_url: 'Registration url'
+  legend:
+    legend: 'Legend'
+    data_missing: 'data missing'
+    data_complete: 'review pending'
+    reviewed_and_locked: 'reviewed & locked'
+  info:
+    add_delegations: 'Create delegations to get started'
+  missing_participants: 'missing participants'
+  participants_without_arrival_travel_group: 'participants without arrival travel group'
+  participants_without_departure_travel_group: 'participants without departure travel group'

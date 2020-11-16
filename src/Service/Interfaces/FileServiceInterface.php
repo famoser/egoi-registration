@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -28,6 +28,8 @@ interface FileServiceInterface
     public function replacePapers(Participant $participant, UploadedFile $file): bool;
 
     public function replaceConsent(Participant $participant, UploadedFile $file): bool;
+
+    public function removeFiles(Participant $participant);
 
     public function downloadPortrait(Participant $participant, string $filename): Response;
 

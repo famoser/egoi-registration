@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the mangel.io project.
+ * This file is part of the famoser/egoi-registration project.
  *
  * (c) Florian Moser <git@famoser.ch>
  *
@@ -114,6 +114,24 @@ class FileService implements FileServiceInterface
         $participant->setConsent($filename);
 
         return true;
+    }
+
+    public function removeFiles(Participant $participant)
+    {
+        if ($participant->getPortrait()) {
+            $folder = $this->getOrCreateDelegationFolder(self::PORTRAIT, $participant->getDelegation());
+            unlink($folder.'/'.$participant->getPortrait());
+        }
+
+        if ($participant->getPapers()) {
+            $folder = $this->getOrCreateDelegationFolder(self::PAPERS, $participant->getDelegation());
+            unlink($folder.'/'.$participant->getPapers());
+        }
+
+        if ($participant->getConsent()) {
+            $folder = $this->getOrCreateDelegationFolder(self::CONSENT, $participant->getDelegation());
+            unlink($folder.'/'.$participant->getConsent());
+        }
     }
 
     public function downloadPortrait(Participant $participant, string $filename): Response

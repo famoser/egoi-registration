@@ -18,7 +18,6 @@
                 <ul class="navbar-nav mr-auto">
                     {% if is_granted('ROLE_ADMIN') %}
                         {{ own_macros.nav_item(path("index"), "index.title"|trans({}, "index")) }}
-                        {{ own_macros.nav_item(path("user_index"), "index.title"|trans({}, "user")) }}
                     {% else %}
                         {{ own_macros.nav_item(path("delegation_view", {"delegation": app.user.delegation.id}), "view.title"|trans({"%name%": app.user.delegation.name}, "delegation")) }}
                     {% endif %}
