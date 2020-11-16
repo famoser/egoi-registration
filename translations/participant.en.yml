@@ -46,3 +46,6 @@ edit_event_presence:
   submit: 'Save onsite details'
   success:
     saved: 'Saved onsite details'
+
+image_download:
+  portrait: 'Download portraits'

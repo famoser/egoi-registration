@@ -17,6 +17,7 @@ services:
             $environment: '%kernel.environment%'
             $publicDir: '%kernel.project_dir%/public'
             $persistentDir: '%kernel.project_dir%/var/persistent'
+            $transientDir: '%kernel.project_dir%/var/transient'
             $guestSurcharge: '%env(GUEST_SURCHARGE)%'
             $singleRoomSurcharge: '%env(SINGLE_ROOM_SURCHARGE)%'
 

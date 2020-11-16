@@ -77,7 +77,6 @@ class ParticipantController extends BaseDoctrineController
 
     private function processImages(FormInterface $form, Participant $participant, TranslatorInterface $translator, FileServiceInterface $fileService)
     {
-        dump($form->get('portraitFile'));
         $file = $form->get('portraitFile')->getData();
         if ($file instanceof UploadedFile) {
             if (!$fileService->uploadPortrait($participant, $file)) {
@@ -96,7 +95,21 @@ class ParticipantController extends BaseDoctrineController
      */
     public function imageAction(Participant $participant, string $type, string $filename, FileServiceInterface $fileService)
     {
+        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
+
         return $fileService->download($participant, $type, $filename);
+    }
+
+    /**
+     * @Route("/image_all/{type}", name="participant_image_all")
+     *
+     * @return Response
+     */
+    public function imageDownloadAction(string $type, FileServiceInterface $fileService)
+    {
+        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_MODERATE);
+
+        return $fileService->downloadAll($type);
     }
 
     use ReviewableContentEditTrait;

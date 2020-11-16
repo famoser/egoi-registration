@@ -14,12 +14,18 @@
         <p>
             <a class="btn btn-outline-primary"
                href="{{ path("delegation_new") }}">{{ "new.title"|trans({}, "delegation") }}</a>
-            <a class="btn btn-outline-secondary"
-               href="{{ path("delegation_export") }}">{{ "export.title"|trans({}, "delegation") }}</a>
-            <a class="btn btn-outline-secondary"
-               href="{{ path("participant_export") }}">{{ "export.title"|trans({}, "participant") }}</a>
-            <a class="btn btn-outline-secondary"
-               href="{{ path("travel_group_export") }}">{{ "export.title"|trans({}, "travel_group") }}</a>
+            <span class="btn-group">
+                <a class="btn btn-outline-secondary"
+                   href="{{ path("delegation_export") }}">{{ "export.title"|trans({}, "delegation") }}</a>
+                <a class="btn btn-outline-secondary"
+                   href="{{ path("participant_export") }}">{{ "export.title"|trans({}, "participant") }}</a>
+                <a class="btn btn-outline-secondary"
+                   href="{{ path("travel_group_export") }}">{{ "export.title"|trans({}, "travel_group") }}</a>
+            </span>
+            <span class="btn-group">
+                <a class="btn btn-outline-secondary"
+                   href="{{ path("participant_image_all", {"type": "portrait"}) }}">{{ "image_download.portrait"|trans({}, "participant") }}</a>
+            </span>
         </p>
 
         <table class="table table-striped">
@@ -27,7 +33,8 @@
             <tr>
                 <th>{{ "entity.name"|trans({}, "entity_delegation") }}</th>
                 <th>{{ "index.delegation_overview.registration_url"|trans() }}
-                    <a class="text-sm text-warning"  href="{{ path("delegation_registration_regenerate_all") }}">{{ "registration_regenerate_all.action"|trans({}, "delegation") }}</a>
+                    <a class="text-sm text-warning"
+                       href="{{ path("delegation_registration_regenerate_all") }}">{{ "registration_regenerate_all.action"|trans({}, "delegation") }}</a>
                 </th>
                 <td class="minimal-width"></td>
             </tr>
@@ -43,7 +50,8 @@
                            href="{{ path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash}) }}">
                             {{ absolute_url(path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash})) }}
                         </a>
-                        <a class="text-sm text-warning" href="{{ path("delegation_registration_regenerate", {"delegation": delegation.id}) }}">{{ "registration_regenerate.action"|trans({}, "delegation") }}</a>
+                        <a class="text-sm text-warning"
+                           href="{{ path("delegation_registration_regenerate", {"delegation": delegation.id}) }}">{{ "registration_regenerate.action"|trans({}, "delegation") }}</a>
                     </td>
                     <td>
                         <span class="btn-group">

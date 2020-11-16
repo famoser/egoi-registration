@@ -21,7 +21,7 @@ interface FileServiceInterface
 
     public function uploadPortrait(Participant $participant, UploadedFile $file): bool;
 
-    public function downloadAllPortrait(): Response;
-
     public function download(Participant $participant, string $type, string $filename): Response;
+
+    public function downloadAll(string $type): Response;
 }

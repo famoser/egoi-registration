@@ -16,6 +16,9 @@ use App\Entity\Participant;
 use App\Enum\ParticipantRole;
 use App\Service\Interfaces\FileServiceInterface;
 use Psr\Log\LoggerInterface;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplFileInfo;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -24,6 +27,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use ZipArchive;
 
 class FileService implements FileServiceInterface
 {
@@ -31,6 +35,11 @@ class FileService implements FileServiceInterface
      * @var string
      */
     private $persistentDir;
+
+    /**
+     * @var string
+     */
+    private $transientDir;
 
     /**
      * @var SluggerInterface
@@ -50,9 +59,10 @@ class FileService implements FileServiceInterface
     /**
      * FileService constructor.
      */
-    public function __construct(string $persistentDir, SluggerInterface $slugger, LoggerInterface $logger, TranslatorInterface $translator)
+    public function __construct(string $persistentDir, string $transientDir, SluggerInterface $slugger, LoggerInterface $logger, TranslatorInterface $translator)
     {
         $this->persistentDir = $persistentDir;
+        $this->transientDir = $transientDir;
         $this->slugger = $slugger;
         $this->logger = $logger;
         $this->translator = $translator;
@@ -60,7 +70,7 @@ class FileService implements FileServiceInterface
 
     public function uploadPortrait(Participant $participant, UploadedFile $file): bool
     {
-        $folder = $this->getOrCreateFolder(self::PORTRAIT, $participant->getDelegation());
+        $folder = $this->getOrCreateDelegationFolder(self::PORTRAIT, $participant->getDelegation());
 
         $filename = $this->getFilename(self::PORTRAIT, $participant);
         $newFilename = sprintf('%s_%s.%s', $filename, uniqid(), $file->guessExtension());
@@ -93,13 +103,30 @@ class FileService implements FileServiceInterface
         throw new NotFoundHttpException();
     }
 
+    public function downloadAll(string $type): Response
+    {
+        if (!in_array($type, [self::PORTRAIT])) {
+            throw new NotFoundHttpException();
+        }
+
+        $folder = $this->getOrCreateFolder($type);
+        $targetFile = $this->transientDir.'/'.$type.'.zip';
+
+        $this->zipFolder($folder, $targetFile);
+
+        $response = new BinaryFileResponse($targetFile);
+        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT);
+
+        return $response;
+    }
+
     private function downloadPortrait(Participant $participant, string $filename): Response
     {
         if ($participant->getPortrait() !== $filename) {
             throw new NotFoundHttpException();
         }
 
-        $folder = $this->getOrCreateFolder(self::PORTRAIT, $participant->getDelegation());
+        $folder = $this->getOrCreateDelegationFolder(self::PORTRAIT, $participant->getDelegation());
         $filePath = $folder.'/'.$filename;
 
         if (!file_exists($filePath)) {
@@ -112,14 +139,14 @@ class FileService implements FileServiceInterface
         return $response;
     }
 
-    public function downloadAllPortrait(): Response
+    private function getOrCreateFolder(string $type): string
     {
-        // TODO: Implement downloadAllPortrait() method.
+        return $this->persistentDir.'/'.$type;
     }
 
-    private function getOrCreateFolder(string $type, Delegation $delegation)
+    private function getOrCreateDelegationFolder(string $type, Delegation $delegation): string
     {
-        $targetDir = $this->persistentDir.'/'.$type.'/'.$delegation->getName();
+        $targetDir = $this->getOrCreateFolder($type).'/'.$delegation->getName();
         if (!is_dir($targetDir)) {
             mkdir($targetDir, 0777, true);
         }
@@ -127,7 +154,7 @@ class FileService implements FileServiceInterface
         return $targetDir;
     }
 
-    private function getFilename(string $type, Participant $participant)
+    private function getFilename(string $type, Participant $participant): string
     {
         $parts = [
             $participant->getDelegation()->getName(),
@@ -141,5 +168,37 @@ class FileService implements FileServiceInterface
         }
 
         return implode('_', $parts);
+    }
+
+    private function zipFolder(string $folder, string $targetPath)
+    {
+        // Get real path for our folder
+        $rootPath = realpath($folder);
+
+        // Initialize archive object
+        $zip = new ZipArchive();
+        $zip->open($targetPath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+
+        // Create recursive directory iterator
+        /** @var SplFileInfo[] $files */
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($rootPath),
+            RecursiveIteratorIterator::LEAVES_ONLY
+        );
+
+        foreach ($files as $name => $file) {
+            // Skip directories (they would be added automatically)
+            if (!$file->isDir()) {
+                // Get real and relative path for current file
+                $filePath = $file->getRealPath();
+                $relativePath = substr($filePath, strlen($rootPath) + 1);
+
+                // Add current file to archive
+                $zip->addFile($filePath, $relativePath);
+            }
+        }
+
+        // Zip archive will be created only after closing object
+        $zip->close();
     }
 }
