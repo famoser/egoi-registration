@@ -203,21 +203,15 @@ trait ParticipantPersonalDataTrait
         $this->consent = $consent;
     }
 
-    abstract public function isLeader(): bool;
-
     public function isPersonalDataComplete()
     {
-        $validation = !empty($this->givenName) &&
+        return !empty($this->givenName) &&
             !empty($this->familyName) &&
             !empty($this->birthday) &&
             !empty($this->gender) &&
+            !empty($this->portrait) &&
             !empty($this->nameOnDocuments) &&
-            !empty($this->portrait);
-
-        if ($this->isLeader()) {
-            $validation &= !empty($this->email);
-        }
-
-        return $validation;
+            !empty($this->papers) &&
+            !empty($this->consent);
     }
 }

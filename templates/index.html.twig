@@ -71,18 +71,17 @@
                            href="{{ path("delegation_registration_regenerate_all") }}">{{ "registration_regenerate_all.action"|trans({}, "delegation") }}</a>
                     </th>
                     <th></th>
+                    <th></th>
                     <th class="border-left" colspan="3">{{ "entity.plural"|trans({}, "entity_participant") }}</th>
                     <th class="border-left" colspan="2">{{ "entity.plural"|trans({}, "entity_travel_group") }}</th>
-                    <td class="border-left minimal-width"></td>
                 </tr>
                 <tr>
-                    <th colspan="3"></th>
+                    <th colspan="4"></th>
                     <th class="border-left">{{ "trait.name"|trans({}, "trait_participant_personal_data") }}</th>
                     <th>{{ "trait.name"|trans({}, "trait_participant_immigration") }}</th>
                     <th>{{ "trait.name"|trans({}, "trait_participant_event_presence") }}</th>
                     <th class="border-left">{{ 0|transArrivalOrDeparture }}</th>
                     <th>{{ 1|transArrivalOrDeparture }}</th>
-                    <td class="border-left"></td>
                 </tr>
                 </thead>
                 <tbody>
@@ -109,6 +108,19 @@
                             {{ own_macros.get_badge(delegation.attendanceComplete, delegation.attendanceReviewProgress, path("delegation_review_attendance", {"delegation": delegation.id}), "edit_attendance.title"|trans({}, "delegation")) }}
                             {{ own_macros.get_badge(delegation.contributionComplete, delegation.contributionReviewProgress, path("delegation_review_contribution", {"delegation": delegation.id}), "edit_contribution.title"|trans({}, "delegation")) }}
                         </td>
+                        <td class="w-10em">
+                            <span class="btn-group">
+                                <a class="btn btn-link"
+                                   href="{{ path("delegation_view", {"delegation": delegation.id}) }}">
+                                    {{ "index.impersonate"|trans }}
+                                </a>
+
+                                <a class="btn btn-outline-danger"
+                                   href="{{ path("delegation_remove", {"delegation": delegation.id}) }}">
+                                    <i class="fal fa-trash"></i>
+                                </a>
+                            </span>
+                        </td>
                         <td class="border-left lead">
                             {{ own_macros.get_review_progress(participant_review_progresses[delegation.id]["personal_data"]) }}
                         </td>
@@ -123,19 +135,6 @@
                         </td>
                         <td class="lead">
                             {{ own_macros.get_review_progress(travel_group_review_progresses[delegation.id]["departure"]) }}
-                        </td>
-                        <td class="border-left">
-                            <span class="btn-group">
-                                <a class="btn btn-link"
-                                   href="{{ path("delegation_view", {"delegation": delegation.id}) }}">
-                                    {{ "index.impersonate"|trans }}
-                                </a>
-
-                                <a class="btn btn-outline-danger"
-                                   href="{{ path("delegation_remove", {"delegation": delegation.id}) }}">
-                                    <i class="fal fa-trash"></i>
-                                </a>
-                            </span>
                         </td>
                     </tr>
                 {% endfor %}
