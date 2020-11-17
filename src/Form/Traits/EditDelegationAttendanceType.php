@@ -12,7 +12,7 @@
 namespace App\Form\Traits;
 
 use App\Entity\Delegation;
-use App\Enum\ParticipantMode;
+use App\Enum\ParticipationMode;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -40,7 +40,7 @@ class EditDelegationAttendanceType extends AbstractType
         $builder->add('leaderCount', IntegerType::class, ['attr' => ['min' => 1, 'max' => 2]]);
 
         $builder->add('guestCount', IntegerType::class, ['attr' => ['min' => 0, 'max' => 5], 'help' => 'guest_count_help', 'help_translation_parameters' => ['%surcharge%' => $this->guestSurcharge]]);
-        $builder->add('participationMode', ChoiceType::class, ParticipantMode::getChoicesForBuilder());
+        $builder->add('participationMode', ChoiceType::class, ParticipationMode::getChoicesForBuilder());
     }
 
     public function configureOptions(OptionsResolver $resolver)

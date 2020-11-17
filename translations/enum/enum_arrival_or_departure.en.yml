@@ -2,4 +2,4 @@ enum:
   name: 'Arrival or departure'
 
 arrival: Arrival
-departure: Depature
+departure: Departure

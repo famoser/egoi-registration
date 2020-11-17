@@ -4,6 +4,13 @@ $green: #009f3d;
 $yellow: #f4c300;
 $red: #d13337;
 
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1000px
+) !default;
+
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-select/dist/css/bootstrap-select.css';
 @import '~flatpickr/dist/flatpickr.css';
@@ -95,10 +102,22 @@ label.required::after {
   font-size: 0.8em;
 }
 
+.w-19em {
+  width: 19em;
+}
+
 .w-16em {
   width: 16em;
 }
 
+.w-14em {
+  width: 14em;
+}
+
 .w-12em {
   width: 12em;
+}
+
+.w-10em {
+  width: 10em;
 }

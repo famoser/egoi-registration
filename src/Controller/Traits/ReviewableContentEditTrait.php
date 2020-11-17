@@ -107,7 +107,7 @@ trait ReviewableContentEditTrait
         if ($form->isSubmitted() && $form->isValid() && !$readOnly) {
             $entity->$setter(ReviewProgress::EDITED);
 
-            if (is_callable($validation) && $validation($form)) {
+            if (!is_callable($validation) || $validation($form)) {
                 $this->fastSave($entity);
 
                 $message = $translator->trans('edit.success.saved', ['%save_name%' => $saveName], 'reviewable_content');
@@ -148,6 +148,7 @@ trait ReviewableContentEditTrait
                 $message = $translator->trans('edit.success.saved_and_unlocked', ['%save_name%' => $saveName], 'reviewable_content');
                 $this->displayWarning($message);
             } else {
+                $entity->$setter(ReviewProgress::EDITED);
                 $message = $translator->trans('edit.success.saved', ['%save_name%' => $saveName], 'reviewable_content');
                 $this->displaySuccess($message);
             }

@@ -17,6 +17,7 @@ use App\Service\Interfaces\FileServiceInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -55,6 +56,10 @@ class EditParticipantPersonalDataType extends AbstractType
             /** @var Participant $participant */
             $participant = $event->getData();
             $form = $event->getForm();
+
+            if ($participant->isLeader()) {
+                $form->add('email', EmailType::class, ['required' => false]);
+            }
 
             $this->addFileFields($participant, $form, $this->urlGenerator);
         });

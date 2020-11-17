@@ -56,7 +56,7 @@ class ParticipantController extends BaseDoctrineController
         $participant->setDelegation($delegation);
         $participant->setCountryOfResidence($delegation->getName());
         $participant->setNationality($delegation->getName());
-        $participant->setPlaceOfBirth($delegation->getName());
+        $participant->setPassportIssueCountry($delegation->getName());
 
         $form = $this->createForm(EditParticipantPersonalDataType::class, $participant);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'new.submit']);
@@ -213,7 +213,7 @@ class ParticipantController extends BaseDoctrineController
      */
     public function removeAction(Request $request, Participant $participant, TranslatorInterface $translator, FileServiceInterface $fileService)
     {
-        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
+        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_REMOVE, $participant);
 
         $form = $this->createForm(RemoveParticipantType::class);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'remove.submit']);
@@ -230,7 +230,7 @@ class ParticipantController extends BaseDoctrineController
             return $this->redirectToRoute('delegation_view', ['delegation' => $participant->getDelegation()->getId()]);
         }
 
-        return $this->render('participant/remove.html.twig', ['form' => $form->createView()]);
+        return $this->render('participant/remove.html.twig', ['form' => $form->createView(), 'role' => $participant->getRole()]);
     }
 
     /**
@@ -242,7 +242,13 @@ class ParticipantController extends BaseDoctrineController
     {
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_MODERATE);
 
-        $participants = $this->getDoctrine()->getRepository(Participant::class)->findBy([], ['familyName' => 'ASC']);
+        $participants = $this->getDoctrine()->getRepository(Participant::class)->findBy([], ['role' => 'ASC', 'familyName' => 'ASC']);
+        $participantsByDelegationName = [];
+        foreach ($participants as $participant) {
+            $participantsByDelegationName[$participant->getDelegation()->getName()][] = $participant;
+        }
+        ksort($participantsByDelegationName);
+        $participants = array_merge(...array_values($participantsByDelegationName));
 
         return $exportService->exportToCsv($participants, 'participant-export', 'participants');
     }

@@ -11,7 +11,7 @@
 
 namespace App\Entity\Traits;
 
-use App\Enum\ParticipantMode;
+use App\Enum\ParticipationMode;
 use App\Enum\ReviewProgress;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -48,7 +48,7 @@ trait DelegationAttendanceTrait
      * @Groups({"delegation-export"})
      * @ORM\Column(type="integer")
      */
-    private $participationMode = ParticipantMode::ONSITE;
+    private $participationMode = ParticipationMode::ONSITE;
 
     /**
      * @var int

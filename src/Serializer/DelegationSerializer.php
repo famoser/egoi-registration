@@ -12,7 +12,7 @@
 namespace App\Serializer;
 
 use App\Entity\Delegation;
-use App\Enum\ParticipantMode;
+use App\Enum\ParticipationMode;
 use App\Enum\ReviewProgress;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
@@ -49,7 +49,7 @@ class DelegationSerializer implements ContextAwareNormalizerInterface
         }
 
         if (isset($data['participationMode'])) {
-            $data['participationMode'] = ParticipantMode::getTranslationForValue($data['participationMode'], $this->translator);
+            $data['participationMode'] = ParticipationMode::getTranslationForValue($data['participationMode'], $this->translator);
         }
 
         if (isset($data['attendanceReviewProgress'])) {
@@ -62,6 +62,10 @@ class DelegationSerializer implements ContextAwareNormalizerInterface
 
         if (isset($data['travelDetailsReviewProgress'])) {
             $data['travelDetailsReviewProgress'] = ReviewProgress::getTranslationForValue($data['travelDetailsReviewProgress'], $this->translator);
+        }
+
+        if (isset($data['translations'])) {
+            $data['translations'] = implode(' ', $data['translations']);
         }
 
         return $data;

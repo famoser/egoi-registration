@@ -150,14 +150,13 @@ trait ParticipantEventPresenceTrait
 
     public function isEventPresenceComplete()
     {
-        $validation = !empty($this->shirtSize) &&
-            !empty($this->shirtFit) &&
+        $validation = null !== $this->shirtSize &&
+            null !== $this->shirtFit &&
             !empty($this->phone) &&
-            !empty($this->diet) &&
-            !empty($this->allergies);
+            null !== $this->diet;
 
         if ($this->isLeader()) {
-            $validation &= !empty($this->singleRoom);
+            $validation &= null !== $this->singleRoom;
         }
 
         return $validation;

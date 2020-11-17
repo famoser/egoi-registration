@@ -1,5 +1,5 @@
 trait:
-  name: Event
+  name: Onsite
 
 diet: Diet
 allergies: Food / medication / other allergies (optional)

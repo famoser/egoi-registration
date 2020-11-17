@@ -13,7 +13,7 @@ namespace App\Enum;
 
 use App\Enum\Base\BaseEnum;
 
-class ParticipantMode extends BaseEnum
+class ParticipationMode extends BaseEnum
 {
     const ONSITE = 0;
     const ONLINE = 1;

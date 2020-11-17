@@ -17,6 +17,7 @@ use App\Entity\Traits\DelegationContributionTrait;
 use App\Entity\Traits\IdTrait;
 use App\Entity\Traits\TimeTrait;
 use App\Enum\ArrivalOrDeparture;
+use App\Enum\ParticipationMode;
 use App\Enum\ReviewProgress;
 use App\Helper\HashHelper;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -192,6 +193,10 @@ class Delegation extends BaseEntity
         );
         $summary['personal_data'] = $chapter;
 
+        if (ParticipationMode::ONLINE === $this->participationMode) {
+            return $summary + ['immigration' => $this->createEmptySummary(), 'onsite' => $this->createEmptySummary()];
+        }
+
         $chapter = $this->summarizeParticipants(
             function (Participant $participant) {
                 return $participant->getImmigrationReviewProgress();
@@ -217,6 +222,10 @@ class Delegation extends BaseEntity
 
     public function getTravelGroupReviewProgress()
     {
+        if (ParticipationMode::ONLINE === $this->participationMode) {
+            return ['arrival' => $this->createEmptySummary(), 'departure' => $this->createEmptySummary()];
+        }
+
         $chapter = $this->summarizeTravelGroup(
             function (Participant $participant) {
                 return $participant->getArrivalTravelGroup();
@@ -248,7 +257,8 @@ class Delegation extends BaseEntity
 
     private function summarizeParticipants(callable $getReviewProgress, callable $getIsComplete)
     {
-        $chapter = ['data_missing' => $this->expectedAttendance(), 'pending_review' => 0, 'reviewed' => 0];
+        $chapter = $this->createEmptySummary();
+        $chapter['data_missing'] = $this->expectedAttendance();
         foreach ($this->participants as $participant) {
             if (ReviewProgress::REVIEWED_AND_LOCKED === $getReviewProgress($participant)) {
                 --$chapter['data_missing'];
@@ -260,5 +270,10 @@ class Delegation extends BaseEntity
         }
 
         return $chapter;
+    }
+
+    private function createEmptySummary()
+    {
+        return ['data_missing' => 0, 'pending_review' => 0, 'reviewed' => 0];
     }
 }
