@@ -14,12 +14,14 @@ namespace App\Security\Voter;
 use App\Entity\Participant;
 use App\Entity\TravelGroup;
 use App\Entity\User;
+use App\Enum\ReviewProgress;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class TravelGroupVoter extends Voter
 {
     const TRAVEL_GROUP_EDIT = 'TRAVEL_GROUP_EDIT';
+    const TRAVEL_GROUP_REMOVE = 'TRAVEL_GROUP_REMOVE';
     const TRAVEL_GROUP_MODERATE = 'TRAVEL_GROUP_MODERATE';
 
     /**
@@ -59,7 +61,15 @@ class TravelGroupVoter extends Voter
                 return true;
             }
 
-            return self::TRAVEL_GROUP_EDIT === $attribute && $user->getDelegation() === $subject->getDelegation();
+            if ($user->getDelegation() !== $subject->getDelegation()) {
+                return false;
+            }
+
+            if (self::TRAVEL_GROUP_REMOVE === $attribute) {
+                return ReviewProgress::REVIEWED_AND_LOCKED !== $subject->getReviewProgress();
+            }
+
+            return self::TRAVEL_GROUP_EDIT === $attribute;
         }
 
         throw new \LogicException('Unknown user payload '.serialize($user).'!');

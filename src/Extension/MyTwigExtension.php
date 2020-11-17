@@ -14,6 +14,7 @@ namespace App\Extension;
 use App\Enum\ArrivalOrDeparture;
 use App\Enum\BooleanType;
 use App\Enum\ParticipantRole;
+use App\Enum\ParticipationMode;
 use App\Helper\DateTimeFormatter;
 use DateTime;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -47,6 +48,7 @@ class MyTwigExtension extends AbstractExtension
             new TwigFilter('camelCaseToUnderscore', [$this, 'camelCaseToUnderscoreFilter']),
             new TwigFilter('transParticipantRole', [$this, 'transParticipantRole']),
             new TwigFilter('transArrivalOrDeparture', [$this, 'transArrivalOrDeparture']),
+            new TwigFilter('transParticipationMode', [$this, 'transParticipationMode']),
             new TwigFilter('truncate', [$this, 'truncateFilter'], ['needs_environment' => true]),
         ];
     }
@@ -59,7 +61,7 @@ class MyTwigExtension extends AbstractExtension
     public function dateFormatFilter(?\DateTime $date): string
     {
         if ($date instanceof DateTime) {
-            return $this->prependDayName($date).', '.$date->format(DateTimeFormatter::DATE_FORMAT);
+            return $date->format(DateTimeFormatter::DATE_FORMAT);
         }
 
         return '-';
@@ -91,6 +93,11 @@ class MyTwigExtension extends AbstractExtension
     public function transArrivalOrDeparture(int $value): string
     {
         return ArrivalOrDeparture::getTranslationForValue($value, $this->translator);
+    }
+
+    public function transParticipationMode(int $value)
+    {
+        return ParticipationMode::getTranslationForValue($value, $this->translator);
     }
 
     /**

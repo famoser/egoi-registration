@@ -102,7 +102,7 @@ class TravelGroupController extends BaseDoctrineController
      */
     public function removeAction(Request $request, TravelGroup $travelGroup, TranslatorInterface $translator)
     {
-        $this->denyAccessUnlessGranted(TravelGroupVoter::TRAVEL_GROUP_EDIT, $travelGroup);
+        $this->denyAccessUnlessGranted(TravelGroupVoter::TRAVEL_GROUP_REMOVE, $travelGroup);
 
         $form = $this->createForm(RemoveTravelGroupType::class);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'travel_group', 'label' => 'remove.submit']);

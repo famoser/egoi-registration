@@ -208,7 +208,7 @@ trait ParticipantPersonalDataTrait
         $validation = !empty($this->givenName) &&
             !empty($this->familyName) &&
             !empty($this->birthday) &&
-            !empty($this->gender) &&
+            null !== $this->gender &&
             !empty($this->portrait) &&
             !empty($this->nameOnDocuments) &&
             !empty($this->papers) &&

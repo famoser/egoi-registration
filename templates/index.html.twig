@@ -36,6 +36,11 @@
     {% if summary["reviewed"] > 0 %}
         <span class="badge badge-success">{{ summary["reviewed"] }}</span>
     {% endif %}
+
+    {% if summary["data_missing"] == 0 and summary["pending_review"] == 0 and summary["reviewed"] == 0 %}
+        N/A
+    {% endif %}
+
 {% endmacro %}
 
 {% import _self as own_macros %}
@@ -49,8 +54,8 @@
             {{ "index.legend.legend"|trans }}:
             <span class="badge badge-danger">{{ "index.legend.data_missing"|trans }}</span>
             <span class="badge badge-warning">{{ "index.legend.data_complete"|trans }}</span>
-            <span class="badge badge-success">{{ "index.legend.reviewed_and_locked"|trans }}</span>
-        </p>
+            <span class="Eventbadge badge-success">{{ "index.legend.reviewed_and_locked"|trans }}</span>
+        </p>Event
 
         <p>
             <a class="btn btn-outline-primary"
@@ -65,18 +70,18 @@
             <table class="table table-striped">
                 <thead>
                 <tr class="bg-light">
-                    <th>{{ "entity.name"|trans({}, "entity_delegation") }}</th>
+                    <th colspan="5">{{ "entity.name"|trans({}, "entity_delegation") }}</th>
+                    <th class="border-left" colspan="3">{{ "entity.plural"|trans({}, "entity_participant") }}</th>
+                    <th class="border-left" colspan="2">{{ "entity.plural"|trans({}, "entity_travel_group") }}</th>
+                </tr>
+                <tr class="text-secondary">
+                    <th>{{ "name"|trans({}, "entity_delegation") }}</th>
+                    <th>{{ "participation_mode_short"|trans({}, "trait_delegation_attendance") }}</th>
                     <th>{{ "registration_hash"|trans({}, "entity_delegation") }}
                         <a class="text-sm text-warning"
                            href="{{ path("delegation_registration_regenerate_all") }}">{{ "registration_regenerate_all.action"|trans({}, "delegation") }}</a>
                     </th>
-                    <th></th>
-                    <th></th>
-                    <th class="border-left" colspan="3">{{ "entity.plural"|trans({}, "entity_participant") }}</th>
-                    <th class="border-left" colspan="2">{{ "entity.plural"|trans({}, "entity_travel_group") }}</th>
-                </tr>
-                <tr>
-                    <th colspan="4"></th>
+                    <th colspan="2"></th>
                     <th class="border-left">{{ "trait.name"|trans({}, "trait_participant_personal_data") }}</th>
                     <th>{{ "trait.name"|trans({}, "trait_participant_immigration") }}</th>
                     <th>{{ "trait.name"|trans({}, "trait_participant_event_presence") }}</th>
@@ -94,6 +99,7 @@
                                 {{ delegation.name }}
                             {% endif %}
                         </td>
+                        <td>{{ delegation.participationMode|transParticipationMode }}</td>
                         <td>
                             <a target="_blank"
                                href="{{ path("register", {"delegationName": delegation.name, "registrationHash": delegation.registrationHash}) }}">
@@ -189,10 +195,13 @@
                             <td>
                                 {{ participant.name }}
                             </td>
-                            <td class="lead w-16em">
+                            <td class="lead {% if delegation.participationMode == 0 %}w-16em{% else %}minimal-width{% endif %}">
                                 {{ own_macros.get_badge(participant.personalDataComplete, participant.personalDataReviewProgress, path("participant_review_personal_data", {"participant": participant.id}), "edit_personal_data.title"|trans({}, "participant")) }}
-                                {{ own_macros.get_badge(participant.immigrationComplete, participant.immigrationReviewProgress, path("participant_review_immigration", {"participant": participant.id}), "edit_immigration.title"|trans({}, "participant")) }}
-                                {{ own_macros.get_badge(participant.eventPresenceComplete, participant.eventPresenceReviewProgress, path("participant_review_event_presence", {"participant": participant.id}), "edit_event_presence.title"|trans({}, "participant")) }}
+
+                                {% if delegation.participationMode == 0 %}
+                                    {{ own_macros.get_badge(participant.immigrationComplete, participant.immigrationReviewProgress, path("participant_review_immigration", {"participant": participant.id}), "edit_immigration.title"|trans({}, "participant")) }}
+                                    {{ own_macros.get_badge(participant.eventPresenceComplete, participant.eventPresenceReviewProgress, path("participant_review_event_presence", {"participant": participant.id}), "edit_event_presence.title"|trans({}, "participant")) }}
+                                {% endif %}
                             </td>
                             <td>
                                 <span class="btn-group">
@@ -208,50 +217,52 @@
                 </table>
             {% endif %}
 
-            <h3 class="mt-4">{{ "entity.plural"|trans({}, "entity_travel_group") }}</h3>
-            <p>
-                {{ own_macros.get_zero_success_badge(delegation.participantsWithoutTravelGroup(0)|length, "index.participants_without_arrival_travel_group"|trans) }}
-                <br/>
-                {{ own_macros.get_zero_success_badge(delegation.participantsWithoutTravelGroup(1)|length, "index.participants_without_departure_travel_group"|trans) }}
-            </p>
-            {% if delegation.travelGroups|length > 0 %}
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>{{ "date_time"|trans({}, "entity_travel_group") }}</th>
-                        <th>{{ "location"|trans({}, "entity_travel_group") }}</th>
-                        <th class="minimal-width"></th>
-                        <td class="minimal-width"></td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for travelGroup in delegation.travelGroups %}
+            {% if delegation.participationMode == 0 %}
+                <h3 class="mt-4">{{ "entity.plural"|trans({}, "entity_travel_group") }}</h3>
+                <p>
+                    {{ own_macros.get_zero_success_badge(delegation.participantsWithoutTravelGroup(0)|length, "index.participants_without_arrival_travel_group"|trans) }}
+                    <br/>
+                    {{ own_macros.get_zero_success_badge(delegation.participantsWithoutTravelGroup(1)|length, "index.participants_without_departure_travel_group"|trans) }}
+                </p>
+                {% if delegation.travelGroups|length > 0 %}
+                    <table class="table table-striped">
+                        <thead>
                         <tr>
-                            <td>
-                                {{ travelGroup.arrivalOrDeparture|transArrivalOrDeparture }}
-                            </td>
-                            <td>
-                                {{ travelGroup.dateTime|dateTimeFormat }}
-                            </td>
-                            <td>
-                                {{ travelGroup.location }}
-                            </td>
-                            <td class="lead">
-                                {{ own_macros.get_badge(travelGroup.complete, travelGroup.reviewProgress, path("travel_group_review", {"travelGroup": travelGroup.id}), "entity.name"|trans({}, "entity_travel_group")) }}
-                            </td>
-                            <td>
-                                <span class="btn-group">
-                                    <a class="btn btn-outline-danger"
-                                       href="{{ path("travel_group_remove", {"travelGroup": travelGroup.id}) }}">
-                                        <i class="fal fa-trash"></i>
-                                    </a>
-                                </span>
-                            </td>
+                            <th></th>
+                            <th>{{ "date_time"|trans({}, "entity_travel_group") }}</th>
+                            <th>{{ "location"|trans({}, "entity_travel_group") }}</th>
+                            <th class="minimal-width"></th>
+                            <td class="minimal-width"></td>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {% for travelGroup in delegation.travelGroups %}
+                            <tr>
+                                <td>
+                                    {{ travelGroup.arrivalOrDeparture|transArrivalOrDeparture }}
+                                </td>
+                                <td>
+                                    {{ travelGroup.dateTime|dateTimeFormat }}
+                                </td>
+                                <td>
+                                    {{ travelGroup.location }}
+                                </td>
+                                <td class="lead">
+                                    {{ own_macros.get_badge(travelGroup.complete, travelGroup.reviewProgress, path("travel_group_review", {"travelGroup": travelGroup.id}), "entity.name"|trans({}, "entity_travel_group")) }}
+                                </td>
+                                <td>
+                                    <span class="btn-group">
+                                        <a class="btn btn-outline-danger"
+                                           href="{{ path("travel_group_remove", {"travelGroup": travelGroup.id}) }}">
+                                            <i class="fal fa-trash"></i>
+                                        </a>
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
             {% endif %}
         {% endif %}
         </div>

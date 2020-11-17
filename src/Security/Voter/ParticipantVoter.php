@@ -13,6 +13,7 @@ namespace App\Security\Voter;
 
 use App\Entity\Participant;
 use App\Entity\User;
+use App\Enum\ReviewProgress;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -20,6 +21,7 @@ class ParticipantVoter extends Voter
 {
     const PARTICIPANT_VIEW = 'PARTICIPANT_VIEW';
     const PARTICIPANT_EDIT = 'PARTICIPANT_EDIT';
+    const PARTICIPANT_REMOVE = 'PARTICIPANT_REMOVE';
     const PARTICIPANT_MODERATE = 'PARTICIPANT_MODERATE';
 
     /**
@@ -37,7 +39,7 @@ class ParticipantVoter extends Voter
         }
 
         // if the attribute isn't one we support, return false
-        if (!in_array($attribute, [self::PARTICIPANT_VIEW, self::PARTICIPANT_EDIT, self::PARTICIPANT_MODERATE])) {
+        if (!in_array($attribute, [self::PARTICIPANT_EDIT, self::PARTICIPANT_REMOVE, self::PARTICIPANT_MODERATE])) {
             return false;
         }
 
@@ -64,7 +66,15 @@ class ParticipantVoter extends Voter
                 return true;
             }
 
-            return in_array($attribute, [self::PARTICIPANT_VIEW, self::PARTICIPANT_EDIT]) && $user->getDelegation() === $subject->getDelegation();
+            if ($user->getDelegation() !== $subject->getDelegation()) {
+                return false;
+            }
+
+            if (self::PARTICIPANT_REMOVE === $attribute) {
+                return ReviewProgress::REVIEWED_AND_LOCKED !== $subject->getPersonalDataReviewProgress();
+            }
+
+            return self::PARTICIPANT_EDIT === $attribute;
         }
 
         throw new \LogicException('Unknown user payload '.serialize($user).'!');

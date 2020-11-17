@@ -213,7 +213,7 @@ class ParticipantController extends BaseDoctrineController
      */
     public function removeAction(Request $request, Participant $participant, TranslatorInterface $translator, FileServiceInterface $fileService)
     {
-        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_EDIT, $participant);
+        $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_REMOVE, $participant);
 
         $form = $this->createForm(RemoveParticipantType::class);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'remove.submit']);
@@ -230,7 +230,7 @@ class ParticipantController extends BaseDoctrineController
             return $this->redirectToRoute('delegation_view', ['delegation' => $participant->getDelegation()->getId()]);
         }
 
-        return $this->render('participant/remove.html.twig', ['form' => $form->createView()]);
+        return $this->render('participant/remove.html.twig', ['form' => $form->createView(), 'role' => $participant->getRole()]);
     }
 
     /**

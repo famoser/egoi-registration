@@ -6,3 +6,4 @@ leader_count: Number of leaders
 guest_count: Number of guests
 guest_count_help: '%surcharge% surcharge per guest'
 participation_mode: Participation mode
+participation_mode_short: onsite/online
