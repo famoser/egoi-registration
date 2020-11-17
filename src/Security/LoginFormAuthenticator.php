@@ -124,13 +124,14 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
     {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
-            return new RedirectResponse($targetPath);
-        }
-
         /** @var User $user */
         $user = $token->getUser();
         if (in_array(User::ROLE_ADMIN, $user->getRoles())) {
+            // redirect to page originally wanted to access
+            if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
+                return new RedirectResponse($targetPath);
+            }
+
             $indexUrl = $this->urlGenerator->generate('index');
 
             return new RedirectResponse($indexUrl);
