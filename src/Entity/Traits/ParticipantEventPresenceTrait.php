@@ -153,8 +153,7 @@ trait ParticipantEventPresenceTrait
         $validation = null !== $this->shirtSize &&
             null !== $this->shirtFit &&
             !empty($this->phone) &&
-            null !== $this->diet &&
-            !empty($this->allergies);
+            null !== $this->diet;
 
         if ($this->isLeader()) {
             $validation &= null !== $this->singleRoom;

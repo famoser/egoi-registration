@@ -56,7 +56,7 @@ class ParticipantController extends BaseDoctrineController
         $participant->setDelegation($delegation);
         $participant->setCountryOfResidence($delegation->getName());
         $participant->setNationality($delegation->getName());
-        $participant->setPlaceOfBirth($delegation->getName());
+        $participant->setPassportIssueCountry($delegation->getName());
 
         $form = $this->createForm(EditParticipantPersonalDataType::class, $participant);
         $form->add('submit', SubmitType::class, ['translation_domain' => 'participant', 'label' => 'new.submit']);

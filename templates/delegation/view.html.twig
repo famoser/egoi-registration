@@ -24,7 +24,7 @@
         <td>{{ role|transParticipantRole }}</td>
 
         {% if participant is null %}
-            <td></td>
+            <td colspan="2"></td>
             <td class="minimal-width text-right">
                 <a class="btn btn-secondary"
                    href="{{ path("participant_new", {"delegation": delegation.id, "role": role}) }}">
