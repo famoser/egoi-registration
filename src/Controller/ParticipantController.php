@@ -242,7 +242,13 @@ class ParticipantController extends BaseDoctrineController
     {
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_MODERATE);
 
-        $participants = $this->getDoctrine()->getRepository(Participant::class)->findBy([], ['familyName' => 'ASC']);
+        $participants = $this->getDoctrine()->getRepository(Participant::class)->findBy([], ['role' => 'ASC', 'familyName' => 'ASC']);
+        $participantsByDelegationName = [];
+        foreach ($participants as $participant) {
+            $participantsByDelegationName[$participant->getDelegation()->getName()][] = $participant;
+        }
+        ksort($participantsByDelegationName);
+        $participants = array_merge(...array_values($participantsByDelegationName));
 
         return $exportService->exportToCsv($participants, 'participant-export', 'participants');
     }

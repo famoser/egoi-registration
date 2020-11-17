@@ -43,6 +43,13 @@
 
 {% endmacro %}
 
+{% macro get_delegation_badges(delegation) %}
+    {% import _self as own_macros %}
+
+    {{ own_macros.get_badge(delegation.attendanceComplete, delegation.attendanceReviewProgress, path("delegation_review_attendance", {"delegation": delegation.id}), "edit_attendance.title"|trans({}, "delegation")) }}
+    {{ own_macros.get_badge(delegation.contributionComplete, delegation.contributionReviewProgress, path("delegation_review_contribution", {"delegation": delegation.id}), "edit_contribution.title"|trans({}, "delegation")) }}
+{% endmacro %}
+
 {% import _self as own_macros %}
 
 {% block content %}
@@ -112,8 +119,7 @@
                             {{ delegation.users|map(p => p.email)|join(", ") }}
                         </td>
                         <td class="lead">
-                            {{ own_macros.get_badge(delegation.attendanceComplete, delegation.attendanceReviewProgress, path("delegation_review_attendance", {"delegation": delegation.id}), "edit_attendance.title"|trans({}, "delegation")) }}
-                            {{ own_macros.get_badge(delegation.contributionComplete, delegation.contributionReviewProgress, path("delegation_review_contribution", {"delegation": delegation.id}), "edit_contribution.title"|trans({}, "delegation")) }}
+                            {{ own_macros.get_delegation_badges(delegation) }}
                         </td>
                         <td>
                             <span class="btn-group">
@@ -172,7 +178,14 @@
         {% for delegation in delegations %}
             {% if delegation.participants|length > 0 or delegation.travelGroups|length > 0 %}
                 <div class="tile mt-3 mb-3" id="{{ delegation.name }}">
-                <h2 class="display-4">{{ delegation.name }}</h2>
+                <h2 class="display-4">{{ delegation.name }} <span class="text-sm">{{ delegation.participationMode|transParticipationMode }}</span></h2>
+                <p class="lead">
+                    {{ own_macros.get_delegation_badges(delegation) }}
+                    <a class="badge badge-link"
+                       href="{{ path("delegation_view", {"delegation": delegation.id}) }}">
+                        {{ "index.impersonate"|trans }}
+                    </a>
+                </p>
 
                 <h3 class="mt-4">{{ "entity.plural"|trans({}, "entity_participant") }}</h3>
                 <p>

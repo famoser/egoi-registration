@@ -64,6 +64,10 @@ class DelegationSerializer implements ContextAwareNormalizerInterface
             $data['travelDetailsReviewProgress'] = ReviewProgress::getTranslationForValue($data['travelDetailsReviewProgress'], $this->translator);
         }
 
+        if (isset($data['translations'])) {
+            $data['translations'] = implode(' ', $data['translations']);
+        }
+
         return $data;
     }
 
