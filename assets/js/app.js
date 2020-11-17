@@ -32,12 +32,23 @@ $(document)
       enableTime: true,
       altFormat: 'F j, Y H:i',
       altInput: true,
-      dateFormat: 'Z'
+      dateFormat: 'Z',
+      time_24hr: true
     })
 
     $('.custom-file-input').on('change', function (event) {
       const fileName = event.target.files[0].name
       $(this).next('.custom-file-label').html(fileName)
+    })
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault()
+
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        })
+      })
     })
 
     // force reload on user browser button navigation
