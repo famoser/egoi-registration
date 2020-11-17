@@ -183,6 +183,8 @@ class Delegation extends BaseEntity
 
     public function getParticipantReviewProgress()
     {
+        $summary = [];
+
         $chapter = $this->summarizeParticipants(
             function (Participant $participant) {
                 return $participant->getPersonalDataReviewProgress();
@@ -226,6 +228,7 @@ class Delegation extends BaseEntity
             return ['arrival' => $this->createEmptySummary(), 'departure' => $this->createEmptySummary()];
         }
 
+        $summary = [];
         $chapter = $this->summarizeTravelGroup(
             function (Participant $participant) {
                 return $participant->getArrivalTravelGroup();

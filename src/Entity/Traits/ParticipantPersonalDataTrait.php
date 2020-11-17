@@ -203,6 +203,8 @@ trait ParticipantPersonalDataTrait
         $this->consent = $consent;
     }
 
+    abstract public function isLeader(): bool;
+
     public function isPersonalDataComplete()
     {
         $validation = !empty($this->givenName) &&
