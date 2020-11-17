@@ -205,7 +205,7 @@ trait ParticipantPersonalDataTrait
 
     public function isPersonalDataComplete()
     {
-        return !empty($this->givenName) &&
+        $validation = !empty($this->givenName) &&
             !empty($this->familyName) &&
             !empty($this->birthday) &&
             !empty($this->gender) &&
@@ -213,5 +213,11 @@ trait ParticipantPersonalDataTrait
             !empty($this->nameOnDocuments) &&
             !empty($this->papers) &&
             !empty($this->consent);
+
+        if ($this->isLeader()) {
+            $validation &= !empty($this->email);
+        }
+
+        return $validation;
     }
 }
