@@ -10,6 +10,7 @@
     "ext-iconv": "*",
     "ext-json": "*",
     "ext-pdo": "*",
+    "ext-zip": "*",
     "composer/package-versions-deprecated": "^1.11",
     "doctrine/annotations": "^1.0",
     "doctrine/doctrine-bundle": "^2.1",
@@ -42,8 +43,7 @@
     "twig/cssinliner-extra": "^3.0",
     "twig/extra-bundle": "^3.0",
     "twig/inky-extra": "^3.0",
-    "twig/twig": "^2.12|^3.0",
-    "ext-zip": "*"
+    "twig/twig": "^2.12|^3.0"
   },
   "require-dev": {
     "brainmaestro/composer-git-hooks": "^2.8",

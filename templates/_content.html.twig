@@ -18,7 +18,7 @@
                 <ul class="navbar-nav mr-auto">
                     {% if is_granted('ROLE_ADMIN') %}
                         {{ own_macros.nav_item(path("index"), "index.title"|trans({}, "index")) }}
-                    {% else %}
+                    {% elseif is_granted('ROLE_DELEGATION') %}
                         {{ own_macros.nav_item(path("delegation_view", {"delegation": app.user.delegation.id}), "view.title"|trans({"%name%": app.user.delegation.name}, "delegation")) }}
                     {% endif %}
                 </ul>
@@ -28,7 +28,9 @@
                             <i class="fal fa-envelope-open"></i>
                         </a>
                     {% endblock %}
-                    {{ own_macros.nav_item(path("logout"), "logout.title"|trans({}, "security")) }}
+                    {% if app.user is not null %}
+                        {{ own_macros.nav_item(path("logout"), "logout.title"|trans({}, "security")) }}
+                    {% endif %}
                 </ul>
             </div>
         </nav>
