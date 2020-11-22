@@ -27,11 +27,17 @@ class EditDelegationAttendanceType extends AbstractType
     private $guestSurcharge;
 
     /**
+     * @var string
+     */
+    private $currency;
+
+    /**
      * EditDelegationAttendanceType constructor.
      */
-    public function __construct(string $guestSurcharge)
+    public function __construct(string $guestSurcharge, string $currency)
     {
         $this->guestSurcharge = $guestSurcharge;
+        $this->currency = $currency;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -39,7 +45,7 @@ class EditDelegationAttendanceType extends AbstractType
         $builder->add('contestantCount', IntegerType::class, ['attr' => ['min' => 1, 'max' => 4]]);
         $builder->add('leaderCount', IntegerType::class, ['attr' => ['min' => 1, 'max' => 2]]);
 
-        $builder->add('guestCount', IntegerType::class, ['attr' => ['min' => 0, 'max' => 5], 'help' => 'guest_count_help', 'help_translation_parameters' => ['%surcharge%' => $this->guestSurcharge]]);
+        $builder->add('guestCount', IntegerType::class, ['attr' => ['min' => 0, 'max' => 5], 'help' => 'guest_count_help', 'help_translation_parameters' => ['%surcharge%' => $this->guestSurcharge, '%currency%' => $this->currency]]);
         $builder->add('participationMode', ChoiceType::class, ParticipationMode::getChoicesForBuilder());
     }
 

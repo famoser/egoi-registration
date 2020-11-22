@@ -85,12 +85,13 @@
             {{ form_row(form.gender) }}
         </div>
     </div>
-    {% if form.email is defined %}
+    {% if form.email is defined and form.phone is defined %}
         <div class="row">
             <div class="col">
                 {{ form_row(form.email) }}
             </div>
             <div class="col">
+                {{ form_row(form.phone) }}
             </div>
         </div>
     {% endif %}
@@ -183,14 +184,6 @@
 {% block edit_participant_event_presence_widget %}
     {% import _self as own_macros %}
 
-    <div class="row">
-        <div class="col">
-            {{ form_row(form.phone) }}
-        </div>
-        <div class="col">
-        </div>
-    </div>
-    <hr/>
     <div class="row">
         <div class="col">
             {{ form_row(form.shirtSize) }}

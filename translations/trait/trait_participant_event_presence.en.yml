@@ -5,9 +5,7 @@ diet: Diet
 allergies: Food / medication / other allergies (optional)
 
 single_room: Single room
-single_room_help: 'Only leaders eligible. %surcharge% surcharge.'
-
-phone: Phone
+single_room_help: 'Only leaders eligible. %currency% %surcharge% surcharge.'
 
 shirt_fit: Shirt fit
 shirt_size: Shirt size

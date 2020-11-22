@@ -1,0 +1,12 @@
+{% extends "_form_content.html.twig" %}
+{% import "shared/invoice.html.twig" as invoice_macros %}
+
+{% block title %}{{ "edit_finance.title"|trans }}{% endblock %}
+{% block description %}{{ "edit_finance.description"|trans }}{% endblock %}
+
+{% block form_content_before %}
+    {{ invoice_macros.invoice_table(invoice) }}
+
+{% endblock %}
+
+{% trans_default_domain "delegation" %}

@@ -59,6 +59,7 @@ class EditParticipantPersonalDataType extends AbstractType
 
             if ($participant->isLeader()) {
                 $form->add('email', EmailType::class, ['required' => false]);
+                $form->add('phone', TextType::class, ['required' => false]);
             }
 
             $this->addFileFields($participant, $form, $this->urlGenerator);

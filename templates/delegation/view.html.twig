@@ -97,9 +97,9 @@
 
     <p class="p-2 jumbotron mb-3 text-right text-secondary">
         {{ "view.legend.legend"|trans }}:
-        <button class="btn btn-sm btn-secondary disabled">{{ "view.legend.data_missing"|trans }}</button>
-        <button class="btn btn-sm btn-outline-secondary disabled">{{ "view.legend.data_complete"|trans }}</button>
-        <button class="btn btn-sm btn-outline-success disabled">{{ "view.legend.reviewed_and_locked"|trans }}</button>
+        <span class="badge badge-secondary">{{ "view.legend.data_missing"|trans }}</span>
+        <span class="badge badge-outline-secondary border border-secondary">{{ "view.legend.data_complete"|trans }}</span>
+        <span class="badge badge-success">{{ "view.legend.reviewed_and_locked"|trans }}</span>
     </p>
 
     <p>
@@ -124,7 +124,9 @@
             </thead>
             <tbody>
             {{ own_macros.get_participant_row(0, delegation) }}
-            {{ own_macros.get_participant_row(1, delegation) }}
+            {% if delegation.leaderCount > 1 %}
+                {{ own_macros.get_participant_row(1, delegation) }}
+            {% endif %}
             {% for i in range(0, delegation.contestantCount-1) %}
                 {{ own_macros.get_participant_row(2, delegation, i) }}
             {% endfor %}
@@ -135,6 +137,17 @@
             {% endif %}
             </tbody>
         </table>
+
+        <p class="lead">
+            <a href="{{ path("delegation_invoice", {"delegation": delegation.id}) }}">{{ "invoice.title"|trans }}</a>
+            ({{ "invoice.outstanding_amount"|trans({}, "shared") }}:
+            {% if invoice.total == 0 %}
+                {% set badge_flavour = "success" %}
+            {% else %}
+                {% set badge_flavour = "warning" %}
+            {% endif %}
+            <span class="badge badge-{{ badge_flavour }}">{{ invoice.total }}</span>)
+        </p>
 
         {% if delegation.participants|length > 0 and delegation.participationMode == 0 %}
             <h2 class="mt-5">{{ "entity.plural"|trans({}, "entity_travel_group") }}</h2>

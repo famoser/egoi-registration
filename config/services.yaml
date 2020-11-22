@@ -18,6 +18,7 @@ services:
             $publicDir: '%kernel.project_dir%/public'
             $persistentDir: '%kernel.project_dir%/var/persistent'
             $transientDir: '%kernel.project_dir%/var/transient'
+            $currency: '%env(CURRENCY)%'
             $guestSurcharge: '%env(GUEST_SURCHARGE)%'
             $singleRoomSurcharge: '%env(SINGLE_ROOM_SURCHARGE)%'
 

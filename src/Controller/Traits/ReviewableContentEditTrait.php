@@ -31,6 +31,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 trait ReviewableContentEditTrait
@@ -49,6 +50,10 @@ trait ReviewableContentEditTrait
 
     abstract protected function render(string $view, array $parameters = [], Response $response = null): Response;
 
+    abstract protected function generateUrl(string $route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string;
+
+    abstract protected function redirect(string $url, int $status = 302): RedirectResponse;
+
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
@@ -62,11 +67,11 @@ trait ReviewableContentEditTrait
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
-    private function reviewDelegationContent(Request $request, TranslatorInterface $translator, Delegation $delegation, string $editablePart)
+    private function reviewDelegationContent(Request $request, TranslatorInterface $translator, Delegation $delegation, string $editablePart, ?callable $validation = null)
     {
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE, $delegation);
 
-        return $this->reviewReviewableContent($request, $translator, $delegation, 'delegation', $editablePart);
+        return $this->reviewReviewableContent($request, $translator, $delegation, $delegation, 'delegation', $editablePart, $validation);
     }
 
     /**
@@ -82,11 +87,11 @@ trait ReviewableContentEditTrait
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
-    private function reviewParticipantContent(Request $request, TranslatorInterface $translator, Participant $participant, string $editablePart)
+    private function reviewParticipantContent(Request $request, TranslatorInterface $translator, Participant $participant, string $editablePart, ?callable $validation = null)
     {
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_MODERATE, $participant);
 
-        return $this->reviewReviewableContent($request, $translator, $participant, 'participant', $editablePart);
+        return $this->reviewReviewableContent($request, $translator, $participant->getDelegation(), $participant, 'participant', $editablePart, $validation);
     }
 
     /**
@@ -123,7 +128,7 @@ trait ReviewableContentEditTrait
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
-    private function reviewReviewableContent(Request $request, TranslatorInterface $translator, BaseEntity $entity, string $collection, string $editablePart = ''): Response
+    private function reviewReviewableContent(Request $request, TranslatorInterface $translator, Delegation $delegation, BaseEntity $entity, string $collection, string $editablePart = '', ?callable $validation = null): Response
     {
         list($templatePrefix, $translationSaveNameKey, $getter, $setter, $formType) = $this->applyConventions($collection, $editablePart);
         $saveName = $translator->trans($translationSaveNameKey, [], $collection);
@@ -139,23 +144,27 @@ trait ReviewableContentEditTrait
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->has('submit_and_lock') && $form->get('submit_and_lock')->isClicked()) {
-                $entity->$setter(ReviewProgress::REVIEWED_AND_LOCKED);
-                $message = $translator->trans('edit.success.saved_and_locked', ['%save_name%' => $saveName], 'reviewable_content');
-                $this->displaySuccess($message);
-            } elseif ($form->has('submit_and_unlock') && $form->get('submit_and_unlock')->isClicked()) {
-                $entity->$setter(ReviewProgress::EDITED);
-                $message = $translator->trans('edit.success.saved_and_unlocked', ['%save_name%' => $saveName], 'reviewable_content');
-                $this->displayWarning($message);
-            } else {
-                $entity->$setter(ReviewProgress::EDITED);
-                $message = $translator->trans('edit.success.saved', ['%save_name%' => $saveName], 'reviewable_content');
-                $this->displaySuccess($message);
+            if (!is_callable($validation) || $validation($form)) {
+                if ($form->has('submit_and_lock') && $form->get('submit_and_lock')->isClicked()) {
+                    $entity->$setter(ReviewProgress::REVIEWED_AND_LOCKED);
+                    $message = $translator->trans('edit.success.saved_and_locked', ['%save_name%' => $saveName], 'reviewable_content');
+                    $this->displaySuccess($message);
+                } elseif ($form->has('submit_and_unlock') && $form->get('submit_and_unlock')->isClicked()) {
+                    $entity->$setter(ReviewProgress::EDITED);
+                    $message = $translator->trans('edit.success.saved_and_unlocked', ['%save_name%' => $saveName], 'reviewable_content');
+                    $this->displayWarning($message);
+                } else {
+                    $entity->$setter(ReviewProgress::EDITED);
+                    $message = $translator->trans('edit.success.saved', ['%save_name%' => $saveName], 'reviewable_content');
+                    $this->displaySuccess($message);
+                }
+
+                $this->fastSave($entity);
+
+                $targetUrl = $this->generateUrl('index').'#'.$delegation->getName();
+
+                return $this->redirect($targetUrl);
             }
-
-            $this->fastSave($entity);
-
-            return $this->redirectToRoute('index');
         }
 
         return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView()]);

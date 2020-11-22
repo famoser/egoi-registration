@@ -196,10 +196,6 @@ class SecurityController extends BaseDoctrineController
             $this->displayError($translator->trans('register.error.invalid_hash', [], 'security'));
 
             return null;
-        } elseif ($delegation->getUsers()->count() > 0) {
-            $this->displayError($translator->trans('register.error.hash_already_used', [], 'security'));
-
-            return null;
         }
 
         return $delegation;
@@ -270,6 +266,14 @@ class SecurityController extends BaseDoctrineController
     {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid() && $this->applySetPasswordType($form->get('password'), $user, $translator)) {
+            $existingUser = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
+            if (null !== $existingUser) {
+                $message = $translator->trans('register.error.email_already_used', [], 'security');
+                $this->displayError($message);
+
+                return false;
+            }
+
             $user->generateAuthenticationHash();
             $this->fastSave($user);
 

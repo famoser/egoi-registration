@@ -65,3 +65,15 @@ edit_contribution:
   title: 'Translations'
   description: 'Translations of task statements your delegation can contribute.'
   save_name: 'translations'
+
+edit_finance:
+  title: 'Finance'
+  description: 'The amount delegations have to pay / already payed.'
+  submit: 'Save changes'
+  success:
+    edited: 'Finance saved.'
+
+invoice:
+  title: 'Fees'
+  description: 'Amount payable by the delegation'
+  total: 'Total'

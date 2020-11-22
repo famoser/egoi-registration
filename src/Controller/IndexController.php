@@ -13,6 +13,7 @@ namespace App\Controller;
 
 use App\Controller\Base\BaseController;
 use App\Entity\Delegation;
+use App\Service\Interfaces\InvoiceServiceInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -26,7 +27,7 @@ class IndexController extends BaseController
      *
      * @return Response
      */
-    public function indexAction()
+    public function indexAction(InvoiceServiceInterface $invoiceService)
     {
         $delegations = $this->getDoctrine()->getRepository(Delegation::class)->findBy([], ['name' => 'ASC']);
 
@@ -40,6 +41,8 @@ class IndexController extends BaseController
             $travelGroupReviewProgresses[$delegation->getId()] = $delegation->getTravelGroupReviewProgress();
         }
 
-        return $this->render('index.html.twig', ['delegations' => $delegations, 'participant_review_progresses' => $participantReviewProgresses, 'travel_group_review_progresses' => $travelGroupReviewProgresses]);
+        $invoiceByDelegation = $invoiceService->getInvoiceByDelegation($delegations);
+
+        return $this->render('index.html.twig', ['delegations' => $delegations, 'delegation_invoices' => $invoiceByDelegation, 'participant_review_progresses' => $participantReviewProgresses, 'travel_group_review_progresses' => $travelGroupReviewProgresses]);
     }
 }

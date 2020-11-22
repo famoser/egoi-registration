@@ -4,6 +4,7 @@ trait:
 contestant_count: Number of contestants
 leader_count: Number of leaders
 guest_count: Number of guests
-guest_count_help: '%surcharge% surcharge per guest'
+guest_count_help: '%currency% %surcharge% surcharge per guest'
 participation_mode: Participation mode
 participation_mode_short: onsite/online
+already_payed: Already payed

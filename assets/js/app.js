@@ -6,6 +6,7 @@ require('bootstrap')
 require('typeface-open-sans')
 require('bootstrap-select')
 require('flatpickr')
+require('jquery-autocompleter')
 
 // attach jquery to window
 window.$ = $
@@ -26,20 +27,39 @@ $(document)
     $('[data-toggle="popover"]')
       .popover()
 
-    $('select').selectpicker()
+    const autocompletes = $('[data-autocomplete]')
+    if (autocompletes.length) {
+      $.getJSON('/resources/autocomplete.json', function (data) {
+        autocompletes.each(function () {
+          const element = $(this)
+          const value = element.attr('data-autocomplete')
 
-    $('input[type=datetime-local]').flatpickr({
-      enableTime: true,
-      altFormat: 'F j, Y H:i',
-      altInput: true,
-      dateFormat: 'Z',
-      time_24hr: true
-    })
+          if (Object.prototype.hasOwnProperty.call(data, value)) {
+            element.autocompleter({ source: data[value] })
+          }
+        })
+      })
+    }
 
-    $('.custom-file-input').on('change', function (event) {
-      const fileName = event.target.files[0].name
-      $(this).next('.custom-file-label').html(fileName)
-    })
+    const defaults = $('[data-default]')
+    if (defaults.length) {
+      $.getJSON('/resources/default.json', function (data) {
+        defaults.each(function () {
+          const element = $(this)
+          const value = element.attr('data-default')
+
+          if (Object.prototype.hasOwnProperty.call(data, value)) {
+            if (!element.val()) {
+              element.val(data[value])
+            }
+          }
+        })
+
+        initializeInputs()
+      })
+    } else {
+      initializeInputs()
+    }
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
@@ -57,3 +77,20 @@ $(document)
         window.location.reload(true)
       })
   })
+
+function initializeInputs () {
+  $('select').selectpicker()
+
+  $('input[type=datetime-local]').flatpickr({
+    enableTime: true,
+    altFormat: 'F j, Y H:i',
+    altInput: true,
+    dateFormat: 'Z',
+    time_24hr: true
+  })
+
+  $('.custom-file-input').on('change', function (event) {
+    const fileName = event.target.files[0].name
+    $(this).next('.custom-file-label').html(fileName)
+  })
+}
