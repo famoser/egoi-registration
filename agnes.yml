@@ -20,6 +20,10 @@ data:
   files:
     - path: .env.local
       required: true
+    - path: public/resources/autocomplete.json
+      required: false
+    - path: public/resources/default.json
+      required: false
 
 scripts:
   build:
