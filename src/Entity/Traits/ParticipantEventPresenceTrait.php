@@ -14,7 +14,6 @@ namespace App\Entity\Traits;
 use App\Enum\Diet;
 use App\Enum\ReviewProgress;
 use App\Enum\ShirtFit;
-use App\Enum\ShirtSize;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -26,7 +25,7 @@ trait ParticipantEventPresenceTrait
      * @Groups({"participant-export"})
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $shirtSize = ShirtSize::S;
+    private $shirtSize;
 
     /**
      * @var int|null
