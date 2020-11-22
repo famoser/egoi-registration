@@ -92,7 +92,7 @@ class TravelGroupController extends BaseDoctrineController
     {
         $this->denyAccessUnlessGranted(TravelGroupVoter::TRAVEL_GROUP_MODERATE, $travelGroup);
 
-        return $this->reviewReviewableContent($request, $translator, $travelGroup, 'travel_group');
+        return $this->reviewReviewableContent($request, $translator, $travelGroup->getDelegation(), $travelGroup, 'travel_group');
     }
 
     /**

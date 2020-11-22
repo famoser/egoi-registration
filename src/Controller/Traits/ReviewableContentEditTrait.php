@@ -31,6 +31,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 trait ReviewableContentEditTrait
@@ -49,6 +50,10 @@ trait ReviewableContentEditTrait
 
     abstract protected function render(string $view, array $parameters = [], Response $response = null): Response;
 
+    abstract protected function generateUrl(string $route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string;
+
+    abstract protected function redirect(string $url, int $status = 302): RedirectResponse;
+
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
@@ -66,7 +71,7 @@ trait ReviewableContentEditTrait
     {
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE, $delegation);
 
-        return $this->reviewReviewableContent($request, $translator, $delegation, 'delegation', $editablePart, $validation);
+        return $this->reviewReviewableContent($request, $translator, $delegation, $delegation, 'delegation', $editablePart, $validation);
     }
 
     /**
@@ -86,7 +91,7 @@ trait ReviewableContentEditTrait
     {
         $this->denyAccessUnlessGranted(ParticipantVoter::PARTICIPANT_MODERATE, $participant);
 
-        return $this->reviewReviewableContent($request, $translator, $participant, 'participant', $editablePart, $validation);
+        return $this->reviewReviewableContent($request, $translator, $participant->getDelegation(), $participant, 'participant', $editablePart, $validation);
     }
 
     /**
@@ -123,7 +128,7 @@ trait ReviewableContentEditTrait
     /**
      * assumes that $editablePart follows some conventions, then generates & processes form.
      */
-    private function reviewReviewableContent(Request $request, TranslatorInterface $translator, BaseEntity $entity, string $collection, string $editablePart = '', ?callable $validation = null): Response
+    private function reviewReviewableContent(Request $request, TranslatorInterface $translator, Delegation $delegation, BaseEntity $entity, string $collection, string $editablePart = '', ?callable $validation = null): Response
     {
         list($templatePrefix, $translationSaveNameKey, $getter, $setter, $formType) = $this->applyConventions($collection, $editablePart);
         $saveName = $translator->trans($translationSaveNameKey, [], $collection);
@@ -156,7 +161,9 @@ trait ReviewableContentEditTrait
 
                 $this->fastSave($entity);
 
-                return $this->redirectToRoute('index');
+                $targetUrl = $this->generateUrl('index').'#'.$delegation->getName();
+
+                return $this->redirect($targetUrl);
             }
         }
 
