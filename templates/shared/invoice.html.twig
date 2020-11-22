@@ -1,0 +1,39 @@
+{% macro invoice_line(item, quantity, rate, amount) %}
+    <tr>
+        <td>{{ item }}</td>
+        <td class="text-right">{{ quantity }}</td>
+        <td class="text-right">{% if rate is not null %}{{ env_currency }} {{ rate }}{% endif %}</td>
+        <td class="text-right">{{ env_currency }} {{ amount }}</td>
+    </tr>
+{% endmacro %}
+
+{% macro total_invoice_line(identifier, amount) %}
+    <tr>
+        <td class="font-weight-bold">{{ identifier }}</td>
+        <td colspan="2"></td>
+        <td class="font-weight-bold text-right">{{ env_currency }} {{ amount }}</td>
+    </tr>
+{% endmacro %}
+
+{% macro invoice_table(invoice) %}
+    {% trans_default_domain "shared" %}
+
+    {% import _self as own_macros %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th>{{ "invoice.item"|trans({}, "shared") }}</th>
+            <th class="text-right">{{ "invoice.quantity"|trans({}, "shared") }}</th>
+            <th class="text-right">{{ "invoice.rate"|trans({}, "shared") }}</th>
+            <th class="text-right">{{ "invoice.amount"|trans({}, "shared") }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{ own_macros.invoice_line("invoice.guest_fees"|trans({}, "shared"), invoice.guestCount, invoice.guestSurcharge, invoice.totalGuestSurcharge) }}
+        {{ own_macros.invoice_line("invoice.single_room_fees"|trans({}, "shared"), invoice.singleRoomCount, invoice.singleRoomSurcharge, invoice.totalSingleRoomSurcharge) }}
+        {{ own_macros.total_invoice_line("invoice.total"|trans({}, "shared"), invoice.total) }}
+        {{ own_macros.invoice_line("invoice.already_payed"|trans({}, "shared"), null, null, invoice.alreadyPayed) }}
+        {{ own_macros.total_invoice_line("invoice.outstanding_amount"|trans({}, "shared"), invoice.outstandingAmount) }}
+        </tbody>
+    </table>
+{% endmacro %}

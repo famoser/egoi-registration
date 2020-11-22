@@ -21,6 +21,7 @@ use App\Form\Delegation\RemoveDelegationType;
 use App\Security\Voter\DelegationVoter;
 use App\Service\Interfaces\ExportServiceInterface;
 use App\Service\Interfaces\FileServiceInterface;
+use App\Service\Interfaces\InvoiceServiceInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -82,11 +83,25 @@ class DelegationController extends BaseDoctrineController
      *
      * @return Response
      */
-    public function viewAction(Delegation $delegation)
+    public function viewAction(Delegation $delegation, InvoiceServiceInterface $invoiceService)
     {
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_VIEW, $delegation);
+        $invoice = $invoiceService->getInvoice($delegation);
 
-        return $this->render('delegation/view.html.twig', ['delegation' => $delegation]);
+        return $this->render('delegation/view.html.twig', ['delegation' => $delegation, 'invoice' => $invoice]);
+    }
+
+    /**
+     * @Route("/invoice/{delegation}", name="delegation_invoice")
+     *
+     * @return Response
+     */
+    public function invoiceAction(Delegation $delegation, InvoiceServiceInterface $invoiceService)
+    {
+        $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_VIEW, $delegation);
+        $invoice = $invoiceService->getInvoice($delegation);
+
+        return $this->render('delegation/invoice.html.twig', ['delegation' => $delegation, 'invoice' => $invoice]);
     }
 
     /**
@@ -212,7 +227,7 @@ class DelegationController extends BaseDoctrineController
      *
      * @return Response
      */
-    public function editFinanceAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
+    public function editFinanceAction(Request $request, Delegation $delegation, TranslatorInterface $translator, InvoiceServiceInterface $invoiceService)
     {
         $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE, $delegation);
 
@@ -229,7 +244,9 @@ class DelegationController extends BaseDoctrineController
             return $this->redirectToRoute('index');
         }
 
-        return $this->render('delegation/edit_finance.html.twig', ['form' => $form->createView()]);
+        $invoice = $invoiceService->getInvoice($delegation);
+
+        return $this->render('delegation/edit_finance.html.twig', ['form' => $form->createView(), 'invoice' => $invoice]);
     }
 
     /**

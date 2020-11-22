@@ -72,3 +72,8 @@ edit_finance:
   submit: 'Save changes'
   success:
     edited: 'Finance saved.'
+
+invoice:
+  title: 'Invoice'
+  description: 'Amount payable by the delegation'
+  total: 'Total'

@@ -1,0 +1,14 @@
+{% extends "_single_content.html.twig" %}
+
+{% block title %}{{ "invoice.title"|trans }}{% endblock %}
+{% block description %}{{ "invoice.description"|trans }}{% endblock %}
+
+{% import "shared/invoice.html.twig" as invoice_macros %}
+
+{% trans_default_domain "delegation" %}
+
+{% block single_content %}
+    {{ invoice_macros.invoice_table(invoice) }}
+
+    <p>{{ env_invoice_disclaimer }}</p>
+{% endblock %}

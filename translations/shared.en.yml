@@ -1,0 +1,10 @@
+invoice:
+  item: 'item'
+  quantity: 'quantity'
+  rate: 'rate'
+  amount: 'amount'
+  guest_fees: 'Guest fee'
+  single_room_fees: 'Single room upgrade'
+  total: 'Total'
+  already_payed: 'Already received'
+  outstanding_amount: 'Outstanding amount'

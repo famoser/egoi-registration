@@ -30,10 +30,13 @@ class Invoice
     private $totalSingleRoomSurcharge;
 
     /** @var int */
+    private $total;
+
+    /** @var int */
     private $alreadyPayed;
 
     /** @var int */
-    private $total;
+    private $outstandingAmount;
 
     public static function createFromDelegation(Delegation $delegation, int $guestSurcharge, int $singleRoomSurcharge): Invoice
     {
@@ -47,11 +50,12 @@ class Invoice
             $self->singleRoomCount += $participant->getSingleRoom() ? 1 : 0;
         }
         $self->singleRoomSurcharge = $singleRoomSurcharge;
-        $self->totalGuestSurcharge = $self->singleRoomCount * $self->singleRoomSurcharge;
+        $self->totalSingleRoomSurcharge = $self->singleRoomCount * $self->singleRoomSurcharge;
 
         $self->alreadyPayed = $delegation->getAlreadyPayed();
 
-        $self->total = $self->totalGuestSurcharge + $self->totalSingleRoomSurcharge - $self->alreadyPayed;
+        $self->total = $self->totalGuestSurcharge + $self->totalSingleRoomSurcharge;
+        $self->outstandingAmount = $self->total - $self->alreadyPayed;
 
         return $self;
     }
@@ -86,13 +90,18 @@ class Invoice
         return $this->totalSingleRoomSurcharge;
     }
 
+    public function getTotal(): int
+    {
+        return $this->total;
+    }
+
     public function getAlreadyPayed(): int
     {
         return $this->alreadyPayed;
     }
 
-    public function getTotal(): int
+    public function getOutstandingAmount(): int
     {
-        return $this->total;
+        return $this->outstandingAmount;
     }
 }
