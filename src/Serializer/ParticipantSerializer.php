@@ -13,8 +13,11 @@ namespace App\Serializer;
 
 use App\Entity\Participant;
 use App\Enum\Diet;
+use App\Enum\Gender;
 use App\Enum\ParticipantRole;
 use App\Enum\ReviewProgress;
+use App\Enum\ShirtFit;
+use App\Enum\ShirtSize;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -39,6 +42,14 @@ class ParticipantSerializer implements ContextAwareNormalizerInterface
     {
         $data = $this->normalizer->normalize($travelGroup, $format, $context);
 
+        if (isset($data['shirtSize'])) {
+            $data['shirtSize'] = ShirtSize::getTranslationForValue($data['shirtSize'], $this->translator);
+        }
+
+        if (isset($data['shirtFit'])) {
+            $data['shirtFit'] = ShirtFit::getTranslationForValue($data['shirtFit'], $this->translator);
+        }
+
         if (isset($data['diet'])) {
             $data['diet'] = Diet::getTranslationForValue($data['diet'], $this->translator);
         }
@@ -49,6 +60,10 @@ class ParticipantSerializer implements ContextAwareNormalizerInterface
 
         if (isset($data['immigrationReviewProgress'])) {
             $data['immigrationReviewProgress'] = ReviewProgress::getTranslationForValue($data['immigrationReviewProgress'], $this->translator);
+        }
+
+        if (isset($data['gender'])) {
+            $data['gender'] = Gender::getTranslationForValue($data['gender'], $this->translator);
         }
 
         if (isset($data['personalDataReviewProgress'])) {
