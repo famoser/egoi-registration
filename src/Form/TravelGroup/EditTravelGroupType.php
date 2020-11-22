@@ -13,6 +13,7 @@ namespace App\Form\TravelGroup;
 
 use App\Entity\Participant;
 use App\Entity\TravelGroup;
+use App\Enum\ArrivalOrDeparture;
 use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -27,8 +28,7 @@ class EditTravelGroupType extends AbstractTravelGroupType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('location', TextType::class, ['required' => false]);
-        $builder->add('dateTime', DateTimeType::class, ['required' => false, 'widget' => 'single_text']);
+        $builder->add('location', TextType::class, ['required' => false, 'attr' => ['data-autocomplete' => 'travelGroup_location']]);
         $builder->add('provider', TextType::class, ['required' => false, 'help' => 'provider_help']);
         $builder->add('tripNumber', TextType::class, ['required' => false, 'help' => 'trip_number_help']);
         $builder->add('description', TextareaType::class, ['required' => false]);
@@ -37,6 +37,9 @@ class EditTravelGroupType extends AbstractTravelGroupType
             /** @var TravelGroup $travelGroup */
             $travelGroup = $event->getData();
             $form = $event->getForm();
+
+            $defaultIdentifier = ArrivalOrDeparture::ARRIVAL === $travelGroup->getArrivalOrDeparture() ? 'arrivalDateTime' : 'departureDateTime';
+            $form->add('dateTime', DateTimeType::class, ['required' => false, 'widget' => 'single_text', 'attr' => ['data-default' => 'travelGroup_'.$defaultIdentifier]]);
 
             $form->add('participants', EntityType::class, [
                 'multiple' => true,
