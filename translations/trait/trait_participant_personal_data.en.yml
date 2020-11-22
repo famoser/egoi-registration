@@ -5,7 +5,7 @@ name: Name
 given_name: "Given name"
 family_name: "Family name"
 email: E-Mail
-phone: Phone
+phone: Phone (optional)
 birthday: Birthday
 gender: Gender
 

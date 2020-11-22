@@ -24,6 +24,14 @@ trait ParticipantPersonalDataTrait
      * @Groups({"participant-export", "travel-export"})
      * @ORM\Column(type="text", nullable=true)
      */
+    private $phone;
+
+    /**
+     * @var string|null
+     *
+     * @Groups({"participant-export", "travel-export"})
+     * @ORM\Column(type="text", nullable=true)
+     */
     private $givenName;
 
     /**
@@ -141,6 +149,16 @@ trait ParticipantPersonalDataTrait
     public function setEmail(?string $email): void
     {
         $this->email = $email;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): void
+    {
+        $this->phone = $phone;
     }
 
     public function getGender(): ?int

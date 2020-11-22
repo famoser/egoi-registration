@@ -19,7 +19,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -33,19 +32,23 @@ class EditParticipantEventPresenceType extends AbstractType
     private $singleRoomSurcharge;
 
     /**
+     * @var string
+     */
+    private $currency;
+
+    /**
      * EditParticipantEventPresenceType constructor.
      */
-    public function __construct(string $singleRoomSurcharge)
+    public function __construct(string $singleRoomSurcharge, string $currency)
     {
         $this->singleRoomSurcharge = $singleRoomSurcharge;
+        $this->currency = $currency;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('shirtSize', ChoiceType::class, ShirtSize::getChoicesForBuilder() + ['required' => false]);
         $builder->add('shirtFit', ChoiceType::class, ShirtFit::getChoicesForBuilder() + ['required' => false]);
-
-        $builder->add('phone', TextType::class, ['required' => false]);
 
         $builder->add('diet', ChoiceType::class, Diet::getChoicesForBuilder() + ['required' => false]);
         $builder->add('allergies', TextareaType::class, ['required' => false]);
@@ -56,7 +59,7 @@ class EditParticipantEventPresenceType extends AbstractType
             $form = $event->getForm();
 
             if ($participant->isLeader()) {
-                $form->add('singleRoom', CheckboxType::class, ['required' => false, 'help' => 'single_room_help', 'help_translation_parameters' => ['%surcharge%' => $this->singleRoomSurcharge]]);
+                $form->add('singleRoom', CheckboxType::class, ['required' => false, 'help' => 'single_room_help', 'help_translation_parameters' => ['%surcharge%' => $this->singleRoomSurcharge, '%currency%' => $this->currency]]);
             }
         });
     }

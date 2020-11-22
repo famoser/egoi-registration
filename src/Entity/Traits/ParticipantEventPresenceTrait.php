@@ -21,14 +21,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 trait ParticipantEventPresenceTrait
 {
     /**
-     * @var string|null
-     *
-     * @Groups({"participant-export", "travel-export"})
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $phone;
-
-    /**
      * @var int|null
      *
      * @Groups({"participant-export"})
@@ -96,16 +88,6 @@ trait ParticipantEventPresenceTrait
         $this->shirtFit = $shirtFit;
     }
 
-    public function getPhone(): ?string
-    {
-        return $this->phone;
-    }
-
-    public function setPhone(?string $phone): void
-    {
-        $this->phone = $phone;
-    }
-
     public function getDiet(): ?string
     {
         return $this->diet;
@@ -152,7 +134,6 @@ trait ParticipantEventPresenceTrait
     {
         $validation = null !== $this->shirtSize &&
             null !== $this->shirtFit &&
-            !empty($this->phone) &&
             null !== $this->diet;
 
         if ($this->isLeader()) {

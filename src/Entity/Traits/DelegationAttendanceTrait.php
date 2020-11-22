@@ -46,6 +46,14 @@ trait DelegationAttendanceTrait
      * @var int
      *
      * @Groups({"delegation-export"})
+     * @ORM\Column(type="integer", options={"default": 0})
+     */
+    private $alreadyPayed = 0;
+
+    /**
+     * @var int
+     *
+     * @Groups({"delegation-export"})
      * @ORM\Column(type="integer")
      */
     private $participationMode = ParticipationMode::ONSITE;
@@ -86,6 +94,16 @@ trait DelegationAttendanceTrait
     public function setGuestCount(int $guestCount): void
     {
         $this->guestCount = $guestCount;
+    }
+
+    public function getAlreadyPayed(): int
+    {
+        return $this->alreadyPayed;
+    }
+
+    public function setAlreadyPayed(int $alreadyPayed): void
+    {
+        $this->alreadyPayed = $alreadyPayed;
     }
 
     public function getParticipationMode(): int

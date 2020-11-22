@@ -16,7 +16,7 @@ use App\Controller\Traits\ReviewableContentEditTrait;
 use App\Entity\Delegation;
 use App\Enum\ParticipantRole;
 use App\Form\Delegation\AddMultipleDelegationsType;
-use App\Form\Delegation\EditDelegationType;
+use App\Form\Delegation\EditDelegationFinanceType;
 use App\Form\Delegation\RemoveDelegationType;
 use App\Security\Voter\DelegationVoter;
 use App\Service\Interfaces\ExportServiceInterface;
@@ -199,6 +199,31 @@ class DelegationController extends BaseDoctrineController
     }
 
     /**
+     * @Route("/edit_finance/{delegation}", name="delegation_edit_finance")
+     *
+     * @return Response
+     */
+    public function editFinanceAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
+    {
+        $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE, $delegation);
+
+        $form = $this->createForm(EditDelegationFinanceType::class, $delegation, ['required' => false]);
+        $form->add('submit', SubmitType::class, ['translation_domain' => 'delegation', 'label' => 'edit_finance.submit']);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->fastSave($delegation);
+
+            $message = $translator->trans('edit_finance.success.edited', [], 'delegation');
+            $this->displaySuccess($message);
+
+            return $this->redirectToRoute('index');
+        }
+
+        return $this->render('delegation/edit_finance.html.twig', ['form' => $form->createView()]);
+    }
+
+    /**
      * @Route("/remove/{delegation}/", name="delegation_remove")
      *
      * @return Response
@@ -243,36 +268,5 @@ class DelegationController extends BaseDoctrineController
         $delegations = $this->getDoctrine()->getRepository(Delegation::class)->findBy([], ['name' => 'ASC']);
 
         return $exportService->exportToCsv($delegations, 'delegation-export', 'delegations');
-    }
-
-    /**
-     * @Route("/edit/{delegation}", name="delegation_edit")
-     *
-     * @return Response
-     */
-    public function editAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
-    {
-        $this->denyAccessUnlessGranted(DelegationVoter::DELEGATION_MODERATE, $delegation);
-
-        $form = $this->createForm(EditDelegationType::class, $delegation, ['required' => false]);
-        $form->add('submit', SubmitType::class, ['translation_domain' => 'delegation', 'label' => 'edit.submit']);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $existingDelegations = $this->getDoctrine()->getRepository(Delegation::class)->findBy(['name' => $delegation->getName()]);
-            if (count($existingDelegations) > 0) {
-                $message = $translator->trans('edit.error.name_already_taken', [], 'delegation');
-                $this->displayError($message);
-            } else {
-                $this->fastSave($delegation);
-
-                $message = $translator->trans('edit.success.edited', [], 'delegation');
-                $this->displaySuccess($message);
-
-                return $this->redirectToRoute('index');
-            }
-        }
-
-        return $this->render('delegation/edit.html.twig', ['form' => $form->createView()]);
     }
 }
