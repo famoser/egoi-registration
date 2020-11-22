@@ -8,7 +8,7 @@
 {% trans_default_domain "delegation" %}
 
 {% block single_content %}
-    {{ invoice_macros.invoice_table(invoice) }}
-
     <p>{{ env_invoice_disclaimer }}</p>
+
+    {{ invoice_macros.invoice_table(invoice) }}
 {% endblock %}

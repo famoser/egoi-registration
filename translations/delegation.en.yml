@@ -74,6 +74,6 @@ edit_finance:
     edited: 'Finance saved.'
 
 invoice:
-  title: 'Invoice'
+  title: 'Fees'
   description: 'Amount payable by the delegation'
   total: 'Total'
