@@ -266,6 +266,14 @@ class SecurityController extends BaseDoctrineController
     {
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid() && $this->applySetPasswordType($form->get('password'), $user, $translator)) {
+            $existingUser = $this->getDoctrine()->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
+            if (null !== $existingUser) {
+                $message = $translator->trans('register.error.email_already_used', [], 'security');
+                $this->displayError($message);
+
+                return false;
+            }
+
             $user->generateAuthenticationHash();
             $this->fastSave($user);
 

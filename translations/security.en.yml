@@ -19,6 +19,7 @@ register:
   error:
     invalid_hash: 'Link invalid.'
     hash_already_used: 'An account has already been created for this delegation.'
+    email_already_used: 'This E-Mail has already been used. Login or reset your password instead.'
 
 recover:
   title: 'Reset password.'
