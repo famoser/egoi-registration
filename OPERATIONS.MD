@@ -13,9 +13,11 @@ APP_SECRET=NEW_SECRET
 MAILER_URL=smtp://info@example.com:NOT_REAL@smtp.mail.com:465/?encryption=ssl&auth_mode=login
 ```
 
+You can additionally configure defaults & autocomplete. See the corresponding files in `public/resources`.
+
 ### Using agnes
 
-Use `famoser/agnes` to ensure folders are setup correctly and migrations are run. 
+Use `famoser/agnes` to ensure folders are setup correctly and migrations are run. It also manages configuration files (see `data.files` section).
 
 You need access to the config repository specified in `agnes.yml`. Then:
 - create a new release (here `v1.0`) of `main` branch with `./vendor/bin/agnes release v1.0 main`
