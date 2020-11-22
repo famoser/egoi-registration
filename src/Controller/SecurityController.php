@@ -196,10 +196,6 @@ class SecurityController extends BaseDoctrineController
             $this->displayError($translator->trans('register.error.invalid_hash', [], 'security'));
 
             return null;
-        } elseif ($delegation->getUsers()->count() > 0) {
-            $this->displayError($translator->trans('register.error.hash_already_used', [], 'security'));
-
-            return null;
         }
 
         return $delegation;

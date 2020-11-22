@@ -58,4 +58,5 @@ security:
         - { path: ^/delegation, role: ROLE_DELEGATION }
         - { path: ^/participant, role: ROLE_DELEGATION }
         - { path: ^/travel_group, role: ROLE_DELEGATION }
+        - { path: ^/users/remove, role: ROLE_DELEGATION }
         - { path: ^/, role: ROLE_ADMIN }

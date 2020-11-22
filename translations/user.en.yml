@@ -7,5 +7,7 @@ remove:
   title: 'Remove user'
   description: 'Remove user.'
   submit: 'Remove user'
+  danger:
+    current_user: 'You are currently logged in as the user you are trying to remove. If you continue, you will be logged out automatically.'
   success:
     removed: 'User removed'
