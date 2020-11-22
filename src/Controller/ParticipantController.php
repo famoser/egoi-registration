@@ -161,9 +161,15 @@ class ParticipantController extends BaseDoctrineController
      *
      * @return Response
      */
-    public function reviewPersonalDataAction(Request $request, Participant $participant, TranslatorInterface $translator)
+    public function reviewPersonalDataAction(Request $request, Participant $participant, TranslatorInterface $translator, FileServiceInterface $fileService)
     {
-        return $this->reviewParticipantContent($request, $translator, $participant, 'personal_data');
+        $validator = function (FormInterface $form) use ($participant, $translator, $fileService) {
+            $this->processImages($form, $participant, $translator, $fileService);
+
+            return true;
+        };
+
+        return $this->reviewParticipantContent($request, $translator, $participant, 'personal_data', $validator);
     }
 
     /**
@@ -198,6 +204,8 @@ class ParticipantController extends BaseDoctrineController
 
     /**
      * @Route("/review_event_presence/{participant}", name="participant_review_event_presence")
+     *
+     * @param FileServiceInterface $fileService
      *
      * @return Response
      */

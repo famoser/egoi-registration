@@ -111,22 +111,27 @@ class DelegationController extends BaseDoctrineController
     public function editAttendanceAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
     {
         $validation = function () use ($delegation, $translator) {
-            $result = ($delegation->getLeaderCount() > 0 || !$delegation->getParticipantWithRole(ParticipantRole::LEADER)) &&
-                ($delegation->getLeaderCount() > 1 || !$delegation->getParticipantWithRole(ParticipantRole::DEPUTY_LEADER)) &&
-                !$delegation->getParticipantWithRole(ParticipantRole::CONTESTANT, $delegation->getContestantCount()) &&
-                !$delegation->getParticipantWithRole(ParticipantRole::GUEST, $delegation->getGuestCount());
-
-            if (!$result) {
-                $message = $translator->trans('edit_attendance.error.too_few_spaces', [], 'delegation');
-                $this->displayError($message);
-
-                return false;
-            }
-
-            return true;
+            return $this->validateAttendance($delegation, $translator);
         };
 
         return $this->editReviewableDelegationContent($request, $translator, $delegation, 'attendance', $validation);
+    }
+
+    private function validateAttendance(Delegation $delegation, TranslatorInterface $translator)
+    {
+        $result = ($delegation->getLeaderCount() > 0 || !$delegation->getParticipantWithRole(ParticipantRole::LEADER)) &&
+            ($delegation->getLeaderCount() > 1 || !$delegation->getParticipantWithRole(ParticipantRole::DEPUTY_LEADER)) &&
+            !$delegation->getParticipantWithRole(ParticipantRole::CONTESTANT, $delegation->getContestantCount()) &&
+            !$delegation->getParticipantWithRole(ParticipantRole::GUEST, $delegation->getGuestCount());
+
+        if (!$result) {
+            $message = $translator->trans('edit_attendance.error.too_few_spaces', [], 'delegation');
+            $this->displayError($message);
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -146,6 +151,10 @@ class DelegationController extends BaseDoctrineController
      */
     public function reviewAttendanceAction(Request $request, Delegation $delegation, TranslatorInterface $translator)
     {
+        $validation = function () use ($delegation, $translator) {
+            return $this->validateAttendance($delegation, $translator);
+        };
+
         return $this->reviewDelegationContent($request, $translator, $delegation, 'attendance');
     }
 
