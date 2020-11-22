@@ -14,6 +14,18 @@ $container-max-widths: (
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-select/dist/css/bootstrap-select.css';
 @import '~flatpickr/dist/flatpickr.css';
+@import '~jquery-autocompleter/src/jquery.autocompleter.css';
+
+.autocompleter-show {
+  background-color: $white;
+  width: calc(#{'100%'} - #{$grid-gutter-width});
+  z-index: 100;
+}
+
+.autocompleter-item {
+  border: solid 1px $gray-400;
+  padding: 0.5em;
+}
 
 // add a drop shadow
 @mixin shadow($shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16)) {

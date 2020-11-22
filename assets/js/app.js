@@ -6,6 +6,7 @@ require('bootstrap')
 require('typeface-open-sans')
 require('bootstrap-select')
 require('flatpickr')
+require('jquery-autocompleter')
 
 // attach jquery to window
 window.$ = $
@@ -27,6 +28,18 @@ $(document)
       .popover()
 
     $('select').selectpicker()
+
+    const data = [
+      {
+        value: 'Zurich Mainstation',
+        label: 'Zurich Mainstation'
+      },
+      {
+        value: 'Zurich Airport (ZRH)',
+        label: 'Zurich Airport (ZRH)'
+      }
+    ]
+    $('#edit_travel_group_location').autocompleter({ source: data })
 
     $('input[type=datetime-local]').flatpickr({
       enableTime: true,
