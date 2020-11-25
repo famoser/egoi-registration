@@ -141,12 +141,12 @@
         <p class="lead">
             <a href="{{ path("delegation_invoice", {"delegation": delegation.id}) }}">{{ "invoice.title"|trans }}</a>
             ({{ "invoice.outstanding_amount"|trans({}, "shared") }}:
-            {% if invoice.total == 0 %}
+            {% if invoice.outstandingAmount == 0 %}
                 {% set badge_flavour = "success" %}
             {% else %}
                 {% set badge_flavour = "warning" %}
             {% endif %}
-            <span class="badge badge-{{ badge_flavour }}">{{ invoice.total }}</span>)
+            <span class="badge badge-{{ badge_flavour }}">{{ invoice.outstandingAmount }}</span>)
         </p>
 
         {% if delegation.participants|length > 0 and delegation.participationMode == 0 %}
