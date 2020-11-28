@@ -56,9 +56,14 @@ class EmailService implements EmailServiceInterface
     private $mailerFromEmail;
 
     /**
+     * @var string
+     */
+    private $supportEmail;
+
+    /**
      * EmailService constructor.
      */
-    public function __construct(TranslatorInterface $translator, LoggerInterface $logger, RequestStack $request, ManagerRegistry $registry, MailerInterface $mailer, string $mailerFromEmail)
+    public function __construct(TranslatorInterface $translator, LoggerInterface $logger, RequestStack $request, ManagerRegistry $registry, MailerInterface $mailer, string $mailerFromEmail, string $supportEmail)
     {
         $this->translator = $translator;
         $this->logger = $logger;
@@ -66,6 +71,7 @@ class EmailService implements EmailServiceInterface
         $this->manager = $registry->getManager();
         $this->mailer = $mailer;
         $this->mailerFromEmail = $mailerFromEmail;
+        $this->supportEmail = $supportEmail;
     }
 
     public function sendRecoverConfirmLink(User $user): bool
@@ -77,7 +83,8 @@ class EmailService implements EmailServiceInterface
             ->subject($subject)
             ->from($this->mailerFromEmail)
             ->to($user->getEmail())
-            ->replyTo($this->mailerFromEmail)
+            ->replyTo($this->supportEmail)
+            ->returnPath($this->supportEmail)
             ->textTemplate('email/recover_confirm.txt.twig')
             ->htmlTemplate('email/recover_confirm.html.twig')
             ->context($entity->getContext());
