@@ -170,7 +170,7 @@ class DelegationController extends BaseDoctrineController
             return $this->validateAttendance($delegation, $translator);
         };
 
-        return $this->reviewDelegationContent($request, $translator, $delegation, 'attendance');
+        return $this->reviewDelegationContent($request, $translator, $delegation, 'attendance', $validation);
     }
 
     /**

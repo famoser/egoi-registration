@@ -26,6 +26,7 @@ use App\Entity\Participant;
 use App\Enum\ReviewProgress;
 use App\Security\Voter\DelegationVoter;
 use App\Security\Voter\ParticipantVoter;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -41,6 +42,8 @@ trait ReviewableContentEditTrait
     abstract protected function createForm(string $type, $data = null, array $options = []): FormInterface;
 
     abstract protected function fastSave(...$entities);
+
+    abstract protected function getDoctrine(): ManagerRegistry;
 
     abstract protected function displaySuccess(string $message, string $link = null);
 
