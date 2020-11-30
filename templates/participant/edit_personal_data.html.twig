@@ -1,9 +1,6 @@
-{% extends "_form_content.html.twig" %}
+{% extends "participant/_form_content_participant.html.twig" %}
 
 {% block title %}{{ "edit_personal_data.title"|trans }}{% endblock %}
 {% block description %}{{ "edit_personal_data.description"|trans }}{% endblock %}
 
 {% trans_default_domain "participant" %}
-
-{% set delegation_breadcrumbs = mode == 'edit' %}
-{% set delegation_breadcrumbs_intermediate = entity.name %}

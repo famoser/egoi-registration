@@ -1,0 +1,22 @@
+{% extends "_form_content.html.twig" %}
+
+{% set delegation_breadcrumbs = mode == 'edit' %}
+
+{% macro delegation_breadcrumb_item(link, text) %}
+    {% if app.request.pathInfo == link %}
+        {{ text }}
+    {% else %}
+        <a href="{{ link }}">
+            {{ text }}
+        </a>
+    {% endif %}
+{% endmacro %}
+{% import _self as own_macros %}
+
+{% block delegation_breadcrumb_leaf %}
+    <li class="breadcrumb-item active" aria-current="page">
+        {{ own_macros.delegation_breadcrumb_item(path('delegation_edit_attendance', {"delegation": entity.id}), "edit_attendance.title"|trans({}, "delegation")) }}
+        <span class="ml-2 mr-2">|</span>
+        {{ own_macros.delegation_breadcrumb_item(path('delegation_edit_contribution', {"delegation": entity.id}), "edit_contribution.title"|trans({}, "delegation")) }}
+    </li>
+{% endblock %}

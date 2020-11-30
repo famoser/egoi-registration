@@ -103,10 +103,16 @@ trait ReviewableContentEditTrait
         $saveName = $translator->trans($translationSaveNameKey, [], $collection);
 
         $readOnly = ReviewProgress::REVIEWED_AND_LOCKED === $entity->$getter();
-        $form = $this->createForm($formType, $entity, ['disabled' => $readOnly]);
-        if (!$readOnly) {
-            $form->add('submit', SubmitType::class, ['translation_domain' => 'reviewable_content', 'label' => 'edit.submit']);
-        }
+        $createForm = function () use ($formType, $entity, $readOnly) {
+            $form = $this->createForm($formType, $entity, ['disabled' => $readOnly]);
+            if (!$readOnly) {
+                $form->add('submit', SubmitType::class, ['translation_domain' => 'reviewable_content', 'label' => 'edit.submit']);
+            }
+
+            return $form;
+        };
+
+        $form = $createForm();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid() && !$readOnly) {
@@ -117,9 +123,10 @@ trait ReviewableContentEditTrait
 
                 $message = $translator->trans('edit.success.saved', ['%save_name%' => $saveName], 'reviewable_content');
                 $this->displaySuccess($message);
-
-                return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
             }
+
+            $this->getDoctrine()->getManager()->refresh($entity);
+            $form = $createForm();
         }
 
         return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'mode' => 'edit', 'delegation' => $delegation, 'entity' => $entity]);
@@ -167,7 +174,7 @@ trait ReviewableContentEditTrait
             }
         }
 
-        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'mode' => 'edit', 'delegation' => $delegation, 'entity' => $entity]);
+        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'mode' => 'review', 'delegation' => $delegation, 'entity' => $entity]);
     }
 
     private function applyConventions(string $collection, string $editablePart = ''): array
