@@ -42,6 +42,7 @@ registration_regenerate_all:
 view:
   title: 'Delegation %name%'
   description: 'Register participants & other required data'
+  breadcrumb_title: 'Overview'
   no_participants_yet: 'No participants yet'
 
   travel_group_purpose: 'How you will arrive and depart from the event so we can arrange transfer.'

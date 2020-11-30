@@ -4,3 +4,5 @@
 {% block description %}{{ "edit_attendance.description"|trans }}{% endblock %}
 
 {% trans_default_domain "delegation" %}
+
+{% set delegation_breadcrumbs = mode == 'edit' %}

@@ -1,15 +1,39 @@
 {% extends "_content.html.twig" %}
 
+{% macro breadcrumb_item(link, text, secondary = false) %}
+    {% if app.request.pathInfo == link %}
+        <li class="breadcrumb-item active" aria-current="page">{{ text }}</li>
+    {% else %}
+        <li class="breadcrumb-item">
+            <a href="{{ link }}">{{ text }}</a>
+        </li>
+    {% endif %}
+{% endmacro %}
+{% import _self as own_macros %}
+
 {% block content %}
-    <div class="content tile">
-        <h1>{{ block('title') }}</h1>
-        <p>{{ block('description') }}</p>
+    <div class="content p-0">
+        {% if delegation_breadcrumbs is defined and delegation_breadcrumbs %}
+            <nav class="mb-0 tile p-0" aria-label="breadcrumb">
+                <ol class="breadcrumb pl-3 mb-0">
+                    {% set delegation_view_path = path("delegation_view", {"delegation": delegation.id}) %}
+                    {% if app.request.pathInfo != delegation_view_path %}
+                        {{ own_macros.breadcrumb_item(delegation_view_path, "view.title"|trans({"%name%": delegation.name}, "delegation")) }}
+                    {% endif %}
+                    {{ own_macros.breadcrumb_item(app.request.pathInfo, block('title')) }}
+                </ol>
+            </nav>
+        {% endif %}
 
-        <hr/>
+        <div class="tile">
+            <h1>{{ block('title') }}</h1>
+            <p>{{ block('description') }}</p>
 
-        {% block single_content %}
+            <hr/>
 
-        {% endblock %}
+            {% block single_content %}
+
+            {% endblock %}
+        </div>
     </div>
-
 {% endblock %}

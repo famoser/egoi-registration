@@ -4,3 +4,5 @@
 {% block description %}{{ "edit_event_presence.description"|trans }}{% endblock %}
 
 {% trans_default_domain "participant" %}
+
+{% set delegation_breadcrumbs = mode == 'edit' %}

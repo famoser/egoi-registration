@@ -4,3 +4,5 @@
 {% block description %}{{ "remove.description"|trans({"%role%": role|transParticipantRole}) }}{% endblock %}
 
 {% trans_default_domain "participant" %}
+
+{% set delegation_breadcrumbs = not is_granted("ROLE_ADMIN") %}

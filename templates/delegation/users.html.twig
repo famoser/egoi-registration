@@ -4,6 +4,7 @@
 {% block description %}{{ "users.description"|trans }}{% endblock %}
 
 {% trans_default_domain "delegation" %}
+{% set delegation_breadcrumbs = true %}
 
 {% block single_content %}
     {% if delegation.users|length == 0 %}

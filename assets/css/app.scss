@@ -27,8 +27,12 @@ $container-max-widths: (
   padding: 0.5em;
 }
 
+h1 {
+  margin-left: -0.05em; /* correct source sans spacing */
+}
+
 // add a drop shadow
-@mixin shadow($shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.16)) {
+@mixin shadow($shadow: 2px 4px 6px 0 rgba(0, 0, 0, 0.16)) {
   box-shadow: $shadow;
 }
 

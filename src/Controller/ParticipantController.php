@@ -73,7 +73,7 @@ class ParticipantController extends BaseDoctrineController
             return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
         }
 
-        return $this->render('participant/new.html.twig', ['form' => $form->createView(), 'role' => $role]);
+        return $this->render('participant/new.html.twig', ['form' => $form->createView(), 'role' => $role, 'delegation' => $delegation]);
     }
 
     private function processImages(FormInterface $form, Participant $participant, TranslatorInterface $translator, FileServiceInterface $fileService)
@@ -238,7 +238,7 @@ class ParticipantController extends BaseDoctrineController
             return $this->redirectToRoute('delegation_view', ['delegation' => $participant->getDelegation()->getId()]);
         }
 
-        return $this->render('participant/remove.html.twig', ['form' => $form->createView(), 'role' => $participant->getRole()]);
+        return $this->render('participant/remove.html.twig', ['form' => $form->createView(), 'role' => $participant->getRole(), 'delegation' => $participant->getDelegation()]);
     }
 
     /**
