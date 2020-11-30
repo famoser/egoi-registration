@@ -6,13 +6,23 @@
 {% trans_default_domain "index" %}
 {% set fluid = true %}
 
-{% macro get_badge(isComplete, reviewProgress, link, content) %}
+{% macro get_badge(isComplete, reviewProgress, content) %}
     {% if reviewProgress == 2 %} {# reviewed #}
-        <a class="badge badge-success" href="{{ link }}">{{ content }}</a>
+        <span class="badge badge-success">{{ content }}</span>
     {% elseif isComplete %}
-        <a class="badge badge-warning" href="{{ link }}">{{ content }}</a>
+        <span class="badge badge-warning">{{ content }}</span>
     {% else %}
-        <a class="badge badge-danger" href="{{ link }}">{{ content }}</a>
+        <span class="badge badge-danger">{{ content }}</span>
+    {% endif %}
+{% endmacro %}
+
+{% macro get_button(isComplete, reviewProgress, link, content) %}
+    {% if reviewProgress == 2 %} {# reviewed #}
+        <a class="btn btn-sm btn-success" href="{{ link }}">{{ content }}</a>
+    {% elseif isComplete %}
+        <a class="btn btn-sm btn-warning" href="{{ link }}">{{ content }}</a>
+    {% else %}
+        <a class="btn btn-sm btn-danger" href="{{ link }}">{{ content }}</a>
     {% endif %}
 {% endmacro %}
 
@@ -46,8 +56,8 @@
 {% macro get_delegation_badges(delegation, invoice) %}
     {% import _self as own_macros %}
 
-    {{ own_macros.get_badge(delegation.attendanceComplete, delegation.attendanceReviewProgress, path("delegation_review_attendance", {"delegation": delegation.id}), "edit_attendance.title"|trans({}, "delegation")) }}
-    {{ own_macros.get_badge(delegation.contributionComplete, delegation.contributionReviewProgress, path("delegation_review_contribution", {"delegation": delegation.id}), "edit_contribution.title"|trans({}, "delegation")) }}
+    {{ own_macros.get_badge(delegation.attendanceComplete, delegation.attendanceReviewProgress, "edit_attendance.title"|trans({}, "delegation")) }}
+    {{ own_macros.get_badge(delegation.contributionComplete, delegation.contributionReviewProgress, "edit_contribution.title"|trans({}, "delegation")) }}
 
     {% if invoice.outstandingAmount == 0 %}
         {% set badge_flavour = "success" %}
@@ -56,7 +66,23 @@
     {% else %}
         {% set badge_flavour = "danger" %}
     {% endif %}
-    <a class="badge badge-{{ badge_flavour }}" href="{{ path("delegation_edit_finance", {"delegation": delegation.id}) }}">{{ "edit_finance.title"|trans({}, "delegation") }}</a>
+    <span class="badge badge-{{ badge_flavour }}">{{ "edit_finance.title"|trans({}, "delegation") }}</span>
+{% endmacro %}
+
+{% macro get_delegation_buttons(delegation, invoice) %}
+    {% import _self as own_macros %}
+
+    {{ own_macros.get_button(delegation.attendanceComplete, delegation.attendanceReviewProgress, path("delegation_review_attendance", {"delegation": delegation.id}), "edit_attendance.title"|trans({}, "delegation")) }}
+    {{ own_macros.get_button(delegation.contributionComplete, delegation.contributionReviewProgress, path("delegation_review_contribution", {"delegation": delegation.id}), "edit_contribution.title"|trans({}, "delegation")) }}
+
+    {% if invoice.outstandingAmount == 0 %}
+        {% set badge_flavour = "success" %}
+    {% elseif invoice.alreadyPayed > 0 %}
+        {% set badge_flavour = "warning" %}
+    {% else %}
+        {% set badge_flavour = "danger" %}
+    {% endif %}
+    <a class="btn btn-sm btn-{{ badge_flavour }}" href="{{ path("delegation_edit_finance", {"delegation": delegation.id}) }}">{{ "edit_finance.title"|trans({}, "delegation") }}</a>
 {% endmacro %}
 
 {% import _self as own_macros %}
@@ -74,7 +100,7 @@
         </p>Event
 
         <p>
-            <a class="btn btn-outline-primary"
+            <a class="btn btn-sm btn-outline-primary"
                href="{{ path("delegation_new") }}">{{ "new.title"|trans({}, "delegation") }}</a>
         </p>
 
@@ -98,7 +124,6 @@
                            href="{{ path("delegation_registration_regenerate_all") }}">{{ "registration_regenerate_all.action"|trans({}, "delegation") }}</a>
                     </th>
                     <th class="w-19em"></th>
-                    <th class="w-10em"></th>
                     <th class="border-left">{{ "trait.name"|trans({}, "trait_participant_personal_data") }}</th>
                     <th>{{ "trait.name"|trans({}, "trait_participant_immigration") }}</th>
                     <th>{{ "trait.name"|trans({}, "trait_participant_event_presence") }}</th>
@@ -129,19 +154,6 @@
                         </td>
                         <td class="lead">
                             {{ own_macros.get_delegation_badges(delegation, delegation_invoices[delegation.id]) }}
-                        </td>
-                        <td>
-                            <span class="btn-group">
-                                <a class="btn btn-link"
-                                   href="{{ path("delegation_view", {"delegation": delegation.id}) }}">
-                                    {{ "index.impersonate"|trans }}
-                                </a>
-
-                                <a class="btn btn-outline-danger"
-                                   href="{{ path("delegation_remove", {"delegation": delegation.id}) }}">
-                                    <i class="fal fa-trash"></i>
-                                </a>
-                            </span>
                         </td>
                         <td class="border-left lead">
                             {{ own_macros.get_review_progress(participant_review_progresses[delegation.id]["personal_data"]) }}
@@ -190,10 +202,14 @@
                     <h2 class="display-4">{{ delegation.name }} <span
                                 class="text-sm">{{ delegation.participationMode|transParticipationMode }}</span></h2>
                     <p class="lead">
-                        {{ own_macros.get_delegation_badges(delegation, delegation_invoices[delegation.id]) }}
-                        <a class="badge badge-link"
+                        {{ own_macros.get_delegation_buttons(delegation, delegation_invoices[delegation.id]) }}
+                        <a class="btn btn-link"
                            href="{{ path("delegation_view", {"delegation": delegation.id}) }}">
                             {{ "index.impersonate"|trans }}
+                        </a>
+                        <a class="btn btn-outline-danger"
+                           href="{{ path("delegation_remove", {"delegation": delegation.id}) }}">
+                            <i class="fal fa-trash"></i>
                         </a>
                     </p>
 
@@ -207,7 +223,7 @@
                             <tr>
                                 <th class="w-12em">{{ "role"|trans({}, "entity_participant") }}</th>
                                 <th>{{ "entity.name"|trans({}, "entity_participant") }}</th>
-                                <th class="{% if delegation.participationMode == 0 %}w-19em{% else %}minimal-width{% endif %}"></th>
+                                <th class="{% if delegation.participationMode == 0 %}w-19em{% else %}w-9em{% endif %}"></th>
                                 <td class="minimal-width"></td>
                             </tr>
                             </thead>
@@ -221,16 +237,16 @@
                                         {{ participant.name }}
                                     </td>
                                     <td class="lead">
-                                        {{ own_macros.get_badge(participant.personalDataComplete, participant.personalDataReviewProgress, path("participant_review_personal_data", {"participant": participant.id}), "edit_personal_data.title"|trans({}, "participant")) }}
+                                        {{ own_macros.get_button(participant.personalDataComplete, participant.personalDataReviewProgress, path("participant_review_personal_data", {"participant": participant.id}), "edit_personal_data.title"|trans({}, "participant")) }}
 
                                         {% if delegation.participationMode == 0 %}
-                                            {{ own_macros.get_badge(participant.immigrationComplete, participant.immigrationReviewProgress, path("participant_review_immigration", {"participant": participant.id}), "edit_immigration.title"|trans({}, "participant")) }}
-                                            {{ own_macros.get_badge(participant.eventPresenceComplete, participant.eventPresenceReviewProgress, path("participant_review_event_presence", {"participant": participant.id}), "edit_event_presence.title"|trans({}, "participant")) }}
+                                            {{ own_macros.get_button(participant.immigrationComplete, participant.immigrationReviewProgress, path("participant_review_immigration", {"participant": participant.id}), "edit_immigration.title"|trans({}, "participant")) }}
+                                            {{ own_macros.get_button(participant.eventPresenceComplete, participant.eventPresenceReviewProgress, path("participant_review_event_presence", {"participant": participant.id}), "edit_event_presence.title"|trans({}, "participant")) }}
                                         {% endif %}
                                     </td>
                                     <td>
                                     <span class="btn-group">
-                                        <a class="btn btn-outline-danger"
+                                        <a class="btn btn-sm btn-outline-danger"
                                            href="{{ path("participant_remove", {"participant": participant.id}) }}">
                                             <i class="fal fa-trash"></i>
                                         </a>
@@ -256,7 +272,7 @@
                                     <th class="w-12em"></th>
                                     <th>{{ "date_time"|trans({}, "entity_travel_group") }}</th>
                                     <th>{{ "location"|trans({}, "entity_travel_group") }}</th>
-                                    <th class="minimal-width"></th>
+                                    <th class="w-8em"></th>
                                     <td class="minimal-width"></td>
                                 </tr>
                                 </thead>
@@ -273,11 +289,11 @@
                                             {{ travelGroup.location }}
                                         </td>
                                         <td class="lead">
-                                            {{ own_macros.get_badge(travelGroup.complete, travelGroup.reviewProgress, path("travel_group_review", {"travelGroup": travelGroup.id}), "entity.name"|trans({}, "entity_travel_group")) }}
+                                            {{ own_macros.get_button(travelGroup.complete, travelGroup.reviewProgress, path("travel_group_review", {"travelGroup": travelGroup.id}), "entity.name"|trans({}, "entity_travel_group")) }}
                                         </td>
                                         <td>
                                         <span class="btn-group">
-                                            <a class="btn btn-outline-danger"
+                                            <a class="btn btn-sm btn-outline-danger"
                                                href="{{ path("travel_group_remove", {"travelGroup": travelGroup.id}) }}">
                                                 <i class="fal fa-trash"></i>
                                             </a>

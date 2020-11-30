@@ -4,3 +4,5 @@
 {% block description %}{{ "remove.description"|trans }}{% endblock %}
 
 {% trans_default_domain "travel_group" %}
+
+{% set delegation_breadcrumbs = not is_granted("ROLE_ADMIN") %}

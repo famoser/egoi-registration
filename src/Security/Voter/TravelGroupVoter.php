@@ -38,7 +38,7 @@ class TravelGroupVoter extends Voter
             return true;
         }
 
-        return self::TRAVEL_GROUP_EDIT === $attribute && $subject instanceof TravelGroup;
+        return in_array($attribute, [self::TRAVEL_GROUP_EDIT, self::TRAVEL_GROUP_REMOVE]) && $subject instanceof TravelGroup;
     }
 
     /**
@@ -56,6 +56,7 @@ class TravelGroupVoter extends Voter
 
         if ($user instanceof User) {
             $userIsAdmin = in_array(User::ROLE_ADMIN, $user->getRoles());
+            dump($userIsAdmin);
 
             if ($userIsAdmin) {
                 return true;

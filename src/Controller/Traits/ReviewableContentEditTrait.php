@@ -26,6 +26,7 @@ use App\Entity\Participant;
 use App\Enum\ReviewProgress;
 use App\Security\Voter\DelegationVoter;
 use App\Security\Voter\ParticipantVoter;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -41,6 +42,8 @@ trait ReviewableContentEditTrait
     abstract protected function createForm(string $type, $data = null, array $options = []): FormInterface;
 
     abstract protected function fastSave(...$entities);
+
+    abstract protected function getDoctrine(): ManagerRegistry;
 
     abstract protected function displaySuccess(string $message, string $link = null);
 
@@ -103,10 +106,16 @@ trait ReviewableContentEditTrait
         $saveName = $translator->trans($translationSaveNameKey, [], $collection);
 
         $readOnly = ReviewProgress::REVIEWED_AND_LOCKED === $entity->$getter();
-        $form = $this->createForm($formType, $entity, ['disabled' => $readOnly]);
-        if (!$readOnly) {
-            $form->add('submit', SubmitType::class, ['translation_domain' => 'reviewable_content', 'label' => 'edit.submit']);
-        }
+        $createForm = function () use ($formType, $entity, $readOnly) {
+            $form = $this->createForm($formType, $entity, ['disabled' => $readOnly]);
+            if (!$readOnly) {
+                $form->add('submit', SubmitType::class, ['translation_domain' => 'reviewable_content', 'label' => 'edit.submit']);
+            }
+
+            return $form;
+        };
+
+        $form = $createForm();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid() && !$readOnly) {
@@ -117,12 +126,13 @@ trait ReviewableContentEditTrait
 
                 $message = $translator->trans('edit.success.saved', ['%save_name%' => $saveName], 'reviewable_content');
                 $this->displaySuccess($message);
-
-                return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
             }
+
+            $this->getDoctrine()->getManager()->refresh($entity);
+            $form = $createForm();
         }
 
-        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView()]);
+        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'mode' => 'edit', 'delegation' => $delegation, 'entity' => $entity]);
     }
 
     /**
@@ -167,7 +177,7 @@ trait ReviewableContentEditTrait
             }
         }
 
-        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView()]);
+        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'mode' => 'review', 'delegation' => $delegation, 'entity' => $entity]);
     }
 
     private function applyConventions(string $collection, string $editablePart = ''): array

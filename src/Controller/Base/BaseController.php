@@ -11,14 +11,14 @@
 
 namespace App\Controller\Base;
 
-use App\Entity\Participant;
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class BaseController extends AbstractController
 {
     /**
-     * @return Participant|null
+     * @return User|null
      */
     protected function getUser()
     {

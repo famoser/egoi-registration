@@ -10,3 +10,4 @@ twig:
         env_support_email: '%env(SUPPORT_EMAIL)%'
         env_currency: '%env(CURRENCY)%'
         env_invoice_disclaimer: '%env(INVOICE_DISCLAIMER)%'
+        env_consent_file_template_path: 'resources/consent.pdf'

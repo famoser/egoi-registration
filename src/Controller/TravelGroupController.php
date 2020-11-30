@@ -66,7 +66,7 @@ class TravelGroupController extends BaseDoctrineController
             return $this->redirectToRoute('delegation_view', ['delegation' => $delegation->getId()]);
         }
 
-        return $this->render('travel_group/new.html.twig', ['form' => $form->createView()]);
+        return $this->render('travel_group/new.html.twig', ['form' => $form->createView(), 'delegation' => $delegation]);
     }
 
     use ReviewableContentEditTrait;
@@ -123,7 +123,7 @@ class TravelGroupController extends BaseDoctrineController
             return $this->redirectToRoute('delegation_view', ['delegation' => $travelGroup->getDelegation()->getId()]);
         }
 
-        return $this->render('travel_group/remove.html.twig', ['form' => $form->createView()]);
+        return $this->render('travel_group/remove.html.twig', ['form' => $form->createView(), 'delegation' => $travelGroup->getDelegation()]);
     }
 
     /**
