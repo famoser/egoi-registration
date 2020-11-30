@@ -20,6 +20,8 @@ data:
   files:
     - path: .env.local
       required: true
+    - path: public/resources/consent.pdf
+      required: true
     - path: public/resources/autocomplete.json
       required: false
     - path: public/resources/default.json

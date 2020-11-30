@@ -18,4 +18,4 @@ papers_file: 'Papers (jpg preferred, png, gif)'
 papers_file_help: 'Official ID including your name & date of birth. If onsite, then use the same ID you use for immigration.'
 
 consent_file: 'Consent (pdf)'
-consent_file_help: 'The signed legal documents required for your participation. Contact us to receive the templates.'
+consent_file_help: 'The signed legal documents required for your participation.'

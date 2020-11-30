@@ -9,6 +9,7 @@ new:
     papers_upload_failed: 'Papers upload failed.'
     consent_upload_failed: 'Consent upload failed.'
   download: 'download'
+  consent_file_template: 'download template'
 
 edit:
   title: 'Edit %role%'

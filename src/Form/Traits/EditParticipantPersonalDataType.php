@@ -91,7 +91,7 @@ class EditParticipantPersonalDataType extends AbstractType
         }
         $form->add('papersFile', FileType::class, $papersOptions);
 
-        $consentOptions = $defaultOptions + ['help' => 'consent_file_help', 'constraints' => self::createFileConstraints('10m', false)];
+        $consentOptions = $defaultOptions + ['help' => 'consent_file_help', 'constraints' => self::createFileConstraints('5m', false)];
         if ($participant->getConsent()) {
             $url = $urlGenerator->generate('participant_download', ['participant' => $participant->getId(), 'filename' => $participant->getConsent(), 'type' => FileServiceInterface::CONSENT]);
             $consentOptions += ['attr' => ['consent_url' => $url]];
