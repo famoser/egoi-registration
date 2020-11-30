@@ -1,7 +1,9 @@
 {% extends "_content.html.twig" %}
 
-{% macro breadcrumb_item(link, text, secondary = false) %}
-    {% if app.request.pathInfo == link %}
+{% macro breadcrumb_item(text, link = null) %}
+    {% if link == null %}
+        <li class="breadcrumb-item active">{{ text }}</li>
+    {% elseif app.request.pathInfo == link %}
         <li class="breadcrumb-item active" aria-current="page">{{ text }}</li>
     {% else %}
         <li class="breadcrumb-item">
@@ -18,9 +20,12 @@
                 <ol class="breadcrumb pl-3 mb-0">
                     {% set delegation_view_path = path("delegation_view", {"delegation": delegation.id}) %}
                     {% if app.request.pathInfo != delegation_view_path %}
-                        {{ own_macros.breadcrumb_item(delegation_view_path, "view.title"|trans({"%name%": delegation.name}, "delegation")) }}
+                        {{ own_macros.breadcrumb_item("view.title"|trans({"%name%": delegation.name}, "delegation"), delegation_view_path) }}
                     {% endif %}
-                    {{ own_macros.breadcrumb_item(app.request.pathInfo, block('title')) }}
+                    {% if delegation_breadcrumbs_intermediate is defined %}
+                        {{ own_macros.breadcrumb_item(delegation_breadcrumbs_intermediate) }}
+                    {% endif %}
+                    {{ own_macros.breadcrumb_item(block('title'), app.request.pathInfo) }}
                 </ol>
             </nav>
         {% endif %}

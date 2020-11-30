@@ -122,7 +122,7 @@ trait ReviewableContentEditTrait
             }
         }
 
-        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'mode' => 'edit', 'delegation' => $delegation]);
+        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'mode' => 'edit', 'delegation' => $delegation, 'entity' => $entity]);
     }
 
     /**
@@ -167,7 +167,7 @@ trait ReviewableContentEditTrait
             }
         }
 
-        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'mode' => 'edit', 'delegation' => $delegation]);
+        return $this->render($collection.'/'.$templatePrefix.'.html.twig', ['form' => $form->createView(), 'mode' => 'edit', 'delegation' => $delegation, 'entity' => $entity]);
     }
 
     private function applyConventions(string $collection, string $editablePart = ''): array
