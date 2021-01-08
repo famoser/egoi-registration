@@ -32,7 +32,6 @@ class Delegation extends BaseEntity
 {
     use IdTrait;
     use TimeTrait;
-
     use DelegationAttendanceTrait;
     use DelegationContributionTrait;
 

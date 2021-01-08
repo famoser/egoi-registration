@@ -29,7 +29,6 @@ class Participant extends BaseEntity
 {
     use IdTrait;
     use TimeTrait;
-
     use ParticipantPersonalDataTrait;
     use ParticipantImmigrationTrait;
     use ParticipantEventPresenceTrait;
