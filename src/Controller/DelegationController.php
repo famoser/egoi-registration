@@ -33,6 +33,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class DelegationController extends BaseDoctrineController
 {
+    use ReviewableContentEditTrait;
+
     /**
      * @Route("/new", name="delegation_new")
      *
@@ -115,8 +117,6 @@ class DelegationController extends BaseDoctrineController
 
         return $this->render('delegation/users.html.twig', ['delegation' => $delegation]);
     }
-
-    use ReviewableContentEditTrait;
 
     /**
      * @Route("/edit_attendance/{delegation}", name="delegation_edit_attendance")

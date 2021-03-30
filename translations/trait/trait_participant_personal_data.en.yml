@@ -9,6 +9,10 @@ phone: Phone (optional)
 birthday: Birthday
 gender: Gender
 
+shirt_fit: Shirt fit
+shirt_size: Shirt size
+sock_size: Sock size
+
 portrait_file: 'Portrait (jpg preferred, png, gif)'
 portrait_file_help: '3:4, in color, neutral background. As on badge, diplomas, ...'
 name_on_documents: 'Desired name on EGOI documents'

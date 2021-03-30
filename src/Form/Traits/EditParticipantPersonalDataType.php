@@ -13,6 +13,9 @@ namespace App\Form\Traits;
 
 use App\Entity\Participant;
 use App\Enum\Gender;
+use App\Enum\ShirtFit;
+use App\Enum\ShirtSize;
+use App\Enum\SockSize;
 use App\Service\Interfaces\FileServiceInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -49,6 +52,10 @@ class EditParticipantPersonalDataType extends AbstractType
         $builder->add('familyName', TextType::class, ['required' => false]);
         $builder->add('birthday', DateType::class, ['widget' => 'single_text', 'required' => false]);
         $builder->add('gender', ChoiceType::class, Gender::getChoicesForBuilder() + ['required' => false]);
+
+        $builder->add('shirtSize', ChoiceType::class, ShirtSize::getChoicesForBuilder() + ['required' => false]);
+        $builder->add('shirtFit', ChoiceType::class, ShirtFit::getChoicesForBuilder() + ['required' => false]);
+        $builder->add('sockSize', ChoiceType::class, SockSize::getChoicesForBuilder() + ['required' => false]);
 
         $builder->add('nameOnDocuments', TextType::class, ['required' => false, 'help' => 'name_on_documents_help']);
 

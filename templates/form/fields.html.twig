@@ -109,6 +109,17 @@
             </div>
         {% endif %}
     </div>
+    <div class="row">
+        <div class="col-4">
+            {{ form_row(form.shirtSize) }}
+        </div>
+        <div class="col-2">
+            {{ form_row(form.shirtFit) }}
+        </div>
+        <div class="col-6">
+            {{ form_row(form.sockSize) }}
+        </div>
+    </div>
     <hr/>
     <div class="row">
         <div class="col">
@@ -189,14 +200,6 @@
 {% block edit_participant_event_presence_widget %}
     {% import _self as own_macros %}
 
-    <div class="row">
-        <div class="col">
-            {{ form_row(form.shirtSize) }}
-        </div>
-        <div class="col">
-            {{ form_row(form.shirtFit) }}
-        </div>
-    </div>
     {% if form.singleRoom is defined %}
         <div class="row">
             <div class="col">

@@ -13,28 +13,11 @@ namespace App\Entity\Traits;
 
 use App\Enum\Diet;
 use App\Enum\ReviewProgress;
-use App\Enum\ShirtFit;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 trait ParticipantEventPresenceTrait
 {
-    /**
-     * @var int|null
-     *
-     * @Groups({"participant-export"})
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $shirtSize;
-
-    /**
-     * @var int|null
-     *
-     * @Groups({"participant-export"})
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $shirtFit = ShirtFit::FEMALE;
-
     /**
      * @var string|null
      *
@@ -66,26 +49,6 @@ trait ParticipantEventPresenceTrait
      * @ORM\Column(type="integer")
      */
     private $eventPresenceReviewProgress = ReviewProgress::NOT_EDITED;
-
-    public function getShirtSize(): ?int
-    {
-        return $this->shirtSize;
-    }
-
-    public function setShirtSize(?int $shirtSize): void
-    {
-        $this->shirtSize = $shirtSize;
-    }
-
-    public function getShirtFit(): ?int
-    {
-        return $this->shirtFit;
-    }
-
-    public function setShirtFit(?int $shirtFit): void
-    {
-        $this->shirtFit = $shirtFit;
-    }
 
     public function getDiet(): ?string
     {
@@ -131,9 +94,7 @@ trait ParticipantEventPresenceTrait
 
     public function isEventPresenceComplete()
     {
-        $validation = null !== $this->shirtSize &&
-            null !== $this->shirtFit &&
-            null !== $this->diet;
+        $validation = null !== $this->diet;
 
         if ($this->isLeader()) {
             $validation &= null !== $this->singleRoom;
