@@ -13,8 +13,6 @@ namespace App\Form\Traits;
 
 use App\Entity\Participant;
 use App\Enum\Diet;
-use App\Enum\ShirtFit;
-use App\Enum\ShirtSize;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -47,9 +45,6 @@ class EditParticipantEventPresenceType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('shirtSize', ChoiceType::class, ShirtSize::getChoicesForBuilder() + ['required' => false]);
-        $builder->add('shirtFit', ChoiceType::class, ShirtFit::getChoicesForBuilder() + ['required' => false]);
-
         $builder->add('diet', ChoiceType::class, Diet::getChoicesForBuilder() + ['required' => false]);
         $builder->add('allergies', TextareaType::class, ['required' => false]);
 

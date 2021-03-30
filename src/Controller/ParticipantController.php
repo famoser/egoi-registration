@@ -38,6 +38,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ParticipantController extends BaseDoctrineController
 {
+    use ReviewableContentEditTrait;
+
     /**
      * @Route("/new/{delegation}/{role}", name="participant_new")
      *
@@ -137,8 +139,6 @@ class ParticipantController extends BaseDoctrineController
 
         return $fileService->downloadArchive($type);
     }
-
-    use ReviewableContentEditTrait;
 
     /**
      * @Route("/edit_personal_data/{participant}", name="participant_edit_personal_data")

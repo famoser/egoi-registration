@@ -13,6 +13,7 @@ namespace App\Entity\Traits;
 
 use App\Enum\Gender;
 use App\Enum\ReviewProgress;
+use App\Enum\ShirtFit;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -65,6 +66,30 @@ trait ParticipantPersonalDataTrait
      * @ORM\Column(type="integer", nullable=true)
      */
     private $gender = Gender::FEMALE;
+
+    /**
+     * @var int|null
+     *
+     * @Groups({"participant-export"})
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $shirtSize;
+
+    /**
+     * @var int|null
+     *
+     * @Groups({"participant-export"})
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $shirtFit = ShirtFit::FEMALE;
+
+    /**
+     * @var int|null
+     *
+     * @Groups({"participant-export"})
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $sockSize;
 
     /**
      * @var string|null
@@ -171,6 +196,36 @@ trait ParticipantPersonalDataTrait
         $this->gender = $gender;
     }
 
+    public function getShirtSize(): ?int
+    {
+        return $this->shirtSize;
+    }
+
+    public function setShirtSize(?int $shirtSize): void
+    {
+        $this->shirtSize = $shirtSize;
+    }
+
+    public function getShirtFit(): ?int
+    {
+        return $this->shirtFit;
+    }
+
+    public function setShirtFit(?int $shirtFit): void
+    {
+        $this->shirtFit = $shirtFit;
+    }
+
+    public function getSockSize(): ?int
+    {
+        return $this->sockSize;
+    }
+
+    public function setSockSize(?int $sockSize): void
+    {
+        $this->sockSize = $sockSize;
+    }
+
     public function getPersonalDataReviewProgress(): int
     {
         return $this->personalDataReviewProgress;
@@ -229,6 +284,8 @@ trait ParticipantPersonalDataTrait
             !empty($this->familyName) &&
             !empty($this->birthday) &&
             null !== $this->gender &&
+            null !== $this->shirtSize &&
+            null !== $this->shirtFit &&
             !empty($this->portrait) &&
             !empty($this->nameOnDocuments) &&
             !empty($this->papers) &&

@@ -33,6 +33,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class TravelGroupController extends BaseDoctrineController
 {
+    use ReviewableContentEditTrait;
+
     /**
      * @Route("/new/{delegation}/{arrivalOrDeparture}", name="travel_group_new")
      *
@@ -68,8 +70,6 @@ class TravelGroupController extends BaseDoctrineController
 
         return $this->render('travel_group/new.html.twig', ['form' => $form->createView(), 'delegation' => $delegation]);
     }
-
-    use ReviewableContentEditTrait;
 
     /**
      * @Route("/edit/{travelGroup}", name="travel_group_edit")
