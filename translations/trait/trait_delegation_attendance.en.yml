@@ -8,3 +8,5 @@ guest_count_help: '%currency% %surcharge% surcharge per guest'
 participation_mode: Participation mode
 participation_mode_short: onsite/online
 already_payed: Already payed
+delivery_address: Delivery Address
+delivery_address_help: We will ship medals, diplomas and goodies of your delegation to this address. You will be responsible for distributing them within your country.
