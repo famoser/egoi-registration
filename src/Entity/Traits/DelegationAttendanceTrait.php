@@ -51,14 +51,6 @@ trait DelegationAttendanceTrait
     private $alreadyPayed = 0;
 
     /**
-     * @var string|null
-     *
-     * @Groups({"delegation-export"})
-     * @ORM\Column(type="string", nullable=true)
-     */
-    private $deliveryAddress;
-
-    /**
      * @var int
      *
      * @Groups({"delegation-export"})
@@ -141,16 +133,6 @@ trait DelegationAttendanceTrait
 
     public function isAttendanceComplete()
     {
-        return $this->expectedAttendance() > 0 && $this->deliveryAddress;
-    }
-
-    public function getDeliveryAddress(): ?string
-    {
-        return $this->deliveryAddress;
-    }
-
-    public function setDeliveryAddress(?string $deliveryAddress): void
-    {
-        $this->deliveryAddress = $deliveryAddress;
+        return $this->expectedAttendance() > 0;
     }
 }

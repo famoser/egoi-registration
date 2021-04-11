@@ -16,7 +16,6 @@ use App\Enum\ParticipationMode;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -48,7 +47,6 @@ class EditDelegationAttendanceType extends AbstractType
 
         $builder->add('guestCount', IntegerType::class, ['attr' => ['min' => 0, 'max' => 5], 'help' => 'guest_count_help', 'help_translation_parameters' => ['%surcharge%' => $this->guestSurcharge, '%currency%' => $this->currency]]);
         $builder->add('participationMode', ChoiceType::class, ParticipationMode::getChoicesForBuilder());
-        $builder->add('deliveryAddress', TextareaType::class, ['help' => 'delivery_address_help']);
     }
 
     public function configureOptions(OptionsResolver $resolver)

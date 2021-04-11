@@ -2,4 +2,6 @@ trait:
   name: Contributions
 
 translations: Languages
-translations_help: In which language(s) your delegation will translate task statements
+translations_help: In which language(s) your delegation will translate task statements.
+delivery_address: Delivery Address
+delivery_address_help: We will ship medals, diplomas and goodies to all delegations who participate online. You will be responsible for distributing them within your country.

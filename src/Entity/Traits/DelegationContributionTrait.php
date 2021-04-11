@@ -26,6 +26,14 @@ trait DelegationContributionTrait
     private $translations;
 
     /**
+     * @var string|null
+     *
+     * @Groups({"delegation-export"})
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $deliveryAddress;
+
+    /**
      * @var int
      *
      * @Groups({"delegation-export"})
@@ -59,8 +67,18 @@ trait DelegationContributionTrait
         $this->contributionReviewProgress = $contributionReviewProgress;
     }
 
+    public function getDeliveryAddress(): ?string
+    {
+        return $this->deliveryAddress;
+    }
+
+    public function setDeliveryAddress(?string $deliveryAddress): void
+    {
+        $this->deliveryAddress = $deliveryAddress;
+    }
+
     public function isContributionComplete()
     {
-        return ReviewProgress::NOT_EDITED !== $this->contributionReviewProgress;
+        return ReviewProgress::NOT_EDITED !== $this->contributionReviewProgress && $this->deliveryAddress;
     }
 }

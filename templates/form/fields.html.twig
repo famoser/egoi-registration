@@ -38,6 +38,14 @@
         </div>
     </div>
 
+    <hr/>
+
+    <div class="row">
+        <div class="col-8">
+            {{ form_row(form.deliveryAddress) }}
+        </div>
+    </div>
+
     {{ own_macros.form_row_buttons(form) }}
 {% endblock %}
 
@@ -55,18 +63,12 @@
             {{ form_row(form.guestCount) }}
         </div>
     </div>
-    <hr/>
     <div class="row">
         <div class="col">
             {{ form_row(form.participationMode) }}
         </div>
         <div class="col"></div>
         <div class="col"></div>
-    </div>
-    <div class="row">
-        <div class="col-8">
-            {{ form_row(form.deliveryAddress) }}
-        </div>
     </div>
 
     {{ own_macros.form_row_buttons(form) }}

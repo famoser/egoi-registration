@@ -63,9 +63,9 @@ edit_attendance:
     too_few_spaces: 'There are fewer places selected than already used. Please remove surplus participants first.'
 
 edit_contribution:
-  title: 'Translations'
-  description: 'Translations of task statements your delegation can contribute.'
-  save_name: 'translations'
+  title: 'Delegation'
+  description: 'Information we need about the delegation.'
+  save_name: 'delegation information'
 
 edit_finance:
   title: 'Finance'
