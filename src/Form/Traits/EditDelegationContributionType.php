@@ -13,6 +13,7 @@ namespace App\Form\Traits;
 
 use App\Entity\Delegation;
 use App\Form\EuropeanLanguageType;
+use App\Form\EuropeanLanguageWithProficiencyType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,6 +24,7 @@ class EditDelegationContributionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('translations', EuropeanLanguageType::class, ['required' => false, 'multiple' => true, 'help' => 'translations_help']);
+        $builder->add('languages', EuropeanLanguageWithProficiencyType::class, ['required' => false, 'multiple' => true, 'help' => 'languages_help']);
         $builder->add('deliveryAddress', TextareaType::class, ['required' => false, 'help' => 'delivery_address_help']);
     }
 

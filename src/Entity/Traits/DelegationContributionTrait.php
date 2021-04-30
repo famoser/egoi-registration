@@ -26,6 +26,14 @@ trait DelegationContributionTrait
     private $translations;
 
     /**
+     * @var string[]
+     *
+     * @Groups({"delegation-export"})
+     * @ORM\Column(type="simple_array", nullable=true)
+     */
+    private $languages;
+
+    /**
      * @var string|null
      *
      * @Groups({"delegation-export"})
@@ -80,5 +88,21 @@ trait DelegationContributionTrait
     public function isContributionComplete()
     {
         return ReviewProgress::NOT_EDITED !== $this->contributionReviewProgress && $this->deliveryAddress;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getLanguages(): array
+    {
+        return $this->languages;
+    }
+
+    /**
+     * @param string[] $languages
+     */
+    public function setLanguages(array $languages): void
+    {
+        $this->languages = $languages;
     }
 }
